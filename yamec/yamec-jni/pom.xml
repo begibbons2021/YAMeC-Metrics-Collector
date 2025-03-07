@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.gibbonsdimarco.yamec</groupId>
+        <artifactId>yamec-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>yamec-jni</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>yamec-jni</name>
+    <description>JNI Module for YAMeC</description>
+
+    <properties>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>compile-native</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>g++</executable>  <workingDirectory>${project.basedir}/src/main/cpp</workingDirectory>
+                            <arguments>
+                                <argument>-c</argument>
+                                <argument>system_metrics.cpp</argument>
+                                <argument>-o</argument>
+                                <argument>system_metrics.o</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>link-native</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>g++</executable>  <workingDirectory>${project.basedir}/src/main/cpp</workingDirectory>
+                            <arguments>
+                                <argument>-shared</argument>  <argument>system_metrics.o</argument>
+                                <argument>-o</argument>
+                                <argument>../target/native/yamecjni.dll</argument> </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-native-lib</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <sourceFile>${project.basedir}/target/native/yamecjni.dll</sourceFile>
+                                    <outputDirectory>${project.build.directory}/native</outputDirectory>
+                                    <destFileName>yamecjni.dll</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
