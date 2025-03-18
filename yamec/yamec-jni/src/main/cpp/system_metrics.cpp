@@ -202,6 +202,8 @@ unsigned int getCpuTemperature()
 {
     SYSTEM_INFO info;
 
+    // TODO
+
     return 0;
 }
 
