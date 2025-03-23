@@ -506,6 +506,76 @@ unsigned int getSystemVirtualMemoryBytesUsed()
     return 0;
 }
 
+unsigned int getSystemPhysicalMemoryBytesUsed()
+{
+    PDH_HQUERY hQuery;
+    PDH_HCOUNTER hCounterAvailableBytes;
+    // PDH_HCOUNTER hCounterPercentInUse;
+    PDH_FMT_COUNTERVALUE availableBytes;
+    // PDH_FMT_COUNTERVALUE percentInUse;
+
+    PDH_STATUS status = PdhOpenQuery(nullptr, 0, &hQuery);
+    // Open a query
+    if (status != ERROR_SUCCESS) {
+        std::wcerr << "Failed to open PDH query for System Physical Memory Bytes Used. Error Code: "
+                        << std::hex << status << std::endl;
+        return 1;
+    }
+
+    // Add a counter for "Committed Bytes"
+    status = PdhAddCounter(hQuery, TEXT("\\Memory\\Available Bytes"), 0, &hCounterAvailableBytes);
+    if (status != ERROR_SUCCESS) {
+        std::wcerr << L"Failed to add counter for Available Bytes. Error Code: "
+                        << std::hex << status << std::endl;
+        PdhCloseQuery(hQuery);
+        return 1;
+    }
+
+    // Initialize collection of memory data
+    status = PdhCollectQueryData(hQuery);
+    if (status != ERROR_SUCCESS) {
+        std::wcerr << L"Failed to collect data for System Physical Memory Bytes Used. Error Code: "
+                        << std::hex << status << std::endl;
+        PdhCloseQuery(hQuery);
+        return 1;
+    }
+
+    // Wait and collect data again
+    Sleep(500);
+
+    // Finalize collection of memory data
+    status = PdhCollectQueryData(hQuery);
+    if (status != ERROR_SUCCESS) {
+        std::wcerr << L"Failed to collect data for System Physical Memory Bytes Used. Error Code: "
+                        << std::hex << status << std::endl;
+        PdhCloseQuery(hQuery);
+        return 1;
+    }
+
+    // Get virtual memory usage
+    status = PdhGetFormattedCounterValue(hCounterAvailableBytes, PDH_FMT_LARGE, nullptr, &availableBytes);
+    if (status == ERROR_SUCCESS) {
+        // Calculate physical memory utilized by subtracting available memory (in bytes) from total physical memory
+        // Since the total memory is reported in Kibibytes, we convert to Bytes by multiplying by 1024
+        const auto totalMemoryInBytes = getPhysicalMemory() * 1024;
+
+        const unsigned long long int bytesUsed = totalMemoryInBytes - availableBytes.largeValue;
+        std::wcout << L"Physical Memory Use: " << bytesUsed
+                        << L" byte(s)" << std::endl;
+    }
+    else
+    {
+        std::wcerr << L"Failed to retrieve counter data for Available Bytes. Error Code: "
+                        << std::hex << status << std::endl;
+        PdhCloseQuery(hQuery);
+        return 1;
+    }
+
+    // Cleanup
+    PdhCloseQuery(hQuery);
+    return 0;
+}
+
 unsigned int getSystemNicRecvBandwidth()
 {
     PDH_HQUERY hquery;
@@ -765,6 +835,7 @@ int main()
     std::cout << "CPU speed: " << GetCPUSpeed() << "MHz" << std::endl;
 
     getSystemVirtualMemoryBytesUsed();
+    getSystemPhysicalMemoryBytesUsed();
 
     getSystemNicRecvBandwidth();
     getSystemNicSendBandwidth();
