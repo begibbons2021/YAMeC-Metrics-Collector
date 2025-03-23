@@ -2,12 +2,14 @@
 #include <windows.h>
 #include <intrin.h>
 #include <pdh.h>
+#include <pdhmsg.h>
 #include <processthreadsapi.h>
 // #include <perflib.h>
 #include <chrono>
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 struct SystemInfo {
     DWORD numberOfProcessors;
@@ -24,6 +26,23 @@ struct CacheInfo {
     DWORD processorPackageCount = 0;
     DWORD byteOffset = 0;
 };
+
+std::string GetCPUSpeed()
+{
+    DWORD dwMHz = 0;
+    DWORD BufSize = sizeof(DWORD);
+    HKEY hKey;
+
+    if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,
+        "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0",
+        0, KEY_READ, &hKey) == ERROR_SUCCESS)
+    {
+        RegQueryValueEx(hKey, "~MHz", NULL, NULL, (LPBYTE)&dwMHz, &BufSize);
+        RegCloseKey(hKey);
+    }
+
+    return std::to_string(dwMHz);
+}
 
 SystemInfo getSystemInfo()
 {
@@ -393,6 +412,100 @@ std::string GetCPUBrandString()
     return std::string(brand);
 }
 
+/**
+ * Calculates the total number of bytes of virtual memory used by the entire system
+ *
+ * @return
+ */
+unsigned int getSystemVirtualMemoryBytesUsed()
+{
+    PDH_HQUERY hQuery;
+    PDH_HCOUNTER hCounterCommittedBytes;
+    PDH_HCOUNTER hCounterPercentInUse;
+    PDH_FMT_COUNTERVALUE committedBytes;
+    PDH_FMT_COUNTERVALUE percentInUse;
+
+    PDH_STATUS status = PdhOpenQuery(nullptr, 0, &hQuery);
+    // Open a query
+    if (status != ERROR_SUCCESS) {
+        std::wcerr << "Failed to open PDH query for System Virtual Memory Bytes Used. Error Code: "
+                        << std::hex << status << std::endl;
+        return 1;
+    }
+
+    // Add a counter for "Committed Bytes"
+    status = PdhAddCounter(hQuery, TEXT("\\Memory\\Committed Bytes"), 0, &hCounterCommittedBytes);
+    if (status != ERROR_SUCCESS) {
+        std::wcerr << L"Failed to add counter for Committed Bytes. Error Code: "
+                        << std::hex << status << std::endl;
+        PdhCloseQuery(hQuery);
+        return 1;
+    }
+
+
+    // Add a counter for "% Committed Bytes In Use"
+    status = PdhAddCounter(hQuery, TEXT("\\Memory\\% Committed Bytes In Use"), 0, &hCounterPercentInUse);
+    if (status != ERROR_SUCCESS) {
+        std::wcerr << L"Failed to add counter for % Committed Bytes In Use. Error Code: "
+                        << std::hex << status << std::endl;
+        PdhCloseQuery(hQuery);
+        return 1;
+    }
+
+    // Initialize collection of memory data
+    status = PdhCollectQueryData(hQuery);
+    if (status != ERROR_SUCCESS) {
+        std::wcerr << L"Failed to collect data for System Virtual Memory Bytes Used. Error Code: "
+                        << std::hex << status << std::endl;
+        PdhCloseQuery(hQuery);
+        return 1;
+    }
+
+    // Wait and collect data again
+    Sleep(500);
+
+    // Finalize collection of memory data
+    status = PdhCollectQueryData(hQuery);
+    if (status != ERROR_SUCCESS) {
+        std::wcerr << L"Failed to collect data for System Virtual Memory Bytes Used. Error Code: "
+                        << std::hex << status << std::endl;
+        PdhCloseQuery(hQuery);
+        return 1;
+    }
+
+    // Get virtual memory usage
+    status = PdhGetFormattedCounterValue(hCounterCommittedBytes, PDH_FMT_DOUBLE, nullptr, &committedBytes);
+    if (status == ERROR_SUCCESS) {
+        status = PdhGetFormattedCounterValue(hCounterPercentInUse, PDH_FMT_DOUBLE, nullptr, &percentInUse);
+        if (status == ERROR_SUCCESS)
+        {
+            // Calculate virtual memory in use my multiplying the committed bytes by the percent actually in use
+            const long long int bytesUsed = ceil(committedBytes.doubleValue * (percentInUse.doubleValue/100));
+
+            std::wcout << "Virtual Memory Use: " << std::fixed << bytesUsed << std::defaultfloat
+                            << " byte(s)" << std::endl;
+        }
+        else
+        {
+            std::wcerr << L"Failed to retrieve counter data for % Committed Bytes In Use. Error Code: "
+                            << std::hex << status << std::endl;
+            PdhCloseQuery(hQuery);
+            return 1;
+        }
+    }
+    else
+    {
+        std::wcerr << L"Failed to retrieve counter data for Committed Bytes. Error Code: "
+                        << std::hex << status << std::endl;
+        PdhCloseQuery(hQuery);
+        return 1;
+    }
+
+    // Cleanup
+    PdhCloseQuery(hQuery);
+    return 0;
+}
+
 unsigned int getSystemNicRecvBandwidth()
 {
     PDH_HQUERY hquery;
@@ -617,7 +730,7 @@ unsigned int getSystemNicSendBandwidth()
         if (status == ERROR_SUCCESS)
         {
             std::wcout << L"NIC: " << nicNames.at(i) << L" | Send Bandwidth: "
-                        << counterValue.doubleValue << L" bytes/sec" << std::endl;
+                         << counterValue.doubleValue << L" bytes/sec" << std::endl;
         }
         else {
             std::wcerr << L"Failed to get counter value for " << nicNames.at(i)
@@ -634,6 +747,7 @@ unsigned int getSystemNicSendBandwidth()
 int main()
 {
     getCpuUsage();
+    getAllGpuDevicesUsage();
     printf("CPU Brand String: %s\n", GetCPUBrandString().c_str());
     SystemInfo info = getSystemInfo();
     std::cout <<  "Number of processors: " << info.numberOfProcessors << "\n";
@@ -646,7 +760,14 @@ int main()
     std::cout << "Cache info: " << "\n";
     std::cout << "L1 cache size: " << cache.processorL1CacheSize / 1024.0 << "KB" << "\n";
     std::cout << "L2 cache size: " << cache.processorL2CacheSize / 1024.0 << "KB" << "\n";
-    std::cout << "L3 cache size: " << cache.processorL3CacheSize / 1024.0 << "KB" << std::endl;
+    std::cout << "L3 cache size: " << cache.processorL3CacheSize / 1024.0 << "KB" << "\n\n";
+
+    std::cout << "CPU speed: " << GetCPUSpeed() << "MHz" << std::endl;
+
+    getSystemVirtualMemoryBytesUsed();
+
+    getSystemNicRecvBandwidth();
+    getSystemNicSendBandwidth();
 
     return 0;
 }
