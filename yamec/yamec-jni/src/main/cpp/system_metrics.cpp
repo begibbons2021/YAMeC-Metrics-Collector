@@ -814,6 +814,244 @@ unsigned int getSystemNicSendBandwidth()
 
 }
 
+unsigned int getSystemDiskReadBandwidth()
+{
+    PDH_HQUERY hquery;
+
+    // Open the PDH query connection
+    PDH_STATUS status = PdhOpenQuery(nullptr, 0, &hquery);
+    if (status != ERROR_SUCCESS)
+    {
+        std::wcerr << "Failed to open the PDH query connection. Error code: " << std::hex << status << std::endl;
+        return 0;
+    }
+
+    // Get a list of Pdh counters for Disk devices
+    // First get the counts for the buffer length of the list of counters and instances
+    DWORD counterNameCharsSize = 0;
+    DWORD instanceNameCharsSize = 0;
+    status = PdhEnumObjectItems(nullptr, nullptr, TEXT("PhysicalDisk"),
+                                    nullptr, &counterNameCharsSize,
+                                    nullptr, &instanceNameCharsSize,
+                                    PERF_DETAIL_WIZARD, 0);
+    if (status != ERROR_SUCCESS && status != PDH_MORE_DATA)
+    {
+        std::wcerr << "Failed to get Disk instance list. Error code: " << std::hex << status << std::endl;
+        PdhCloseQuery(hquery);
+        return 0;
+    }
+
+    // Then fill the buffer of counter and instance characters
+    std::vector<WCHAR> counterNameChars(counterNameCharsSize);
+    std::vector<WCHAR> instanceNameChars(instanceNameCharsSize);
+    status = PdhEnumObjectItemsW(nullptr, nullptr, L"PhysicalDisk",
+                                    counterNameChars.data(), &counterNameCharsSize,
+                                    instanceNameChars.data(), &instanceNameCharsSize,
+                                    PERF_DETAIL_WIZARD, 0);
+    if (status != ERROR_SUCCESS)
+    {
+        std::wcerr << "Failed to fill Disk instance list. Error code: " << std::hex <<  status << std::endl;
+        PdhCloseQuery(hquery);
+        return 0;
+    }
+
+    // Finally, separate instance names into separate strings in a vector
+    std::vector<std::wstring> diskNames;
+    WCHAR* currentNamePtr = instanceNameChars.data();
+    while (*currentNamePtr)
+    {
+        diskNames.emplace_back(currentNamePtr);
+        currentNamePtr += wcslen(currentNamePtr) + 1;
+    }
+
+    // Set up counters for data collection
+    std::vector<HCOUNTER> counters;
+
+    for (const auto & diskName : diskNames)
+    {
+        auto counter = HCOUNTER();
+        std::wstring counterPath = L"\\PhysicalDisk(" + diskName + L")\\Disk Read Bytes/sec";
+        status = PdhAddCounterW(hquery, counterPath.c_str(), 0, &counter);
+        if (status == ERROR_SUCCESS)
+        {
+            counters.push_back(counter);
+        }
+        else
+        {
+            std::wcerr << L"Could not add counter for Disk read bandwidth for " << diskName
+                           << L". Error Code: " << std::hex << status << std::endl;
+        }
+
+    }
+
+    if (counters.empty())
+    {
+        std::wcerr << "No valid Disk counters found." << std::endl;
+        PdhCloseQuery(hquery);
+        return 0;
+    }
+
+    // Start collection of data from counters
+    status = PdhCollectQueryData(hquery);
+    if (status != ERROR_SUCCESS)
+    {
+        std::wcerr << "Could not initialize query for Disk read bandwidth data. Error code: " << std::hex << status << std::endl;
+        PdhCloseQuery(hquery);
+        return 0;
+    }
+
+    Sleep(1000); // Wait for data to be collected/calculated
+
+    // Collect data from counters
+    status = PdhCollectQueryData(hquery);
+    if (status != ERROR_SUCCESS)
+    {
+        std::wcerr << "Could not query Disk read bandwidth data. Error code: " << std::hex << status << std::endl;
+        PdhCloseQuery(hquery);
+        return 0;
+    }
+
+    // Output counter data
+    for (size_t i = 0; i < counters.size(); i++)
+    {
+        PDH_FMT_COUNTERVALUE counterValue;
+        status = PdhGetFormattedCounterValue(counters.at(i), PDH_FMT_DOUBLE, nullptr, &counterValue);
+        if (status == ERROR_SUCCESS)
+        {
+            std::wcout << L"Disk: " << diskNames.at(i) << L" | Read Speed: "
+                         << counterValue.doubleValue << L" bytes/sec" << std::endl;
+        }
+        else {
+            std::wcerr << L"Failed to get counter value for " << diskNames.at(i)
+                        << L". Error code: " << std::hex << status << std::endl;
+        }
+    }
+
+    PdhCloseQuery(hquery);
+
+    return 1;
+
+}
+
+unsigned int getSystemDiskWriteBandwidth()
+{
+    PDH_HQUERY hquery;
+
+    // Open the PDH query connection
+    PDH_STATUS status = PdhOpenQuery(nullptr, 0, &hquery);
+    if (status != ERROR_SUCCESS)
+    {
+        std::wcerr << "Failed to open the PDH query connection. Error code: " << std::hex << status << std::endl;
+        return 0;
+    }
+
+    // Get a list of Pdh counters for Disk devices
+    // First get the counts for the buffer length of the list of counters and instances
+    DWORD counterNameCharsSize = 0;
+    DWORD instanceNameCharsSize = 0;
+    status = PdhEnumObjectItems(nullptr, nullptr, TEXT("PhysicalDisk"),
+                                    nullptr, &counterNameCharsSize,
+                                    nullptr, &instanceNameCharsSize,
+                                    PERF_DETAIL_WIZARD, 0);
+    if (status != ERROR_SUCCESS && status != PDH_MORE_DATA)
+    {
+        std::wcerr << "Failed to get Disk instance list. Error code: " << std::hex << status << std::endl;
+        PdhCloseQuery(hquery);
+        return 0;
+    }
+
+    // Then fill the buffer of counter and instance characters
+    std::vector<WCHAR> counterNameChars(counterNameCharsSize);
+    std::vector<WCHAR> instanceNameChars(instanceNameCharsSize);
+    status = PdhEnumObjectItemsW(nullptr, nullptr, L"PhysicalDisk",
+                                    counterNameChars.data(), &counterNameCharsSize,
+                                    instanceNameChars.data(), &instanceNameCharsSize,
+                                    PERF_DETAIL_WIZARD, 0);
+    if (status != ERROR_SUCCESS)
+    {
+        std::wcerr << "Failed to fill Disk instance list. Error code: " << std::hex <<  status << std::endl;
+        PdhCloseQuery(hquery);
+        return 0;
+    }
+
+    // Finally, separate instance names into separate strings in a vector
+    std::vector<std::wstring> diskNames;
+    WCHAR* currentNamePtr = instanceNameChars.data();
+    while (*currentNamePtr)
+    {
+        diskNames.emplace_back(currentNamePtr);
+        currentNamePtr += wcslen(currentNamePtr) + 1;
+    }
+
+    // Set up counters for data collection
+    std::vector<HCOUNTER> counters;
+
+    for (const auto & diskName : diskNames)
+    {
+        auto counter = HCOUNTER();
+        std::wstring counterPath = L"\\PhysicalDisk(" + diskName + L")\\Disk Write Bytes/sec";
+        status = PdhAddCounterW(hquery, counterPath.c_str(), 0, &counter);
+        if (status == ERROR_SUCCESS)
+        {
+            counters.push_back(counter);
+        }
+        else
+        {
+            std::wcerr << L"Could not add counter for Disk write bandwidth for " << diskName
+                           << L". Error Code: " << std::hex << status << std::endl;
+        }
+
+    }
+
+    if (counters.empty())
+    {
+        std::wcerr << "No valid Disk counters found." << std::endl;
+        PdhCloseQuery(hquery);
+        return 0;
+    }
+
+    // Start collection of data from counters
+    status = PdhCollectQueryData(hquery);
+    if (status != ERROR_SUCCESS)
+    {
+        std::wcerr << "Could not initialize query for Disk write bandwidth data. Error code: " << std::hex << status << std::endl;
+        PdhCloseQuery(hquery);
+        return 0;
+    }
+
+    Sleep(1000); // Wait for data to be collected/calculated
+
+    // Collect data from counters
+    status = PdhCollectQueryData(hquery);
+    if (status != ERROR_SUCCESS)
+    {
+        std::wcerr << "Could not query Disk write bandwidth data. Error code: " << std::hex << status << std::endl;
+        PdhCloseQuery(hquery);
+        return 0;
+    }
+
+    // Output counter data
+    for (size_t i = 0; i < counters.size(); i++)
+    {
+        PDH_FMT_COUNTERVALUE counterValue;
+        status = PdhGetFormattedCounterValue(counters.at(i), PDH_FMT_DOUBLE, nullptr, &counterValue);
+        if (status == ERROR_SUCCESS)
+        {
+            std::wcout << L"Disk: " << diskNames.at(i) << L" | Write Speed: "
+                         << counterValue.doubleValue << L" bytes/sec" << std::endl;
+        }
+        else {
+            std::wcerr << L"Failed to get counter value for " << diskNames.at(i)
+                        << L". Error code: " << std::hex << status << std::endl;
+        }
+    }
+
+    PdhCloseQuery(hquery);
+
+    return 1;
+
+}
+
 int main()
 {
     getCpuUsage();
@@ -839,6 +1077,9 @@ int main()
 
     getSystemNicRecvBandwidth();
     getSystemNicSendBandwidth();
+
+    getSystemDiskReadBandwidth();
+    getSystemDiskWriteBandwidth();
 
     return 0;
 }
