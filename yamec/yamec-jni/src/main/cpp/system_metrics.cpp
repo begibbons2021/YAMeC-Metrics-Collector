@@ -11,6 +11,11 @@
 #include <string>
 #include <vector>
 
+#include <comdef.h>
+#include <Wbemidl.h>
+
+#pragma comment(lib, "wbemuuid.lib")
+
 struct SystemInfo {
     DWORD numberOfProcessors;
     WORD architecture;
@@ -1052,6 +1057,213 @@ unsigned int getSystemDiskWriteBandwidth()
 
 }
 
+unsigned int getMemoryInfo()
+{
+
+    // Initialize COM
+    HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+
+    if (FAILED(hr))
+    {
+        std::wcerr << "Failed to initialize COM library for Memory Details. Error Code: "
+                        << std::hex << hr << std::endl;
+        return 1;
+    }
+
+    // Set general COM security levels
+    hr = CoInitializeSecurity(NULL,
+                                -1,
+                                NULL,
+                                NULL,
+                                RPC_C_AUTHN_LEVEL_DEFAULT,
+                                RPC_C_IMP_LEVEL_IMPERSONATE,
+                                NULL,
+                                EOAC_NONE,
+                                NULL);
+
+    if (FAILED(hr)) {
+        std::wcerr << "Failed to initialize security for Memory Details. Error code: "
+                        << std::hex << hr << std::endl;
+        CoUninitialize();
+        return 1;
+    }
+
+    IWbemLocator *pLocator = 0;
+
+    // Get the initial WMI locator
+    hr = CoCreateInstance(CLSID_WbemLocator,
+                            0,
+                            CLSCTX_INPROC_SERVER,
+                            IID_IWbemLocator,
+                            ((LPVOID *) &pLocator));
+
+    if (FAILED(hr))
+    {
+        std::wcerr << "Failed to create IWbemLocator for Memory Details. Error code: "
+                        << std::hex << hr << std::endl;
+        CoUninitialize();
+        return 1;
+    }
+
+    IWbemServices *pWbemServices = 0;
+
+    // Connect to WMI using the current user's credentials to call to system
+    // information database
+    hr = pLocator->ConnectServer(BSTR(L"ROOT\\CIMV2"),
+                                    NULL,
+                                    NULL,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    &pWbemServices);
+
+    if (FAILED(hr))
+    {
+        std::wcerr << "Failed to create IWbemServices for Memory Details. Error code: "
+                        << std::hex << hr << std::endl;
+        pLocator->Release();
+        CoUninitialize();
+        return 1;
+    }
+
+    // Set up security levels on pWbemServices Proxy
+    hr = CoSetProxyBlanket(pWbemServices,
+                            RPC_C_AUTHN_WINNT,
+                            RPC_C_AUTHZ_NONE,
+                            NULL,
+                            RPC_C_AUTHN_LEVEL_CALL,
+                            RPC_C_IMP_LEVEL_IMPERSONATE,
+                            NULL,
+                            EOAC_NONE);
+
+    if (FAILED(hr))
+    {
+        std::wcerr << "Failed to create IWbemServices for Memory Details. Error code: "
+                        << std::hex << hr << std::endl;
+        pWbemServices->Release();
+        pLocator->Release();
+        CoUninitialize();
+        return 1;
+    }
+
+    // Query data
+    IEnumWbemClassObject* pIEnum = NULL;
+    hr = pWbemServices->ExecQuery(bstr_t(L"WQL"),
+                                    bstr_t(L"SELECT * from Win32_PhysicalMemory"),
+                                    WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
+                                    NULL,
+                                    &pIEnum);
+
+    if (FAILED(hr))
+    {
+        std::wcerr << "Query for Memory Details failed. Error code: "
+                        << std::hex << hr << std::endl;
+        pWbemServices->Release();
+        pLocator->Release();
+        CoUninitialize();
+        return 1;
+    }
+
+    // Output data
+    IWbemClassObject *pWbemObject = NULL; // Returned struct of system data
+    ULONG ulReturn = 0; // Lines left to return
+    unsigned int memorySlotsUsed = 0;
+
+    // Each DIMM/unit of memory will have its own output
+    // https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-physicalmemory
+    while (pIEnum)
+    {
+        hr = pIEnum->Next(WBEM_INFINITE, 1, &pWbemObject, &ulReturn);
+
+        if (0 == ulReturn)
+        {
+            break;
+        }
+
+        VARIANT capacityVar, speedVar, formfactorVar;
+        VariantInit(&capacityVar);
+        VariantInit(&speedVar);
+        VariantInit(&formfactorVar);
+
+        hr = pWbemObject->Get(L"Capacity", 0, &capacityVar, 0, 0);
+        hr = pWbemObject->Get(L"Speed", 0, &speedVar, 0, 0);
+        hr = pWbemObject->Get(L"Formfactor", 0, &formfactorVar, 0, 0);
+
+        std::wcout << "Memory Capacity: " << capacityVar.bstrVal << " bytes" << std::endl;
+        std::wcout << "Memory Speed: " << speedVar.ullVal << "MT/s" <<  std::endl;
+        std::wcout << "Memory Formfactor: " << formfactorVar.uintVal << std::endl;
+
+        VariantClear(&capacityVar);
+        VariantClear(&speedVar);
+        VariantClear(&formfactorVar);
+
+        pWbemObject->Release();
+
+        ++memorySlotsUsed;
+
+    }
+
+    pIEnum->Release();
+
+
+    // Query data
+    hr = pWbemServices->ExecQuery(bstr_t(L"WQL"),
+                                    bstr_t(L"SELECT * from Win32_PhysicalMemoryArray"),
+                                    WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
+                                    NULL,
+                                    &pIEnum);
+
+    if (FAILED(hr))
+    {
+        std::wcerr << "Query for Memory Details failed. Error code: "
+                        << std::hex << hr << std::endl;
+        pWbemServices->Release();
+        pLocator->Release();
+        CoUninitialize();
+        return 1;
+    }
+
+
+    // Output data
+    ulReturn = 0; // Lines left to return
+
+    // Each DIMM/unit of memory will have its own output
+    // https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-physicalmemory
+    while (pIEnum)
+    {
+        hr = pIEnum->Next(WBEM_INFINITE, 1, &pWbemObject, &ulReturn);
+
+        if (0 == ulReturn)
+        {
+            break;
+        }
+
+        VARIANT memoryDevicesVar;
+        VariantInit(&memoryDevicesVar);
+
+
+        hr = pWbemObject->Get(L"MemoryDevices", 0, &memoryDevicesVar, 0, 0);
+
+
+        std::wcout << "Slots Total: " << memoryDevicesVar.uintVal  << std::endl;
+        std::wcout << "Slots Used: " << memorySlotsUsed << std::endl;
+
+        VariantClear(&memoryDevicesVar);
+
+        pWbemObject->Release();
+
+    }
+
+    pIEnum->Release();
+    pWbemServices->Release();
+    pLocator->Release();
+    CoUninitialize();
+
+
+    return 0;
+}
+
 int main()
 {
     getCpuUsage();
@@ -1071,6 +1283,8 @@ int main()
     std::cout << "L3 cache size: " << cache.processorL3CacheSize / 1024.0 << "KB" << "\n\n";
 
     std::cout << "CPU speed: " << GetCPUSpeed() << "MHz" << std::endl;
+
+    getMemoryInfo();
 
     getSystemVirtualMemoryBytesUsed();
     getSystemPhysicalMemoryBytesUsed();
