@@ -1264,6 +1264,166 @@ unsigned int getMemoryInfo()
     return 0;
 }
 
+unsigned int getDiskInfo()
+{
+
+    // Initialize COM
+    HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+
+    if (FAILED(hr))
+    {
+        std::wcerr << "Failed to initialize COM library for Disk Details. Error Code: "
+                        << std::hex << hr << std::endl;
+        return 1;
+    }
+
+    // Set general COM security levels
+    hr = CoInitializeSecurity(NULL,
+                                -1,
+                                NULL,
+                                NULL,
+                                RPC_C_AUTHN_LEVEL_DEFAULT,
+                                RPC_C_IMP_LEVEL_IMPERSONATE,
+                                NULL,
+                                EOAC_NONE,
+                                NULL);
+
+    if (FAILED(hr)) {
+        std::wcerr << "Failed to initialize security for Disk Details. Error code: "
+                        << std::hex << hr << std::endl;
+        CoUninitialize();
+        return 1;
+    }
+
+    IWbemLocator *pLocator = 0;
+
+    // Get the initial WMI locator
+    hr = CoCreateInstance(CLSID_WbemLocator,
+                            0,
+                            CLSCTX_INPROC_SERVER,
+                            IID_IWbemLocator,
+                            ((LPVOID *) &pLocator));
+
+    if (FAILED(hr))
+    {
+        std::wcerr << "Failed to create IWbemLocator for Disk Details. Error code: "
+                        << std::hex << hr << std::endl;
+        CoUninitialize();
+        return 1;
+    }
+
+    IWbemServices *pWbemServices = 0;
+
+    // Connect to WMI using the current user's credentials to call to system
+    // information database
+    hr = pLocator->ConnectServer(BSTR(L"ROOT\\microsoft\\windows\\storage"),
+                                    NULL,
+                                    NULL,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    &pWbemServices);
+
+    if (FAILED(hr))
+    {
+        std::wcerr << "Failed to create IWbemServices for Disk Details. Error code: "
+                        << std::hex << hr << std::endl;
+        pLocator->Release();
+        CoUninitialize();
+        return 1;
+    }
+
+    // Set up security levels on pWbemServices Proxy
+    hr = CoSetProxyBlanket(pWbemServices,
+                            RPC_C_AUTHN_WINNT,
+                            RPC_C_AUTHZ_NONE,
+                            NULL,
+                            RPC_C_AUTHN_LEVEL_CALL,
+                            RPC_C_IMP_LEVEL_IMPERSONATE,
+                            NULL,
+                            EOAC_NONE);
+
+    if (FAILED(hr))
+    {
+        std::wcerr << "Failed to create IWbemServices for Disk Details. Error code: "
+                        << std::hex << hr << std::endl;
+        pWbemServices->Release();
+        pLocator->Release();
+        CoUninitialize();
+        return 1;
+    }
+
+    // Query data
+    IEnumWbemClassObject* pIEnum = NULL;
+    hr = pWbemServices->ExecQuery(bstr_t(L"WQL"),
+                                    bstr_t(L"SELECT * from MSFT_PhysicalDisk"),
+                                    WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
+                                    NULL,
+                                    &pIEnum);
+
+
+    if (FAILED(hr))
+    {
+        std::wcerr << "Query for Disk Details failed. Error code: "
+                        << std::hex << hr << std::endl;
+        pWbemServices->Release();
+        pLocator->Release();
+        CoUninitialize();
+        return 1;
+    }
+
+    // Output data
+    IWbemClassObject *pWbemObject = NULL; // Returned struct of system data
+    ULONG ulReturn = 0; // Lines left to return
+    std::vector<std::string> disk_ids;
+    unsigned int memorySlotsUsed = 0;
+
+    // Each DIMM/unit of memory will have its own output
+    // https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-physicalmemory
+    while (pIEnum) {
+        hr = pIEnum->Next(WBEM_INFINITE, 1, &pWbemObject, &ulReturn);
+
+        if (0 == ulReturn)
+        {
+            break;
+        }
+
+        VARIANT nameVar, capacityVar, mediaTypeVar;
+        VariantInit(&nameVar);
+        // VariantInit(&diskIdVar);
+        VariantInit(&capacityVar);
+        VariantInit(&mediaTypeVar);
+
+        hr = pWbemObject->Get(L"FriendlyName", 0, &nameVar, 0, 0);
+        // hr = pWbemObject->Get(L"DeviceID", 0, &diskIdVar, 0, 0);
+        hr = pWbemObject->Get(L"Size", 0, &capacityVar, 0, 0);
+        hr = pWbemObject->Get(L"MediaType", 0, &mediaTypeVar, 0, 0);
+
+        std::wcout << nameVar.bstrVal << std::endl;
+        std::wcout << "Disk Capacity: " << capacityVar.bstrVal << " bytes" << std::endl;
+        std::wcout << "Disk Type: " << mediaTypeVar.uintVal <<  std::endl;
+
+        // disk_ids.emplace_back(_com_util::ConvertBSTRToString(diskIdVar.bstrVal));
+        VariantClear(&capacityVar);
+        VariantClear(&nameVar);
+        // VariantClear(&diskIdVar);
+        VariantClear(&mediaTypeVar);
+
+        pWbemObject->Release();
+
+        ++memorySlotsUsed;
+    }
+
+    pIEnum->Release();
+    pWbemServices->Release();
+    pLocator->Release();
+    CoUninitialize();
+
+
+    return 0;
+}
+
 int main()
 {
     getCpuUsage();
@@ -1294,6 +1454,8 @@ int main()
 
     getSystemDiskReadBandwidth();
     getSystemDiskWriteBandwidth();
+
+    getDiskInfo();
 
     return 0;
 }
