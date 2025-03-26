@@ -1264,6 +1264,169 @@ unsigned int getMemoryInfo()
     return 0;
 }
 
+unsigned int getNICInfo() {
+    // Initialize COM
+    HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+
+    if (FAILED(hr))
+    {
+        std::wcerr << "Failed to initialize COM library for NIC Details. Error Code: "
+                        << std::hex << hr << std::endl;
+        return 1;
+    }
+
+    // Set general COM security levels
+    hr = CoInitializeSecurity(NULL,
+                                -1,
+                                NULL,
+                                NULL,
+                                RPC_C_AUTHN_LEVEL_DEFAULT,
+                                RPC_C_IMP_LEVEL_IMPERSONATE,
+                                NULL,
+                                EOAC_NONE,
+                                NULL);
+
+    if (FAILED(hr)) {
+        std::wcerr << "Failed to initialize security for NIC Details. Error code: "
+                        << std::hex << hr << std::endl;
+        CoUninitialize();
+        return 1;
+    }
+
+    IWbemLocator *pLocator = 0;
+
+    // Get the initial WMI locator
+    hr = CoCreateInstance(CLSID_WbemLocator,
+                            0,
+                            CLSCTX_INPROC_SERVER,
+                            IID_IWbemLocator,
+                            ((LPVOID *) &pLocator));
+
+    if (FAILED(hr))
+    {
+        std::wcerr << "Failed to create IWbemLocator for NIC Details. Error code: "
+                        << std::hex << hr << std::endl;
+        CoUninitialize();
+        return 1;
+    }
+
+    IWbemServices *pWbemServices = 0;
+
+    // Connect to WMI using the current user's credentials to call to system
+    // information database
+    hr = pLocator->ConnectServer(BSTR(L"ROOT\\StandardCimv2"),
+                                    NULL,
+                                    NULL,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    &pWbemServices);
+
+    if (FAILED(hr))
+    {
+        std::wcerr << "Failed to create IWbemServices for NIC Details. Error code: "
+                        << std::hex << hr << std::endl;
+        pLocator->Release();
+        CoUninitialize();
+        return 1;
+    }
+
+    // Set up security levels on pWbemServices Proxy
+    hr = CoSetProxyBlanket(pWbemServices,
+                            RPC_C_AUTHN_WINNT,
+                            RPC_C_AUTHZ_NONE,
+                            NULL,
+                            RPC_C_AUTHN_LEVEL_CALL,
+                            RPC_C_IMP_LEVEL_IMPERSONATE,
+                            NULL,
+                            EOAC_NONE);
+
+    if (FAILED(hr))
+    {
+        std::wcerr << "Failed to create IWbemServices for NIC Details. Error code: "
+                        << std::hex << hr << std::endl;
+        pWbemServices->Release();
+        pLocator->Release();
+        CoUninitialize();
+        return 1;
+    }
+
+    // Query data
+    IEnumWbemClassObject* pIEnum = NULL;
+    hr = pWbemServices->ExecQuery(bstr_t(L"WQL"),
+                                    bstr_t(L"SELECT * from MSFT_NetAdapter"),
+                                    WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
+                                    NULL,
+                                    &pIEnum);
+
+    if (FAILED(hr))
+    {
+        std::wcerr << "Query for NIC Details failed. Error code: "
+                        << std::hex << hr << std::endl;
+        pWbemServices->Release();
+        pLocator->Release();
+        CoUninitialize();
+        return 1;
+    }
+
+    // Output data
+    IWbemClassObject *pWbemObject = NULL; // Returned struct of system data
+    ULONG ulReturn = 0; // Lines left to return
+    unsigned int nicCount = 0;
+
+    // Each DIMM/unit of memory will have its own output
+    // https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-physicalmemory
+    while (pIEnum)
+    {
+        hr = pIEnum->Next(WBEM_INFINITE, 1, &pWbemObject, &ulReturn);
+
+        if (0 == ulReturn)
+        {
+            break;
+        }
+
+        VARIANT nameVar, deviceNameVar, physicalVar, interfaceNameVar, interfaceTypeVar;
+        VariantInit(&nameVar);
+        VariantInit(&deviceNameVar);
+        VariantInit(&physicalVar);
+        VariantInit(&interfaceNameVar);
+        VariantInit(&interfaceTypeVar);
+
+        hr = pWbemObject->Get(L"InterfaceDescription", 0, &deviceNameVar, 0, 0);
+        hr = pWbemObject->Get(L"Name", 0, &nameVar, 0, 0);
+        hr = pWbemObject->Get(L"HardwareInterface", 0, &physicalVar, 0, 0);
+        hr = pWbemObject->Get(L"InterfaceName", 0, &interfaceNameVar, 0, 0);
+        hr = pWbemObject->Get(L"InterfaceType", 0, &interfaceTypeVar, 0, 0);
+
+        if (physicalVar.bVal != 0) {
+            std::wcout << "NIC Name: " << deviceNameVar.bstrVal  << " - " << nameVar.bstrVal << " ("
+                        << interfaceNameVar.bstrVal << ") " << std::endl;
+            std::wcout << "Type: " << interfaceTypeVar.ulVal << std::endl;
+
+            ++nicCount;
+        }
+
+        VariantClear(&nameVar);
+        VariantClear(&deviceNameVar);
+        VariantClear(&physicalVar);
+        VariantClear(&interfaceNameVar);
+        VariantClear(&interfaceTypeVar);
+
+
+        pWbemObject->Release();
+
+    }
+
+    pIEnum->Release();
+    pWbemServices->Release();
+    pLocator->Release();
+    CoUninitialize();
+
+
+    return 0;
+}
+
 unsigned int getDiskInfo()
 {
 
@@ -1456,6 +1619,8 @@ int main()
     getSystemDiskWriteBandwidth();
 
     getDiskInfo();
+
+    getNICInfo();
 
     return 0;
 }
