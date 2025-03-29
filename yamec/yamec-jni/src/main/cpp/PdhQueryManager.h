@@ -21,6 +21,10 @@ public:
 
     [[nodiscard]] bool collectData() const;
 
+    bool getCounterValue(PDH_HCOUNTER counter, unsigned int *value) const;
+    bool getCounterValue(PDH_HCOUNTER counter, int *value) const;
+    bool getCounterValue(PDH_HCOUNTER counter, unsigned long long *value) const;
+    bool getCounterValue(PDH_HCOUNTER counter, long long *value) const;
     bool getCounterValue(PDH_HCOUNTER counter, double *value) const;
 
 private:
