@@ -67,6 +67,55 @@ bool PdhQueryManager::collectData() const
     return true;
 }
 
+
+bool PdhQueryManager::getCounterValue(const PDH_HCOUNTER counter, int *value) const
+{
+    if (!m_initialized)
+    {
+        std::cerr << "Query not initialized." << std::endl;
+        return false;
+    }
+
+    PDH_FMT_COUNTERVALUE counterValue;
+    if (PdhGetFormattedCounterValue(counter, PDH_FMT_LONG, nullptr, &counterValue) != ERROR_SUCCESS)
+    {
+        std::cerr << "Failed to get formatted counter value." << std::endl;
+        return false;
+    }
+
+    *value = counterValue.longValue;
+    return true;
+}
+
+bool PdhQueryManager::getCounterValue(const PDH_HCOUNTER counter, unsigned int *value) const
+{
+    return getCounterValue(counter, reinterpret_cast<int *>(value));
+}
+
+bool PdhQueryManager::getCounterValue(const PDH_HCOUNTER counter, long long *value) const
+{
+    if (!m_initialized)
+    {
+        std::cerr << "Query not initialized." << std::endl;
+        return false;
+    }
+
+    PDH_FMT_COUNTERVALUE counterValue;
+    if (PdhGetFormattedCounterValue(counter, PDH_FMT_LARGE, nullptr, &counterValue) != ERROR_SUCCESS)
+    {
+        std::cerr << "Failed to get formatted counter value." << std::endl;
+        return false;
+    }
+
+    *value = counterValue.largeValue;
+    return true;
+}
+
+bool PdhQueryManager::getCounterValue(const PDH_HCOUNTER counter, unsigned long long *value) const
+{
+    return getCounterValue(counter, reinterpret_cast<long long *>(value));
+}
+
 bool PdhQueryManager::getCounterValue(const PDH_HCOUNTER counter, double *value) const
 {
     if (!m_initialized)

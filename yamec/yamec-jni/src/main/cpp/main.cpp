@@ -32,7 +32,7 @@ int main()
 
     MEMORYSTATUSEX memStatus = {0};
     memStatus.dwLength = sizeof(MEMORYSTATUSEX);
-    if (MemoryInfo::getMemoryStatus(&memStatus))
+    if (monitor.getMemoryInfo()->getMemoryStatus(&memStatus))
     {
         std::cout << "Memory load: " << memStatus.dwMemoryLoad << "%" << std::endl;
         std::cout << "Available physical memory: " << memStatus.ullAvailPhys / (1024.0 * 1024 * 1024) << " GB" <<
@@ -68,6 +68,29 @@ int main()
     {
         std::cout << "GPU monitoring not available" << std::endl;
     }
+
+
+    unsigned long long memoryPhysicalAvailable;
+    unsigned long long memoryBytesCommitted;
+    double memoryCommittedPercentUsed;
+    if (monitor.getMemoryCounters(&memoryPhysicalAvailable, &memoryBytesCommitted, &memoryCommittedPercentUsed))
+    {
+        std::cout << "Physical memory available: " << memoryPhysicalAvailable << " bytes" << std::endl;
+        std::cout << "Bytes committed: " << memoryBytesCommitted << " bytes" << std::endl;
+
+        // Calculate virtual memory in use my multiplying the committed bytes by the percent actually in use
+        const long long int virtualBytesUsed = ceil(memoryBytesCommitted * (memoryCommittedPercentUsed/100));
+
+        std::cout << "Percent committed in use: " << memoryCommittedPercentUsed
+                    << "% (" << std::fixed << virtualBytesUsed  << std::defaultfloat << " bytes)" << std::endl;
+        std::cout << std::endl;
+    }
+    else
+    {
+        std::cerr << "Memory monitoring not available" << std::endl;
+    }
+
+
 
     std::cout << "\nAll tests completed successfully!" << std::endl;
     return 0;

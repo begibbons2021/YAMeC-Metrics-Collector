@@ -33,6 +33,13 @@ public:
 
     [[nodiscard]] bool getGpuUsage(double *usage) const;
 
+    [[nodiscard]] bool getMemoryCounters(unsigned long long *physicalBytesAvailable,
+                                            unsigned long long *virtualBytesCommitted,
+                                            double *committedPercentUsed) const;
+    [[nodiscard]] bool getPhysicalMemoryAvailable(unsigned long long *bytesAvailable) const;
+    [[nodiscard]] bool getVirtualMemoryCommitted(unsigned long long *bytesCommitted) const;
+    [[nodiscard]] bool getVirtualMemoryCommittedPercentUsed(double *committedPercentUsed) const;
+
     [[nodiscard]] unsigned long long getPhysicalMemory();
 
 private:
