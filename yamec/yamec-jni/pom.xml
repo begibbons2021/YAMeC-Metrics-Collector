@@ -10,69 +10,89 @@
     </parent>
     <artifactId>yamec-jni</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
     <name>yamec-jni</name>
     <description>JNI Module for YAMeC</description>
 
     <properties>
+        <native.classifier>native-win64</native.classifier>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.googlecode.cmake-maven-project</groupId>
+            <artifactId>cmake-maven-plugin</artifactId>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
+            <!-- Configure the jar plugin to skip default jar generation -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.5.0</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>compile-native</id>
-                        <phase>compile</phase>
+                        <id>default-jar</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <classifier>jar</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.googlecode.cmake-maven-project</groupId>
+                <artifactId>cmake-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>cmake-generate</id>
                         <goals>
-                            <goal>exec</goal>
+                            <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <executable>g++</executable>  <workingDirectory>${project.basedir}/src/main/cpp</workingDirectory>
-                            <arguments>
-                                <argument>-c</argument>
-                                <argument>system_metrics.cpp</argument>
-                                <argument>-o</argument>
-                                <argument>system_metrics.o</argument>
-                            </arguments>
+                            <sourcePath>${project.basedir}/..</sourcePath>
+                            <targetPath>${project.build.directory}/cmake</targetPath>
+                            <generator>Visual Studio 17 2022</generator>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>link-native</id>
-                        <phase>compile</phase>
+                        <id>cmake-compile</id>
                         <goals>
-                            <goal>exec</goal>
+                            <goal>compile</goal>
                         </goals>
                         <configuration>
-                            <executable>g++</executable>  <workingDirectory>${project.basedir}/src/main/cpp</workingDirectory>
-                            <arguments>
-                                <argument>-shared</argument>  <argument>system_metrics.o</argument>
-                                <argument>-o</argument>
-                                <argument>../target/native/yamecjni.dll</argument> </arguments>
+                            <config>Release</config>
+                            <projectDirectory>${project.build.directory}/cmake</projectDirectory>
                         </configuration>
                     </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.4.0</version>
+                <executions>
                     <execution>
-                        <id>copy-native-lib</id>
+                        <id>attach-native-library</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>copy</goal>
+                            <goal>attach-artifact</goal>
                         </goals>
                         <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <sourceFile>${project.basedir}/target/native/yamecjni.dll</sourceFile>
-                                    <outputDirectory>${project.build.directory}/native</outputDirectory>
-                                    <destFileName>yamecjni.dll</destFileName>
-                                </artifactItem>
-                            </artifactItems>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/cmake/Release/yamecjni.dll</file>
+                                    <type>dll</type>
+                                    <classifier>${native.classifier}</classifier>
+                                </artifact>
+                            </artifacts>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
-
 </project>
