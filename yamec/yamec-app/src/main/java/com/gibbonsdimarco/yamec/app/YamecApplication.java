@@ -8,6 +8,7 @@ public class YamecApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(YamecApplication.class, args);
+        System.out.println("Yamec Application Started");
     }
 
 }
