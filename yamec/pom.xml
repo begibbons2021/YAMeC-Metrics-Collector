@@ -20,6 +20,8 @@
         <maven.compiler.target>23</maven.compiler.target>
         <spring-boot.version>3.4.3</spring-boot.version>
         <launch4j.version>1.7.25</launch4j.version>
+        <iz-pack.version>5.2.4</iz-pack.version>
+        <cmake-maven.version>3.31.5-b1</cmake-maven.version>
 <!--        <wix-maven-plugin.version>3.0.1</wix-maven-plugin.version>-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -37,13 +39,13 @@
             <dependency>
                 <groupId>org.codehaus.izpack</groupId>
                 <artifactId>izpack-maven-plugin</artifactId>
-                <version>5.2.4</version>
+                <version>${iz-pack.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.googlecode.cmake-maven-project/cmake-maven-plugin -->
             <dependency>
                 <groupId>com.googlecode.cmake-maven-project</groupId>
                 <artifactId>cmake-maven-plugin</artifactId>
-                <version>3.31.5-b1</version>
+                <version>${cmake-maven.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
