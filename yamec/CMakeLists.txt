@@ -72,7 +72,6 @@ endif()
 
 # Set output name to match what's referenced in the pom.xml
 set_target_properties(yamecjni PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Release
     OUTPUT_NAME "yamecjni"
     PREFIX "")
 
