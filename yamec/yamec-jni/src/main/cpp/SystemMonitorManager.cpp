@@ -36,6 +36,12 @@ bool SystemMonitorManager::initialize()
         return false;
     }
 
+    // Initialize the disk info
+    if (!m_diskInfo.initialize(&m_pdhManager))
+    {
+        return false;
+    }
+
     m_initialized = true;
     return true;
 }

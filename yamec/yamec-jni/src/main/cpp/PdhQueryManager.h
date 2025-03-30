@@ -4,6 +4,7 @@
 
 #ifndef PDHQUERYMANAGER_H
 #define PDHQUERYMANAGER_H
+#include <vector>
 #include <pdh.h>
 #include <string>
 
@@ -17,7 +18,10 @@ public:
 
     bool initialize();
 
+    size_t getInstances(const std::string& objectName, std::vector<std::wstring> &instanceList) const;
+
     bool addCounter(const std::string &counterPath, PDH_HCOUNTER *pCounter) const;
+
 
     [[nodiscard]] bool collectData() const;
 

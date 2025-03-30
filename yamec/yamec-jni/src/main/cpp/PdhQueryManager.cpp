@@ -5,6 +5,8 @@
 #include "PdhQueryManager.h"
 
 #include <iostream>
+#include <vector>
+#include <pdhmsg.h>
 
 PdhQueryManager::PdhQueryManager() : m_initialized(false) {}
 
@@ -31,6 +33,64 @@ bool PdhQueryManager::initialize()
 
     m_initialized = true;
     return true;
+}
+
+size_t PdhQueryManager::getInstances(const std::string& objectName, std::vector<std::wstring> &instanceList) const
+{
+    if (!m_initialized)
+    {
+        std::cerr << "Query not initialized." << std::endl;
+        return 0;
+    }
+
+    // Get a list of Pdh counters for Disk devices
+    // First get the counts for the buffer length of the list of counters and instances
+    DWORD counterNameCharsSize = 0;
+    DWORD instanceNameCharsSize = 0;
+    PDH_STATUS status = PdhEnumObjectItems(nullptr, nullptr, TEXT(objectName.c_str()),
+                                    nullptr, &counterNameCharsSize,
+                                    nullptr, &instanceNameCharsSize,
+                                    PERF_DETAIL_WIZARD, 0);
+    if (status != ERROR_SUCCESS && status != PDH_MORE_DATA)
+    {
+        std::wcerr << "Failed to get " << TEXT(objectName.c_str()) << " instance list. Error code: " << std::hex << status << std::endl;
+        return 0;
+    }
+
+    auto objectNamePtr = objectName.c_str();
+    auto objectNameLength = objectName.length();
+    auto objectNameAsWchar = new wchar_t[objectNameLength + 1];
+    size_t convertedChars = 0;
+    mbstowcs_s(&convertedChars, objectNameAsWchar, objectNameLength + 1, objectNamePtr, objectNameLength);
+
+
+    // Then fill the buffer of counter and instance characters
+    std::vector<WCHAR> counterNameChars(counterNameCharsSize);
+    std::vector<WCHAR> instanceNameChars(instanceNameCharsSize);
+    status = PdhEnumObjectItemsW(nullptr, nullptr, objectNameAsWchar,
+                                    counterNameChars.data(), &counterNameCharsSize,
+                                    instanceNameChars.data(), &instanceNameCharsSize,
+                                    PERF_DETAIL_WIZARD, 0);
+    if (status != ERROR_SUCCESS)
+    {
+        std::wcerr << "Failed to fill " << objectNameAsWchar << " instance list. Error code: " << std::hex <<  status << std::endl;
+        return 0;
+    }
+
+    // Finally, separate instance names into separate string;
+    std::vector<std::wstring> diskNames;
+    WCHAR* currentNamePtr = instanceNameChars.data();
+    while (*currentNamePtr)
+    {
+        diskNames.emplace_back(currentNamePtr);
+        currentNamePtr += wcslen(currentNamePtr) + 1;
+    }
+
+    const size_t numDisks = diskNames.size();
+    instanceList = diskNames;
+
+    return numDisks;
+
 }
 
 bool PdhQueryManager::addCounter(const std::string &counterPath, PDH_HCOUNTER *pCounter) const

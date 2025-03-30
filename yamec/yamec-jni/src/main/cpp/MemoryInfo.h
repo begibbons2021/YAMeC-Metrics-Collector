@@ -38,7 +38,6 @@ public:
     PDH_HCOUNTER m_virtualMemoryCommittedPercentUsedCounter{};
     PdhQueryManager *m_pdhManager;
 
-    static DWORD countSetBits(ULONG_PTR bitMask);
 };
 
 #endif //MEMORYINFO_H

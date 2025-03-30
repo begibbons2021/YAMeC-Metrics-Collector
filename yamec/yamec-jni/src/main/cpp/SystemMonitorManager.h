@@ -11,6 +11,7 @@
 
 #include "PdhQueryManager.h"
 #include "CpuInfo.h"
+#include "DiskInfo.h"
 #include "MemoryInfo.h"
 #include "GpuInfo.h"
 
@@ -27,6 +28,7 @@ public:
     [[nodiscard]] CpuInfo *getCpuInfo() { return &m_cpuInfo; }
     [[nodiscard]] MemoryInfo *getMemoryInfo() { return &m_memoryInfo; }
     [[nodiscard]] GpuInfo *getGpuInfo() { return &m_gpuInfo; }
+    [[nodiscard]] DiskInfo *getDiskInfo() { return &m_diskInfo; }
 
     // Convenience methods
     [[nodiscard]] bool getCpuUsage(double *usage) const;
@@ -46,6 +48,7 @@ private:
     PdhQueryManager m_pdhManager;
     CpuInfo m_cpuInfo;
     MemoryInfo m_memoryInfo;
+    DiskInfo m_diskInfo;
     GpuInfo m_gpuInfo;
     bool m_initialized;
 };

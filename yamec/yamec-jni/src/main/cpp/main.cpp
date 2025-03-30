@@ -90,6 +90,32 @@ int main()
         std::cerr << "Memory monitoring not available" << std::endl;
     }
 
+    // GPU usage (if available)
+    DiskInfo *diskInfo = monitor.getDiskInfo();
+    if (diskInfo)
+    {
+        std::vector<std::wstring> diskInstanceNames;
+        size_t diskInstances = diskInfo->getInstanceNames(&diskInstanceNames);
+
+        if (diskInstances > 0)
+        {
+            std::cout << "Disk Instances: ";
+            for (int i = 0; i < diskInstances; i++)
+            {
+                std::wcout << diskInstanceNames.at(i);
+                if (i < diskInstances - 1)
+                {
+                    std::cout << "; ";
+                }
+            }
+            std::cout << std::endl;
+        }
+    } else
+    {
+        std::cout << "Disk monitoring not available" << std::endl;
+    }
+
+
 
 
     std::cout << "\nAll tests completed successfully!" << std::endl;
