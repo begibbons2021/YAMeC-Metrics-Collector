@@ -109,6 +109,45 @@ int main()
                 }
             }
             std::cout << std::endl;
+
+            std::vector<double> diskInstancesUsage;
+            std::vector<unsigned long long> diskInstancesReadBandwidth;
+            std::vector<unsigned long long> diskInstancesWriteBandwidth;
+            std::vector<double> diskInstancesAvgTimeToTransfer;
+            if (diskInfo->getAllCounters(&diskInstancesUsage,
+                                            &diskInstancesReadBandwidth,
+                                            &diskInstancesWriteBandwidth,
+                                            &diskInstancesAvgTimeToTransfer))
+            {
+                std::cout << "Disk Usage: " << std::endl;
+                for (int i = 0; i < diskInstances; i++)
+                {
+                    std::wcout << diskInstanceNames.at(i) << L": "
+                                    << diskInstancesUsage.at(i) << std::endl;
+                }
+
+                std::cout << "Disk Bytes Read/sec: " << std::endl;
+                for (int i = 0; i < diskInstances; i++)
+                {
+                    std::wcout << diskInstanceNames.at(i) << L": "
+                                    << diskInstancesReadBandwidth.at(i) << std::endl;
+                }
+
+                std::cout << "Disk Bytes Written/sec: " << std::endl;
+                for (int i = 0; i < diskInstances; i++)
+                {
+                    std::wcout << diskInstanceNames.at(i) << L": "
+                                    << diskInstancesWriteBandwidth.at(i) << std::endl;
+                }
+
+                std::cout << "Disk Average Time (sec) to Transfer: " << std::endl;
+                for (int i = 0; i < diskInstances; i++)
+                {
+                    std::wcout << diskInstanceNames.at(i) << L": "
+                                    << diskInstancesAvgTimeToTransfer.at(i) << std::endl;
+                }
+            }
+
         }
     } else
     {

@@ -21,6 +21,9 @@ class DiskInfo
 
     [[nodiscard]] size_t getInstanceNames(std::vector<std::wstring> *list) const;
 
+    bool getAllCounters(std::vector<double> *diskUsageValues, std::vector<unsigned long long> *diskReadBandwidthValues, std::vector<unsigned
+                        long long> *diskWriteBandwidthValues, std::vector<double> *diskTimeToTransferValues) const;
+
     // [[nodiscard]] static unsigned long long getPhysicalMemory();
     //
     // [[nodiscard]] bool getMemoryStatus(MEMORYSTATUSEX *memStatus);

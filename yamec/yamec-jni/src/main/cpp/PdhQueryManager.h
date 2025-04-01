@@ -22,6 +22,8 @@ public:
 
     bool addCounter(const std::string &counterPath, PDH_HCOUNTER *pCounter) const;
 
+    bool addCounter(const std::wstring &counterPath, PDH_HCOUNTER *pCounter) const;
+
 
     [[nodiscard]] bool collectData() const;
 

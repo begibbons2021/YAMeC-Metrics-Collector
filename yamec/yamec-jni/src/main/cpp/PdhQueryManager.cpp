@@ -57,6 +57,7 @@ size_t PdhQueryManager::getInstances(const std::string& objectName, std::vector<
         return 0;
     }
 
+    // Convert Object Name retrieved to a wide string
     auto objectNamePtr = objectName.c_str();
     auto objectNameLength = objectName.length();
     auto objectNameAsWchar = new wchar_t[objectNameLength + 1];
@@ -104,6 +105,23 @@ bool PdhQueryManager::addCounter(const std::string &counterPath, PDH_HCOUNTER *p
     if (PdhAddCounter(m_query, counterPath.c_str(), 0, pCounter) != ERROR_SUCCESS)
     {
         std::cerr << "Failed to add counter: " << counterPath << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+bool PdhQueryManager::addCounter(const std::wstring &counterPath, PDH_HCOUNTER *pCounter) const
+{
+    if (!m_initialized)
+    {
+        std::cerr << "Query not initialized." << std::endl;
+        return false;
+    }
+
+    if (PdhAddCounterW(m_query, counterPath.c_str(), 0, pCounter) != ERROR_SUCCESS)
+    {
+        std::wcerr << "Failed to add counter: " << counterPath << std::endl;
         return false;
     }
 
