@@ -21,22 +21,9 @@ class DiskInfo
 
     [[nodiscard]] size_t getInstanceNames(std::vector<std::wstring> *list) const;
 
-    bool getAllCounters(std::vector<double> *diskUsageValues, std::vector<unsigned long long> *diskReadBandwidthValues, std::vector<unsigned
+    [[nodiscard]] bool getAllCounters(std::vector<double> *diskUsageValues, std::vector<unsigned long long> *diskReadBandwidthValues, std::vector<unsigned
                         long long> *diskWriteBandwidthValues, std::vector<double> *diskTimeToTransferValues) const;
 
-    // [[nodiscard]] static unsigned long long getPhysicalMemory();
-    //
-    // [[nodiscard]] bool getMemoryStatus(MEMORYSTATUSEX *memStatus);
-    //
-    // [[nodiscard]] bool getAllCounters(unsigned long long *physicalMemoryAvailable,
-    //                                     unsigned long long *virtualMemoryCommitted,
-    //                                     double *virtualMemoryCommittedPercentUsed) const;
-    //
-    // [[nodiscard]] bool getPhysicalMemoryAvailable(unsigned long long *physicalMemoryAvailable) const;
-    //
-    // [[nodiscard]] bool getVirtualMemoryCommitted(unsigned long long *virtualMemoryCommitted) const;
-    //
-    // [[nodiscard]] bool getVirtualMemoryCommittedPercentUsed(double *virtualMemoryCommittedPercentUsed) const;
 
     private:
     size_t num_disks = 0;

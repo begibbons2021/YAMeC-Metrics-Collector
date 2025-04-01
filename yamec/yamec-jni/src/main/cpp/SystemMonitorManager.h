@@ -14,6 +14,7 @@
 #include "DiskInfo.h"
 #include "MemoryInfo.h"
 #include "GpuInfo.h"
+#include "NicInfo.h"
 
 
 class SystemMonitorManager
@@ -29,6 +30,7 @@ public:
     [[nodiscard]] MemoryInfo *getMemoryInfo() { return &m_memoryInfo; }
     [[nodiscard]] GpuInfo *getGpuInfo() { return &m_gpuInfo; }
     [[nodiscard]] DiskInfo *getDiskInfo() { return &m_diskInfo; }
+    [[nodiscard]] NicInfo *getNicInfo() { return &m_nicInfo; }
 
     // Convenience methods
     [[nodiscard]] bool getCpuUsage(double *usage) const;
@@ -50,6 +52,7 @@ private:
     MemoryInfo m_memoryInfo;
     DiskInfo m_diskInfo;
     GpuInfo m_gpuInfo;
+    NicInfo m_nicInfo;
     bool m_initialized;
 };
 

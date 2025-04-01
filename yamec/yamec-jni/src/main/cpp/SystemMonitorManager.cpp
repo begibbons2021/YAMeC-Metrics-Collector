@@ -42,6 +42,12 @@ bool SystemMonitorManager::initialize()
         return false;
     }
 
+    // Initialize the NIC info
+    if (!m_nicInfo.initialize(&m_pdhManager))
+    {
+        return false;
+    }
+
     m_initialized = true;
     return true;
 }
