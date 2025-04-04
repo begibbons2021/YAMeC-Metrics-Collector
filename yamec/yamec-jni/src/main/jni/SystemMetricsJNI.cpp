@@ -1,3 +1,3 @@
 #include <jni.h>
-#include <windows.h>
+#include "SystemMonitorManager.h"
 

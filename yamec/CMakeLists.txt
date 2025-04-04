@@ -49,15 +49,20 @@ if(WIN32)
             yamec-jni/src/main/cpp/MemoryInfo.h
             yamec-jni/src/main/cpp/DiskInfo.cpp
             yamec-jni/src/main/cpp/DiskInfo.h
+            yamec-jni/src/main/cpp/NicInfo.cpp
+            yamec-jni/src/main/cpp/NicInfo.h
             yamec-jni/src/main/cpp/PdhQueryManager.cpp
             yamec-jni/src/main/cpp/PdhQueryManager.h
             yamec-jni/src/main/cpp/SystemMonitorManager.cpp
             yamec-jni/src/main/cpp/SystemMonitorManager.h
             #        yamec-jni/src/main/cpp/system_metrics.cpp
             #        yamec-jni/src/main/cpp/system_metrics.cpp
-            yamec-jni/src/main/jni/SystemMetricsJNI.cpp
+            # yamec-jni/src/main/jni/SystemMetricsJNI.cpp
+            yamec-jni/src/main/cpp/com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI.cpp
+            yamec-jni/src/main/cpp/com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI.h
 
     )
+
 
 else()
     message(FATAL_ERROR "The OS this is being built on is not supported! Compilation halted.")
