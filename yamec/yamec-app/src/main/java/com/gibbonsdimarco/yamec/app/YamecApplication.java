@@ -4,11 +4,6 @@ import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
-
 @SpringBootApplication
 public class YamecApplication {
 //    public static String getExecutableLocation()

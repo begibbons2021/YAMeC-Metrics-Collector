@@ -1,6 +1,6 @@
 package com.gibbonsdimarco.yamec.app.jni;
+
 import com.github.fommil.jni.JniLoader;
-import com.gibbonsdimarco.yamec.app.YamecApplication;
 
 public class SystemMonitorManagerJNI {
     static {
