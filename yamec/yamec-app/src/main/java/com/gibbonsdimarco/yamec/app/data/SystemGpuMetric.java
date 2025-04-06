@@ -1,4 +1,4 @@
-package com.gibbonsdimarco.yamec.app;
+package com.gibbonsdimarco.yamec.app.data;
 
 /**
  * Contains collected GPU metrics passed from the SystemMonitorManager

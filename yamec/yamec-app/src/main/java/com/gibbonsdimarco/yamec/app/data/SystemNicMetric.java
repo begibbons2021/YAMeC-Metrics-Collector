@@ -1,4 +1,4 @@
-package com.gibbonsdimarco.yamec.app;
+package com.gibbonsdimarco.yamec.app.data;
 
 /**
  * Contains collected hardware network interface metrics passed from the
