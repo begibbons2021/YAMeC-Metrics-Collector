@@ -91,126 +91,111 @@ int main()
     }
 
     // Disk usage (if available)
-    DiskInfo *diskInfo = monitor.getDiskInfo();
-    if (diskInfo)
-    {
-        std::vector<std::wstring> diskInstanceNames;
-        size_t diskInstances = diskInfo->getInstanceNames(&diskInstanceNames);
+    std::vector<std::wstring> diskInstanceNames;
 
-        if (diskInstances > 0)
+    if (const size_t diskInstances = monitor.getDiskInstances(&diskInstanceNames); diskInstances > 0)
+    {
+        std::cout << "Disk Instances: ";
+        for (int i = 0; i < diskInstances; i++)
         {
-            std::cout << "Disk Instances: ";
+            std::wcout << diskInstanceNames.at(i);
+            if (i < diskInstances - 1)
+            {
+                std::cout << "; ";
+            }
+        }
+        std::cout << std::endl;
+
+        std::vector<double> diskInstancesUsage;
+        std::vector<unsigned long long> diskInstancesReadBandwidth;
+        std::vector<unsigned long long> diskInstancesWriteBandwidth;
+        std::vector<double> diskInstancesAvgTimeToTransfer;
+        if (monitor.getDiskCounters(&diskInstancesUsage,
+                                        &diskInstancesReadBandwidth,
+                                        &diskInstancesWriteBandwidth,
+                                        &diskInstancesAvgTimeToTransfer))
+        {
+            std::cout << "Disk Usage: " << std::endl;
             for (int i = 0; i < diskInstances; i++)
             {
-                std::wcout << diskInstanceNames.at(i);
-                if (i < diskInstances - 1)
-                {
-                    std::cout << "; ";
-                }
+                std::wcout << diskInstanceNames.at(i) << L": "
+                            << diskInstancesUsage.at(i) << std::endl;
             }
-            std::cout << std::endl;
 
-            std::vector<double> diskInstancesUsage;
-            std::vector<unsigned long long> diskInstancesReadBandwidth;
-            std::vector<unsigned long long> diskInstancesWriteBandwidth;
-            std::vector<double> diskInstancesAvgTimeToTransfer;
-            if (diskInfo->getAllCounters(&diskInstancesUsage,
-                                            &diskInstancesReadBandwidth,
-                                            &diskInstancesWriteBandwidth,
-                                            &diskInstancesAvgTimeToTransfer))
+            std::cout << "Disk Bytes Read/sec: " << std::endl;
+            for (int i = 0; i < diskInstances; i++)
             {
-                std::cout << "Disk Usage: " << std::endl;
-                for (int i = 0; i < diskInstances; i++)
-                {
-                    std::wcout << diskInstanceNames.at(i) << L": "
-                                    << diskInstancesUsage.at(i) << std::endl;
-                }
-
-                std::cout << "Disk Bytes Read/sec: " << std::endl;
-                for (int i = 0; i < diskInstances; i++)
-                {
-                    std::wcout << diskInstanceNames.at(i) << L": "
-                                    << diskInstancesReadBandwidth.at(i) << std::endl;
-                }
-
-                std::cout << "Disk Bytes Written/sec: " << std::endl;
-                for (int i = 0; i < diskInstances; i++)
-                {
-                    std::wcout << diskInstanceNames.at(i) << L": "
-                                    << diskInstancesWriteBandwidth.at(i) << std::endl;
-                }
-
-                std::cout << "Disk Average Time (sec) to Transfer: " << std::endl;
-                for (int i = 0; i < diskInstances; i++)
-                {
-                    std::wcout << diskInstanceNames.at(i) << L": "
-                                    << diskInstancesAvgTimeToTransfer.at(i) << std::endl;
-                }
+                std::wcout << diskInstanceNames.at(i) << L": "
+                                << diskInstancesReadBandwidth.at(i) << std::endl;
             }
 
+            std::cout << "Disk Bytes Written/sec: " << std::endl;
+            for (int i = 0; i < diskInstances; i++)
+            {
+                std::wcout << diskInstanceNames.at(i) << L": "
+                                << diskInstancesWriteBandwidth.at(i) << std::endl;
+            }
+
+            std::cout << "Disk Average Time (sec) to Transfer: " << std::endl;
+            for (int i = 0; i < diskInstances; i++)
+            {
+                std::wcout << diskInstanceNames.at(i) << L": "
+                                << diskInstancesAvgTimeToTransfer.at(i) << std::endl;
+            }
         }
-    } else
+    }
+    else
     {
         std::cout << "Disk monitoring not available" << std::endl;
     }
 
     // NIC usage (if available)
-    NicInfo *nicInfo = monitor.getNicInfo();
-    if (nicInfo)
+    std::vector<std::wstring> nicInstanceNames;
+    if (const size_t nicInstances = monitor.getNicInstances(&nicInstanceNames); nicInstances > 0)
     {
-        std::vector<std::wstring> nicInstanceNames;
-        size_t nicInstances = nicInfo->getInstanceNames(&nicInstanceNames);
-
-        if (nicInstances > 0)
+        std::cout << "NIC Instances: ";
+        for (int i = 0; i < nicInstances; i++)
         {
-            std::cout << "NIC Instances: ";
+            std::wcout << nicInstanceNames.at(i);
+            if (i < nicInstances - 1)
+            {
+                std::cout << "; ";
+            }
+        }
+        std::cout << std::endl;
+        std::vector<unsigned long long> nicInstancesBandwidth;
+        std::vector<unsigned long long> nicInstancesRecvBytes;
+        std::vector<unsigned long long> nicInstancesSendBytes;
+        if (monitor.getNicCounters(&nicInstancesBandwidth,
+                                        &nicInstancesRecvBytes,
+                                        &nicInstancesSendBytes))
+        {
+            std::cout << "NIC Bandwidth (bps): " << std::endl;
             for (int i = 0; i < nicInstances; i++)
             {
-                std::wcout << nicInstanceNames.at(i);
-                if (i < nicInstances - 1)
-                {
-                    std::cout << "; ";
-                }
+                std::wcout << nicInstanceNames.at(i) << L": "
+                                << nicInstancesBandwidth.at(i) << std::endl;
             }
-            std::cout << std::endl;
 
-            std::vector<unsigned long long> nicInstancesBandwidth;
-            std::vector<unsigned long long> nicInstancesRecvBytes;
-            std::vector<unsigned long long> nicInstancesSendBytes;
-            if (nicInfo->getAllCounters(&nicInstancesBandwidth,
-                                            &nicInstancesRecvBytes,
-                                            &nicInstancesSendBytes))
+            std::cout << "NIC Bytes Received/sec: " << std::endl;
+            for (int i = 0; i < nicInstances; i++)
             {
-                std::cout << "NIC Bandwidth (bps): " << std::endl;
-                for (int i = 0; i < nicInstances; i++)
-                {
-                    std::wcout << nicInstanceNames.at(i) << L": "
-                                    << nicInstancesBandwidth.at(i) << std::endl;
-                }
-
-                std::cout << "NIC Bytes Received/sec: " << std::endl;
-                for (int i = 0; i < nicInstances; i++)
-                {
-                    std::wcout << nicInstanceNames.at(i) << L": "
-                                    << nicInstancesRecvBytes.at(i) << std::endl;
-                }
-
-                std::cout << "NIC Bytes Sent/sec: " << std::endl;
-                for (int i = 0; i < nicInstances; i++)
-                {
-                    std::wcout << nicInstanceNames.at(i) << L": "
-                                    << nicInstancesSendBytes.at(i) << std::endl;
-                }
-
+                std::wcout << nicInstanceNames.at(i) << L": "
+                                << nicInstancesRecvBytes.at(i) << std::endl;
             }
 
+            std::cout << "NIC Bytes Sent/sec: " << std::endl;
+            for (int i = 0; i < nicInstances; i++)
+            {
+                std::wcout << nicInstanceNames.at(i) << L": "
+                                << nicInstancesSendBytes.at(i) << std::endl;
+            }
         }
-    } else
+    }
+    else
     {
         std::cout << "NIC monitoring not available" << std::endl;
     }
-
-
 
 
     std::cout << "\nAll tests completed successfully!" << std::endl;

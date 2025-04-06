@@ -118,6 +118,11 @@ size_t DiskInfo::initInstances()
 
 }
 
+size_t DiskInfo::getNumDisks() const
+{
+    return num_disks;
+}
+
 size_t DiskInfo::getInstanceNames(std::vector<std::wstring> *list) const
 {
     list->clear();

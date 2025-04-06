@@ -100,6 +100,11 @@ size_t NicInfo::initInstances()
 
 }
 
+size_t NicInfo::getNumNics() const
+{
+    return num_nics;
+}
+
 size_t NicInfo::getInstanceNames(std::vector<std::wstring> *list) const
 {
     list->clear();
@@ -112,13 +117,9 @@ size_t NicInfo::getInstanceNames(std::vector<std::wstring> *list) const
     return num_nics;
 }
 
-
-
-
-
 bool NicInfo::getAllCounters(std::vector<unsigned long long> *nicBandwidthBpsValues,
-                                std::vector<unsigned long long> *nicRecvBytesValues,
-                                std::vector<unsigned long long> *nicSendBytesValues) const
+                                std::vector<unsigned long long> *nicSendBytesValues,
+                                std::vector<unsigned long long> *nicRecvBytesValues) const
 {
     if (!m_pdhManager)
     {

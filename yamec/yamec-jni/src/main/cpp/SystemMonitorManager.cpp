@@ -107,6 +107,64 @@ bool SystemMonitorManager::getMemoryCounters(unsigned long long *physicalBytesAv
     return m_memoryInfo.getAllCounters(physicalBytesAvailable, virtualBytesCommitted, committedPercentUsed);
 }
 
+size_t SystemMonitorManager::getDiskInstances(std::vector<std::wstring> *instanceNames) const
+{
+    if (!m_initialized)
+    {
+        return 0;
+    }
+
+    return m_diskInfo.getInstanceNames(instanceNames);
+}
+
+bool SystemMonitorManager::getDiskCounters(std::vector <double> *diskInstancesUsage,
+                                            std::vector<unsigned long long> *diskInstancesReadBandwidth,
+                                            std::vector<unsigned long long> *diskInstancesWriteBandwidth,
+                                            std::vector<double> *diskInstancesAvgTimeToTransfer) const
+{
+    if (!m_initialized
+        || !diskInstancesUsage
+        || !diskInstancesReadBandwidth
+        || !diskInstancesWriteBandwidth
+        || !diskInstancesAvgTimeToTransfer)
+    {
+        return false;
+    }
+
+    return m_diskInfo.getAllCounters(diskInstancesUsage,
+                                        diskInstancesReadBandwidth,
+                                        diskInstancesWriteBandwidth,
+                                        diskInstancesAvgTimeToTransfer);
+}
+
+size_t SystemMonitorManager::getNicInstances(std::vector<std::wstring> *instanceNames) const
+{
+    if (!m_initialized)
+    {
+        return 0;
+    }
+
+    return m_nicInfo.getInstanceNames(instanceNames);
+}
+
+
+bool SystemMonitorManager::getNicCounters(std::vector<unsigned long long> *nicInstancesBandwidth,
+                                            std::vector<unsigned long long> *nicInstancesSendBytes,
+                                            std::vector<unsigned long long> *nicInstancesRecvBytes) const
+{
+    if (!m_initialized
+        || !nicInstancesBandwidth
+        || !nicInstancesSendBytes
+        || !nicInstancesRecvBytes)
+    {
+        return false;
+    }
+
+    return m_nicInfo.getAllCounters(nicInstancesBandwidth, nicInstancesSendBytes, nicInstancesRecvBytes);
+
+
+}
+
 bool SystemMonitorManager::getPhysicalMemoryAvailable(unsigned long long *bytesAvailable) const
 {
     if (!m_initialized || !bytesAvailable)

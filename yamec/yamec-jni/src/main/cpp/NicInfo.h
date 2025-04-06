@@ -21,9 +21,11 @@ class NicInfo
 
     [[nodiscard]] size_t getInstanceNames(std::vector<std::wstring> *list) const;
 
+    [[nodiscard]] size_t getNumNics() const;
+
     [[nodiscard]] bool getAllCounters(std::vector<unsigned long long> *nicBandwidthBpsValues,
-                                std::vector<unsigned long long> *nicRecvBytesValues,
-                                std::vector<unsigned long long> *nicSendBytesValues) const;
+                                std::vector<unsigned long long> *nicSendBytesValues,
+                                std::vector<unsigned long long> *nicRecvBytesValues) const;
 
     
     private:
