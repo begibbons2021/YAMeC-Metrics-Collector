@@ -15,6 +15,22 @@ extern "C" {
 JNIEXPORT void JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_sayHello
   (JNIEnv *, jobject);
 
+/*
+ * Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+ * Method:    initialize
+ * Signature: ()L
+ */
+JNIEXPORT jlong JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_initialize
+                                  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+ * Method:    release
+ * Signature: (L)B
+ */
+JNIEXPORT jboolean JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_release
+                              (JNIEnv *, jobject, jlong);
+
 #ifdef __cplusplus
 }
 #endif
