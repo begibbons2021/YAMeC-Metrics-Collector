@@ -185,6 +185,130 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 
 }
 
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getDiskMetrics
+                            (JNIEnv *env, jobject obj, const jlong monitorPtr)
+{
+
+    auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
+
+    // Java Classes & Methods Used
+    jclass arrayListClass = env->FindClass("java/util/ArrayList");
+    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemDiskMetric");
+    jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
+    // Java does Generic type checks at compile time but not runtime, so we add objects of type Object
+    jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
+    // Ljava/lang/string; double, long long, long long, double, bool, bool
+    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(Ljava/lang/String;DJJDZZ)V");
+
+    // Create buffers to hold the disk instance names and disk instance count
+    std::vector<std::wstring> diskInstanceNames;
+    size_t diskInstanceCount;
+
+    try
+    {
+        diskInstanceCount = monitor->getDiskInstances(&diskInstanceNames);
+    }
+    catch (...)
+    {
+        // If the monitor's pointer is incorrect or some error occurs in retrieval
+        return env->NewGlobalRef(nullptr); // An error occurs when retrieving data
+    }
+
+    // No disks are being tracked with program counters (how???)
+    if (diskInstanceCount == 0)
+    {
+        return env->NewGlobalRef(nullptr);
+    }
+
+    // Create buffers to hold the other information temporarily
+    std::vector<double> diskInstancesUsage;
+    std::vector<unsigned long long> diskInstancesReadBandwidth;
+    std::vector<unsigned long long> diskInstancesWriteBandwidth;
+    std::vector<double> diskInstancesAvgTimeToTransfer;
+    constexpr bool isReadBandwidthUnsigned = true;
+    constexpr bool isWriteBandwidthUnsigned = true;
+
+    // Attempt to fill buffers
+    if (!monitor->getDiskCounters(&diskInstancesUsage,
+                                            &diskInstancesReadBandwidth,
+                                            &diskInstancesWriteBandwidth,
+                                            &diskInstancesAvgTimeToTransfer))
+    {
+        // Retrieval of counters failed, so return null
+        return env->NewGlobalRef(nullptr);
+    }
+
+    // Put data into Java objects
+
+    // Create ArrayList of size diskInstanceCount
+    jobject diskInstanceArrayList = env->NewObject(arrayListClass,
+                                                    arrayListConstructor,
+                                                    static_cast<jlong>(diskInstanceCount));
+
+    // Append each SystemDiskMetric to the end of the ArrayList
+    for (size_t i = 0; i < diskInstanceCount; i++)
+    {
+        // Convert wchar instance name to char
+        // Suggested method: https://stackoverflow.com/a/870444
+        // Determining new length
+        int utf8Length = WideCharToMultiByte(CP_UTF8,
+                                                0,
+                                                diskInstanceNames[i].c_str(),
+                                                -1,
+                                                nullptr,
+                                                0,
+                                                nullptr,
+                                                nullptr);
+
+        // Conversion failure fail-safe: Just return null
+        if (utf8Length == 0)
+        {
+            return env->NewGlobalRef(nullptr);
+        }
+
+        char* utf8String = new char[utf8Length + 1];
+
+        utf8Length = WideCharToMultiByte(CP_UTF8,
+                            0,
+                            diskInstanceNames[i].c_str(),
+                            -1,
+                            utf8String,
+                            utf8Length,
+                            nullptr,
+                            nullptr);
+
+        // Conversion failure fail-safe: Just return null
+        if (utf8Length == 0)
+        {
+            return env->NewGlobalRef(nullptr);
+        }
+
+
+        // Allocate Java SystemDiskMetric object
+        // Ljava/lang/String; double, long long, long long, double, bool, bool
+        jobject diskInstanceObject = env->NewObject(systemMetricClass,
+                                                        systemMetricConstructor,
+                                                        env->NewStringUTF(utf8String),
+                                                        diskInstancesUsage[i],
+                                                        static_cast<jlong>(diskInstancesReadBandwidth[i]),
+                                                        static_cast<jlong>(diskInstancesWriteBandwidth[i]),
+                                                        diskInstancesAvgTimeToTransfer[i],
+                                                        static_cast<jboolean>(isReadBandwidthUnsigned),
+                                                        static_cast<jboolean>(isWriteBandwidthUnsigned));
+
+        // Try to add the object to the ArrayList
+        if (const jboolean success = env->CallBooleanMethod(diskInstanceArrayList, arrayListAddMethod, diskInstanceObject); !success)
+        {
+            return env->NewGlobalRef(nullptr);
+        }
+
+    }
+
+    // Return created ArrayList
+    return diskInstanceArrayList;
+
+}
+
 JNIEXPORT jboolean JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_release
                             (JNIEnv *env, jobject obj, const jlong monitorPtr)
 {

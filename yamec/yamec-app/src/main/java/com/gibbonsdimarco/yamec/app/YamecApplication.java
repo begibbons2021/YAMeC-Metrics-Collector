@@ -134,6 +134,38 @@ public class YamecApplication {
         }
 
         try {
+            System.err.println("Testing Disk Metrics Retrieval...");
+            java.util.ArrayList<SystemDiskMetric> diskMetrics = monitor.getDiskMetrics();
+            if (diskMetrics != null) {
+
+                System.err.println("Disk Information:");
+                System.err.printf("\tDisk Instances Present (including _Total): %d\n", diskMetrics.size());
+
+                for (SystemDiskMetric diskMetric : diskMetrics) {
+                    // Skip total system disk use
+                    if (diskMetric.getDeviceName().compareTo("_Total") == 0) {
+                        continue;
+                    }
+
+                    System.err.printf("\t%s\n", diskMetric.getDeviceName());
+                    System.err.printf("\t\tUsage: %f%%\n", diskMetric.getUsage());
+                    System.err.printf("\t\tRead Bandwidth: %s bytes/sec\n", diskMetric.getReadBandwidthUnsigned());
+                    System.err.printf("\t\tWrite Bandwidth: %s bytes/sec\n", diskMetric.getWriteBandwidthUnsigned());
+                    System.err.printf("\t\tAverage Transfer Rate: %f bytes/sec\n", diskMetric.getAverageTimeToTransfer());
+                }
+            }
+            else {
+                System.err.println("Disk Information: \n\tNo Disk Metrics Found");
+            }
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Failed to retrieve Disk Metrics.");
+            return;
+        }
+
+        try {
             System.err.println("Closing System Monitor Manager... ");
             monitor.close();
 
