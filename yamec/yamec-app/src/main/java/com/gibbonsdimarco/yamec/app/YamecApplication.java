@@ -5,11 +5,6 @@ import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
-
 @SpringBootApplication
 public class YamecApplication {
 //    public static String getExecutableLocation()
@@ -62,7 +57,7 @@ public class YamecApplication {
 
     private static SystemMonitorManagerJNI monitor;
 
-    private static boolean testSystemMonitorManager() {
+    private static void testSystemMonitorManager() {
         System.err.println("Testing System Monitor Manager...");
 
         try {
@@ -72,7 +67,7 @@ public class YamecApplication {
         catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to create System Monitor Manager.");
-            return false;
+            return;
         }
 
         try {
@@ -90,7 +85,7 @@ public class YamecApplication {
         catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to retrieve CPU Metrics.");
-            return false;
+            return;
         }
 
         try {
@@ -108,14 +103,40 @@ public class YamecApplication {
         catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to retrieve GPU Metrics.");
-            return false;
+            return;
+        }
+
+        try {
+            System.err.println("Testing Memory Metrics Retrieval...");
+            SystemMemoryMetric memoryMetrics = monitor.getMemoryMetrics();
+            if (memoryMetrics != null) {
+                // Calculate the actual virtual memory use from the amount of committed memory used.
+                double bytesVirtualMemoryInUse = Math.ceil(memoryMetrics.getVirtualMemoryCommitted()
+                                                            * memoryMetrics.getCommittedVirtualMemoryUsage());
+
+                System.err.println("Memory Information:");
+                System.err.printf("\tAvailable Memory (Physical Memory): %s bytes\n",
+                                    memoryMetrics.getPhysicalMemoryAvailableUnsigned());
+                System.err.printf("\tVirtual Memory Committed: %s\n",
+                                    memoryMetrics.getVirtualMemoryCommitted());
+                System.err.printf("\tVirtual Memory In-Use: %f%% (~%.0f bytes)\n",
+                                    memoryMetrics.getCommittedVirtualMemoryUsage(),
+                                    bytesVirtualMemoryInUse);
+            }
+            else {
+                System.err.println("Memory Information: \n\tNo Memory Metrics Found");
+            }
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Failed to retrieve Memory Metrics.");
+            return;
         }
 
         try {
             System.err.println("Closing System Monitor Manager... ");
-            if (!monitor.close()) {
-                throw new Exception("The System Monitor Manager could not be closed.");
-            }
+            monitor.close();
 
             if (!monitor.isClosed()) {
                 throw new Exception("The status of the System Monitor Manager did not change to closed.");
@@ -124,11 +145,10 @@ public class YamecApplication {
         catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to close System Monitor Manager.");
-            return false;
+            return;
         }
 
         System.err.println("Testing complete.");
-        return true;
     }
 
     public static void main(String[] args) {

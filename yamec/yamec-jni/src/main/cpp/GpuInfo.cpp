@@ -37,7 +37,23 @@ bool GpuInfo::initialize(PdhQueryManager *pdhManager)
 
 bool GpuInfo::getUsage(double *usage) const
 {
-    if (!m_pdhManager || !usage)
+    // TODO: FIX THIS ALGORITHM (https://stackoverflow.com/questions/77643749/getting-gpu-usage-statistics-with-pdh)
+
+    if (!m_pdhManager)
+    {
+        std::cerr << "PDH manager not initialized" << std::endl;
+        return false;
+    }
+
+    // Collect data twice for accurate readings
+    if (!m_pdhManager->collectData())
+    {
+        return false;
+    }
+
+    Sleep(500); // Wait for 500ms
+
+    if (!m_pdhManager->collectData())
     {
         return false;
     }

@@ -66,7 +66,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     return systemMetricObject;
 
 }
-// Note to self: JAVA_HOME/bin/javap -s -p <class file> to see descriptors
+
 JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getGpuMetrics
                             (JNIEnv *env, jobject obj, const jlong monitorPtr)
 {
@@ -87,7 +87,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     double usageBuffer;
 
     // Attempt to fill buffers
-    if (!monitor->getCpuUsage(&usageBuffer))
+    if (!monitor->getGpuUsage(&usageBuffer))
     {
         // Retrieval of counters failed, so return null
         return env->NewGlobalRef(nullptr);
@@ -141,6 +141,45 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     // {
     //
     // }
+
+    return systemMetricObject;
+
+}
+
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getMemoryMetrics
+                            (JNIEnv *env, jobject obj, const jlong monitorPtr)
+{
+    auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
+
+    // Java Classes & Methods Used
+    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemMemoryMetric");
+    // long long, long long, double, bool, bool
+    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(JJDZZ)V");
+
+
+    // Create buffers to hold the other information temporarily
+    // Metrics Buffers (CPU Usage only has one!)
+    unsigned long long physicalMemoryAvailable;
+    unsigned long long virtualMemoryCommitted;
+    double committedVirtualMemoryUsage;
+    constexpr bool isPhysicalMemoryAvailableUnsigned    = true;
+    constexpr bool isVirtualMemoryCommittedUnsigned = true;
+
+    // Attempt to fill buffers
+    if (!monitor->getMemoryCounters(&physicalMemoryAvailable, &virtualMemoryCommitted, &committedVirtualMemoryUsage))
+    {
+        // Retrieval of counters failed, so return null
+        return env->NewGlobalRef(nullptr);
+    }
+
+    // Put data into Java objects
+    jobject systemMetricObject = env->NewObject(systemMetricClass,
+                                                systemMetricConstructor,
+                                                static_cast<jlong>(physicalMemoryAvailable),
+                                                static_cast<jlong>(virtualMemoryCommitted),
+                                                committedVirtualMemoryUsage,
+                                                static_cast<jboolean>(isPhysicalMemoryAvailableUnsigned),
+                                                static_cast<jboolean>(isVirtualMemoryCommittedUnsigned));
 
     return systemMetricObject;
 

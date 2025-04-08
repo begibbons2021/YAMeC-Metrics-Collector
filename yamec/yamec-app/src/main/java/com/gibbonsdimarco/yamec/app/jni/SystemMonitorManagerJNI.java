@@ -1,8 +1,9 @@
 package com.gibbonsdimarco.yamec.app.jni;
 import com.gibbonsdimarco.yamec.app.data.*;
 import com.github.fommil.jni.JniLoader;
+import jakarta.websocket.OnClose;
 
-public class SystemMonitorManagerJNI {
+public class SystemMonitorManagerJNI implements java.io.Closeable {
     static {
         try {
             JniLoader.load("native/windows/x64/yamecjni.dll");
@@ -53,24 +54,22 @@ public class SystemMonitorManagerJNI {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
-     * Release the memory allocated to the SystemMonitorManager in C++
-     * and stops further operations.
+     * Releases the memory allocated to the native SystemMonitorManager
+     * and stops further use of this class
      *
-     * @return True if the SystemMonitorManager was closed successfully;
-     * If the closure fails or the SystemMonitorManager is already
-     * closed, this returns false
+     * @throws RuntimeException if the resource cannot be closed
      */
-    public boolean close() {
+    @OnClose
+    public void close() {
         if (closed) {
-            return false;
+            return;
         }
 
         if (this.release(this.monitorAddress)) {
             closed = true;
-            return true;
         }
         else {
-            return false;
+            throw new RuntimeException("Unable to release system monitor manager memory");
         }
 
     }
@@ -103,8 +102,18 @@ public class SystemMonitorManagerJNI {
         return getGpuMetrics(this.monitorAddress);
     }
 
-    public java.util.ArrayList<SystemMemoryMetric> getMemoryMetrics() {
-        return null;
+    /**
+     * Retrieves the current system metrics for the system's primary memory
+     *
+     * @return A SystemMemoryMetric object containing the system's memory information.
+     * If the memory metrics cannot be retrieved, this returns null.
+     */
+    public SystemMemoryMetric getMemoryMetrics() {
+        if (closed) {
+            return null;
+        }
+
+        return getMemoryMetrics(this.monitorAddress);
     }
 
     public java.util.ArrayList<SystemDiskMetric> getDiskMetrics() {
@@ -129,7 +138,7 @@ public class SystemMonitorManagerJNI {
      * Instantiates the native SystemMonitorManager object and returns the
      * address which the SystemMonitorManager is stored at as a long
      * integer.
-     *
+     * <p>
      * If the instance cannot be initialized, this returns -1
      *
      * @return A long containing the memory address of the native object
@@ -141,7 +150,7 @@ public class SystemMonitorManagerJNI {
 
     private native SystemGpuMetric getGpuMetrics(long ptr);
 
-//    private native java.util.ArrayList<SystemMemoryMetric> getMemoryMetrics(long ptr);
+    private native SystemMemoryMetric getMemoryMetrics(long ptr);
 
 //    private native java.util.ArrayList<SystemDiskMetric> getDiskMetrics(long ptr);
 
