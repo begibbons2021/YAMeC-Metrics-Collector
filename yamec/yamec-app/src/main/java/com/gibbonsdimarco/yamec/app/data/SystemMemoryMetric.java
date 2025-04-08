@@ -99,6 +99,23 @@ public class SystemMemoryMetric {
         return committedVirtualMemoryUsage;
     }
 
+    // Remove use of unsigned values?
+
+    /**
+     * Calculates the number of bytes of virtual memory in use (treating the numbers as signed)
+     * by multiplying the amount of memory committed to the page file/virtual memory by the
+     * percent of that memory in use. It is then returned as a double rounded up to the next
+     * full number of bytes
+     *
+     * @return A double containing the number of bytes of virtual memory in use
+     */
+    public double getCommittedVirtualMemoryBytes()
+    {
+        // Calculate the actual virtual memory use from the amount of committed memory used.
+        return Math.ceil(this.getVirtualMemoryCommitted()
+                * this.getCommittedVirtualMemoryUsage());
+    }
+
     /**
      * Returns whether the physicalMemoryAvailable value is supposed to be signed
      * or unsigned as a boolean value

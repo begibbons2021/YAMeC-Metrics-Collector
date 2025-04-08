@@ -111,8 +111,7 @@ public class YamecApplication {
             SystemMemoryMetric memoryMetrics = monitor.getMemoryMetrics();
             if (memoryMetrics != null) {
                 // Calculate the actual virtual memory use from the amount of committed memory used.
-                double bytesVirtualMemoryInUse = Math.ceil(memoryMetrics.getVirtualMemoryCommitted()
-                                                            * memoryMetrics.getCommittedVirtualMemoryUsage());
+                double bytesVirtualMemoryInUse = memoryMetrics.getCommittedVirtualMemoryBytes();
 
                 System.err.println("Memory Information:");
                 System.err.printf("\tAvailable Memory (Physical Memory): %s bytes\n",
