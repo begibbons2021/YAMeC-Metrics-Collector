@@ -41,16 +41,49 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
-    // jclass arrayListClass = env->FindClass("java/util/ArrayList");
     jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemCpuMetric");
-    // jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
-    // jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
     jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(Ljava/lang/String;D)V");
 
 
     // Create buffers to hold the other information temporarily
     // Metrics Buffers (CPU Usage only has one!)
     const std::string deviceName = CpuInfo::getBrandString();
+    double usageBuffer;
+
+    // Attempt to fill buffers
+    if (!monitor->getCpuUsage(&usageBuffer))
+    {
+        // Retrieval of counters failed, so return null
+        return env->NewGlobalRef(nullptr);
+    }
+
+    // Put data into Java objects
+    jobject systemMetricObject = env->NewObject(systemMetricClass,
+                                                systemMetricConstructor,
+                                                env->NewStringUTF(deviceName.c_str()),
+                                                usageBuffer);
+
+    return systemMetricObject;
+
+}
+// Note to self: JAVA_HOME/bin/javap -s -p <class file> to see descriptors
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getGpuMetrics
+                            (JNIEnv *env, jobject obj, const jlong monitorPtr)
+{
+
+    auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
+
+    // Java Classes & Methods Used
+    // jclass arrayListClass = env->FindClass("java/util/ArrayList");
+    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemGpuMetric");
+    // jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
+    // jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
+    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(Ljava/lang/String;D)V");
+
+
+    // Create buffers to hold the other information temporarily
+    // Metrics Buffers (GPU Usage only has one!)
+    const std::string deviceName = "_Total";
     double usageBuffer;
 
     // Attempt to fill buffers

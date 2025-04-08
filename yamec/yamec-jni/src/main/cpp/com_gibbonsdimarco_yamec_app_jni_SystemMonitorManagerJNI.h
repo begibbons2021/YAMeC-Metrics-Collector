@@ -32,6 +32,14 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                                 (JNIEnv *, jobject, const jlong);
 
 /*
+* Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+* Method:    getGpuMetrics
+* Signature: (J)Lcom/gibbonsdimarco/yamec/app/data/SystemGpuMetric;
+*/
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getGpuMetrics
+                                (JNIEnv *, jobject, const jlong);
+
+/*
  * Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
  * Method:    release
  * Signature: (J)Z

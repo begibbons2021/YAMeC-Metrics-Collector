@@ -1,6 +1,6 @@
 package com.gibbonsdimarco.yamec.app;
 
-import com.gibbonsdimarco.yamec.app.data.SystemCpuMetric;
+import com.gibbonsdimarco.yamec.app.data.*;
 import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -90,6 +90,24 @@ public class YamecApplication {
         catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to retrieve CPU Metrics.");
+            return false;
+        }
+
+        try {
+            System.err.println("Testing GPU Metrics Retrieval...");
+            SystemGpuMetric gpuMetrics = monitor.getGpuMetrics();
+            if (gpuMetrics != null) {
+               System.err.printf("GPU Information: \n\t%s\n\t\tUsage: %.1f%%\n",
+                                    gpuMetrics.getDeviceName(), gpuMetrics.getUsage());
+            }
+            else {
+                System.err.println("GPU Information: \n\tNo GPU Metrics Found");
+            }
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Failed to retrieve GPU Metrics.");
             return false;
         }
 

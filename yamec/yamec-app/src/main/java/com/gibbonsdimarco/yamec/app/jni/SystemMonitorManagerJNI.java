@@ -75,6 +75,12 @@ public class SystemMonitorManagerJNI {
 
     }
 
+    /**
+     * Retrieves the current system metrics for the system's CPU devices
+     *
+     * @return A SystemCpuMetric object containing the system's CPU information.
+     * If the CPU metrics cannot be retrieved, this returns null.
+     */
     public SystemCpuMetric getCpuMetrics() {
         if (closed) {
             return null;
@@ -83,8 +89,18 @@ public class SystemMonitorManagerJNI {
         return getCpuMetrics(this.monitorAddress);
     }
 
+    /**
+     * Retrieves the current system metrics for the system's GPU devices
+     *
+     * @return A SystemGpuMetric object containing the system's GPU information.
+     * If the GPU metrics cannot be retrieved, this returns null.
+     */
     public SystemGpuMetric getGpuMetrics() {
-        return null;
+        if (closed) {
+            return null;
+        }
+
+        return getGpuMetrics(this.monitorAddress);
     }
 
     public java.util.ArrayList<SystemMemoryMetric> getMemoryMetrics() {
@@ -122,13 +138,13 @@ public class SystemMonitorManagerJNI {
     private native long initialize();
 
     private native SystemCpuMetric getCpuMetrics(long ptr);
-//
-//    private native SystemGpuMetric getGpuMetrics(long ptr);
-//
+
+    private native SystemGpuMetric getGpuMetrics(long ptr);
+
 //    private native java.util.ArrayList<SystemMemoryMetric> getMemoryMetrics(long ptr);
-//
+
 //    private native java.util.ArrayList<SystemDiskMetric> getDiskMetrics(long ptr);
-//
+
 //    private native java.util.ArrayList<SystemNicMetric> getNicMetrics(long ptr);
 
     /**
