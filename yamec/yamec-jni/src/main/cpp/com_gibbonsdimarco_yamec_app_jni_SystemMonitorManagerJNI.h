@@ -18,15 +18,23 @@ JNIEXPORT void JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManage
 /*
  * Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
  * Method:    initialize
- * Signature: ()L
+ * Signature: ()J
  */
 JNIEXPORT jlong JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_initialize
                                   (JNIEnv *, jobject);
 
 /*
+* Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+* Method:    getCpuMetrics
+* Signature: (J)Lcom/gibbonsdimarco/yamec/app/data/SystemCpuMetric;
+*/
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getCpuMetrics
+                                (JNIEnv *, jobject, const jlong);
+
+/*
  * Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
  * Method:    release
- * Signature: (L)B
+ * Signature: (J)Z
  */
 JNIEXPORT jboolean JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_release
                               (JNIEnv *, jobject, jlong);

@@ -1,5 +1,6 @@
 package com.gibbonsdimarco.yamec.app;
 
+import com.gibbonsdimarco.yamec.app.data.SystemCpuMetric;
 import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -71,6 +72,24 @@ public class YamecApplication {
         catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to create System Monitor Manager.");
+            return false;
+        }
+
+        try {
+            System.err.println("Testing CPU Metrics Retrieval...");
+            SystemCpuMetric cpuMetrics = monitor.getCpuMetrics();
+            if (cpuMetrics != null) {
+               System.err.printf("CPU Information: \n\t%s\n\t\tUsage: %.1f%%\n",
+                                    cpuMetrics.getDeviceName(), cpuMetrics.getUsage());
+            }
+            else {
+                System.err.println("CPU Information: \n\tNo CPU Metrics Found");
+            }
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Failed to retrieve CPU Metrics.");
             return false;
         }
 

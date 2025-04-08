@@ -73,23 +73,6 @@ bool SystemMonitorManager::getGpuUsage(double *usage) const
 }
 
 /**
- * JNIEXPORT jobject JNICALL getMemoryCounters(JNIenv) const
- * {
-        unsigned long long physicalBytesAvailable;
-        unsigned long long virtualBytesCommitted;
-        double committedPercentUsed;
-
-        if (!getMemoryCounters(&physicalBytesAvailable, &virtualBytesCommitted, &committedPercentUsed))
-        {
-            return NULL;
-        }
-
-
-
-   }
- */
-
-/**
 * Retrieves all memory-related performance counters.
 */
 bool SystemMonitorManager::getMemoryCounters(unsigned long long *physicalBytesAvailable,

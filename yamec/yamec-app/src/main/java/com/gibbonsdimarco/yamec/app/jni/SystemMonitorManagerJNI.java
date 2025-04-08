@@ -76,7 +76,11 @@ public class SystemMonitorManagerJNI {
     }
 
     public SystemCpuMetric getCpuMetrics() {
-        return null;
+        if (closed) {
+            return null;
+        }
+
+        return getCpuMetrics(this.monitorAddress);
     }
 
     public SystemGpuMetric getGpuMetrics() {
@@ -117,7 +121,7 @@ public class SystemMonitorManagerJNI {
      */
     private native long initialize();
 
-//    private native SystemCpuMetric getCpuMetrics(long ptr);
+    private native SystemCpuMetric getCpuMetrics(long ptr);
 //
 //    private native SystemGpuMetric getGpuMetrics(long ptr);
 //
@@ -137,3 +141,39 @@ public class SystemMonitorManagerJNI {
     private native boolean release(long ptr);
 
 }
+
+/*
+ * Signatures:
+ * public class com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI {
+ *   public com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI();
+ *     descriptor: ()V
+ *
+ *   public boolean isClosed();
+ *     descriptor: ()Z
+ *
+ *   public boolean close();
+ *     descriptor: ()Z
+ *
+ *   public com.gibbonsdimarco.yamec.app.data.SystemCpuMetric getCpuMetrics();
+ *     descriptor: ()Lcom/gibbonsdimarco/yamec/app/data/SystemCpuMetric;
+ *
+ *   public com.gibbonsdimarco.yamec.app.data.SystemGpuMetric getGpuMetrics();
+ *     descriptor: ()Lcom/gibbonsdimarco/yamec/app/data/SystemGpuMetric;
+ *
+ *   public java.util.ArrayList<com.gibbonsdimarco.yamec.app.data.SystemMemoryMetric> getMemoryMetrics();
+ *     descriptor: ()Ljava/util/ArrayList;
+ *
+ *   public java.util.ArrayList<com.gibbonsdimarco.yamec.app.data.SystemDiskMetric> getDiskMetrics();
+ *     descriptor: ()Ljava/util/ArrayList;
+ *
+ *   public java.util.ArrayList<com.gibbonsdimarco.yamec.app.data.SystemNicMetric> getNicMetrics();
+ *     descriptor: ()Ljava/util/ArrayList;
+ *
+ *   public native void sayHello();
+ *     descriptor: ()V
+ *
+ *   static {};
+ *     descriptor: ()V
+ * }
+ *
+ */
