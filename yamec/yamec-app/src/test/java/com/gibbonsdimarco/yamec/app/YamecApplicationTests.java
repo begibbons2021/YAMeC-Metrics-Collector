@@ -167,7 +167,7 @@ class YamecApplicationTests {
             System.err.println("Closing System Monitor Manager... ");
             monitor.close();
 
-            if (!monitor.isClosed()) {
+            if (monitor.isOpen()) {
                 throw new Exception("The status of the System Monitor Manager did not change to closed.");
             }
         }

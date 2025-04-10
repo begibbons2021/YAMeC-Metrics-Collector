@@ -3,7 +3,7 @@ import com.gibbonsdimarco.yamec.app.data.*;
 import com.github.fommil.jni.JniLoader;
 import jakarta.websocket.OnClose;
 
-public class SystemMonitorManagerJNI implements java.io.Closeable {
+public class SystemMonitorManagerJNI implements AutoCloseable {
     static {
         try {
             JniLoader.load("native/windows/x64/yamecjni.dll");
@@ -42,10 +42,10 @@ public class SystemMonitorManagerJNI implements java.io.Closeable {
     /**
      * Returns a boolean variable containing whether this SystemMonitorManager is closed
      *
-     * @return True if this instance is closed; otherwise, this returns false
+     * @return True if this instance is open; otherwise, this returns false
      */
-    public boolean isClosed() {
-        return closed;
+    public boolean isOpen() {
+        return !closed;
     }
 
 
@@ -60,7 +60,7 @@ public class SystemMonitorManagerJNI implements java.io.Closeable {
      * @throws RuntimeException if the resource cannot be closed
      */
     @OnClose
-    public void close() {
+    public void close() throws RuntimeException {
         if (closed) {
             return;
         }
