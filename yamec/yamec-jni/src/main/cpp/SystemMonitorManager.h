@@ -15,6 +15,7 @@
 #include "MemoryInfo.h"
 #include "GpuInfo.h"
 #include "NicInfo.h"
+#include "WmiQueryManager.h"
 
 
 class SystemMonitorManager
@@ -64,6 +65,7 @@ public:
 
 private:
     PdhQueryManager m_pdhManager;
+    WmiQueryManager m_wmiManager;
     CpuInfo m_cpuInfo;
     MemoryInfo m_memoryInfo;
     DiskInfo m_diskInfo;

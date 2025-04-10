@@ -74,10 +74,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
-    // jclass arrayListClass = env->FindClass("java/util/ArrayList");
     jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemGpuMetric");
-    // jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
-    // jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
     jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(Ljava/lang/String;D)V");
 
 
@@ -99,48 +96,6 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                                                 env->NewStringUTF(deviceName.c_str()),
                                                 usageBuffer);
 
-    // // Try to get the disk instance names and count
-    // std::vector<std::wstring> diskInstanceNames;
-    // size_t diskInstanceCount;
-    //
-    // try
-    // {
-    //     diskInstanceCount = monitor->getDiskInstances(&diskInstanceNames);
-    // }
-    // catch (...)
-    // {
-    //     // If the monitor's pointer is incorrect or some error occurs in retrieval
-    //     return env->NewGlobalRef(nullptr); // An error occurs when retrieving data
-    // }
-    //
-    // // No disks are being tracked with program counters (how???)
-    // if (diskInstanceCount == 0)
-    // {
-    //     return env->NewGlobalRef(nullptr);
-    // }
-    //
-    // // Create buffers to hold the other information temporarily
-    // std::vector<double> diskInstancesUsage;
-    // std::vector<unsigned long long> diskInstancesReadBandwidth;
-    // std::vector<unsigned long long> diskInstancesWriteBandwidth;
-    // std::vector<double> diskInstancesAvgTimeToTransfer;
-    //
-    // // Attempt to fill buffers
-    // if (!monitor->getDiskCounters(&diskInstancesUsage,
-    //                                         &diskInstancesReadBandwidth,
-    //                                         &diskInstancesWriteBandwidth,
-    //                                         &diskInstancesAvgTimeToTransfer))
-    // {
-    //     // Retrieval of counters failed, so return null
-    //     return env->NewGlobalRef(nullptr);
-    // }
-    //
-    // // Put data into Java objects
-    //
-    // for (size_t i = 0; i < diskInstanceCount; i++)
-    // {
-    //
-    // }
 
     return systemMetricObject;
 

@@ -212,3 +212,23 @@ bool PdhQueryManager::getCounterValue(const PDH_HCOUNTER counter, double *value)
     *value = counterValue.doubleValue;
     return true;
 }
+
+// size_t PdhQueryManager::getCounterArray(const PDH_HCOUNTER counter, double *values[]) const
+// {
+//     if (!m_initialized)
+//     {
+//         std::cerr << "Query not initialized." << std::endl;
+//         return false;
+//     }
+//
+//     PDH_FMT_COUNTERVALUE counterValues[];
+//     PDH_STATUS status = PdhGetFormattedCounterArray(counter, PDH_FMT_DOUBLE, nullptr, &counterValue);
+//     if (status)
+//     {
+//         std::cerr << "Failed to get formatted counter value." << std::endl;
+//         return false;
+//     }
+//
+//
+//     return true;
+// }

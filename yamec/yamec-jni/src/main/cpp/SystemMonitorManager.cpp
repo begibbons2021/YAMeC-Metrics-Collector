@@ -18,6 +18,11 @@ bool SystemMonitorManager::initialize()
         return false;
     }
 
+    if (!m_wmiManager.initialize())
+    {
+        return false;
+    }
+
     // Initialize the CPU info
     if (!m_cpuInfo.initialize(&m_pdhManager))
     {
