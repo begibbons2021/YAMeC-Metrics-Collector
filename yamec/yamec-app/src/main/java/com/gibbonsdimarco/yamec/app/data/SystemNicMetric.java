@@ -29,28 +29,35 @@ public class SystemNicMetric extends SystemDeviceMetric {
      * Whether the NIC bandwidth should be represented using an
      * unsigned value
      */
-    private boolean nicBandwidthIsUnsigned = false;
+    private boolean nicBandwidthIsUnsigned;
 
     /**
      * Whether the bytes sent should be represented using an
      * unsigned value
      */
-    private boolean bytesSentIsUnsigned = false;
+    private boolean bytesSentIsUnsigned;
 
     /**
      * Whether the bytes received should be represented using an
      * unsigned value
      */
-    private boolean bytesReceivedIsUnsigned = false;
+    private boolean bytesReceivedIsUnsigned;
 
     public SystemNicMetric(String deviceName,
                            long nicBandwidth,
                            long bytesSent,
-                           long bytesReceived) {
+                           long bytesReceived,
+                           boolean nicBandwidthIsUnsigned,
+                           boolean bytesSentIsUnsigned,
+                           boolean bytesReceivedIsUnsigned) {
         super(deviceName);
         this.nicBandwidth = nicBandwidth;
         this.bytesSent = bytesSent;
         this.bytesReceived = bytesReceived;
+        this.nicBandwidthIsUnsigned = nicBandwidthIsUnsigned;
+        this.bytesSentIsUnsigned = bytesSentIsUnsigned;
+        this.bytesReceivedIsUnsigned = bytesReceivedIsUnsigned;
+
 
     }
 

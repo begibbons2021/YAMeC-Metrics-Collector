@@ -49,9 +49,17 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 /*
 * Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
 * Method:    getDiskMetrics
-* Signature: (J)Lcom/gibbonsdimarco/yamec/app/data/SystemDiskMetric;
+* Signature: (J)Ljava/util/ArrayList;
 */
 JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getDiskMetrics
+                                    (JNIEnv *, jobject, const jlong);
+
+/*
+* Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+* Method:    getNicMetrics
+* Signature: (J)Ljava/util/ArrayList;
+*/
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getNicMetrics
                                     (JNIEnv *, jobject, const jlong);
 
 /*

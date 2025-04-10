@@ -166,6 +166,37 @@ public class YamecApplication {
         }
 
         try {
+            System.err.println("Testing NIC Metrics Retrieval...");
+            java.util.ArrayList<SystemNicMetric> nicMetrics = monitor.getNicMetrics();
+            if (nicMetrics != null) {
+
+                System.err.println("NIC Information:");
+                System.err.printf("\tNIC Instances Present (including _Total): %d\n", nicMetrics.size());
+
+                for (SystemNicMetric nicMetric : nicMetrics) {
+                    // Skip total system NIC use
+                    if (nicMetric.getDeviceName().compareTo("_Total") == 0) {
+                        continue;
+                    }
+
+                    System.err.printf("\t%s\n", nicMetric.getDeviceName());
+                    System.err.printf("\t\tCurrent Operation Bandwidth: %s bps\n", nicMetric.getNicBandwidthUnsigned());
+                    System.err.printf("\t\tBytes Sent: %s bytes/sec\n", nicMetric.getBytesSentUnsigned());
+                    System.err.printf("\t\tWrite Bandwidth: %s bytes/sec\n", nicMetric.getBytesReceivedUnsigned());
+                }
+            }
+            else {
+                System.err.println("NIC Information: \n\tNo NIC Metrics Found");
+            }
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Failed to retrieve NIC Metrics.");
+            return;
+        }
+
+        try {
             System.err.println("Closing System Monitor Manager... ");
             monitor.close();
 

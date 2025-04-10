@@ -125,7 +125,11 @@ public class SystemMonitorManagerJNI implements java.io.Closeable {
     }
 
     public java.util.ArrayList<SystemNicMetric> getNicMetrics() {
-        return null;
+        if (closed) {
+            return null;
+        }
+
+        return getNicMetrics(this.monitorAddress);
     }
 
 
@@ -158,7 +162,7 @@ public class SystemMonitorManagerJNI implements java.io.Closeable {
 
     private native java.util.ArrayList<SystemDiskMetric> getDiskMetrics(long ptr);
 
-//    private native java.util.ArrayList<SystemNicMetric> getNicMetrics(long ptr);
+    private native java.util.ArrayList<SystemNicMetric> getNicMetrics(long ptr);
 
     /**
      * Releases the memory allocated to the SystemMonitorManager
