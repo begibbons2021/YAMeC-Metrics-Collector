@@ -5,56 +5,56 @@ SystemMonitorManager::SystemMonitorManager() : m_initialized(false) {}
 
 SystemMonitorManager::~SystemMonitorManager() = default;
 
-bool SystemMonitorManager::initialize()
+int SystemMonitorManager::initialize()
 {
     if (m_initialized)
     {
-        return true;
+        return 0;
     }
 
     // Initialize the PDH query manager
     if (!m_pdhManager.initialize())
     {
-        return false;
+        return -1;
     }
 
     if (!m_wmiManager.initialize())
     {
-        return false;
+        return -2;
     }
 
     // Initialize the CPU info
     if (!m_cpuInfo.initialize(&m_pdhManager))
     {
-        return false;
+        return -3;
     }
 
     // Initialize the GPU info (this may fail if no compatible GPU is present)
     if (!m_gpuInfo.initialize(&m_pdhManager))
     {
-        return false;
+        return -4;
     }
 
     // Initialize the memory info
     if (!m_memoryInfo.initialize(&m_pdhManager, &m_wmiManager))
     {
-        return false;
+        return -5;
     }
 
     // Initialize the disk info
     if (!m_diskInfo.initialize(&m_pdhManager))
     {
-        return false;
+        return -6;
     }
 
     // Initialize the NIC info
     if (!m_nicInfo.initialize(&m_pdhManager))
     {
-        return false;
+        return -7;
     }
 
     m_initialized = true;
-    return true;
+    return 0;
 }
 
 bool SystemMonitorManager::getCpuUsage(double *usage) const

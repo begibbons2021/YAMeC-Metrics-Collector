@@ -25,7 +25,7 @@ public:
 
     ~SystemMonitorManager();
 
-    [[nodiscard]] bool initialize();
+    [[nodiscard]] int initialize();
 
     [[nodiscard]] CpuInfo *getCpuInfo() { return &m_cpuInfo; }
     [[nodiscard]] MemoryInfo *getMemoryInfo() { return &m_memoryInfo; }
