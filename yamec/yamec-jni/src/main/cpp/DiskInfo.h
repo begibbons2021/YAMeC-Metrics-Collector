@@ -19,6 +19,8 @@ class DiskInfo
 
     [[nodiscard]] bool initialize(PdhQueryManager *pdhManager);
 
+    [[nodiscard]] size_t getNumDisks() const;
+
     [[nodiscard]] size_t getInstanceNames(std::vector<std::wstring> *list) const;
 
     [[nodiscard]] bool getAllCounters(std::vector<double> *diskUsageValues, std::vector<unsigned long long> *diskReadBandwidthValues, std::vector<unsigned

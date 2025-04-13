@@ -18,6 +18,11 @@ bool SystemMonitorManager::initialize()
         return false;
     }
 
+    if (!m_wmiManager.initialize())
+    {
+        return false;
+    }
+
     // Initialize the CPU info
     if (!m_cpuInfo.initialize(&m_pdhManager))
     {
@@ -31,7 +36,7 @@ bool SystemMonitorManager::initialize()
     }
 
     // Initialize the memory info
-    if (!m_memoryInfo.initialize(&m_pdhManager))
+    if (!m_memoryInfo.initialize(&m_pdhManager, &m_wmiManager))
     {
         return false;
     }
@@ -73,23 +78,6 @@ bool SystemMonitorManager::getGpuUsage(double *usage) const
 }
 
 /**
- * JNIEXPORT jobject JNICALL getMemoryCounters(JNIenv) const
- * {
-        unsigned long long physicalBytesAvailable;
-        unsigned long long virtualBytesCommitted;
-        double committedPercentUsed;
-
-        if (!getMemoryCounters(&physicalBytesAvailable, &virtualBytesCommitted, &committedPercentUsed))
-        {
-            return NULL;
-        }
-
-
-
-   }
- */
-
-/**
 * Retrieves all memory-related performance counters.
 */
 bool SystemMonitorManager::getMemoryCounters(unsigned long long *physicalBytesAvailable,
@@ -105,6 +93,64 @@ bool SystemMonitorManager::getMemoryCounters(unsigned long long *physicalBytesAv
     }
 
     return m_memoryInfo.getAllCounters(physicalBytesAvailable, virtualBytesCommitted, committedPercentUsed);
+}
+
+size_t SystemMonitorManager::getDiskInstances(std::vector<std::wstring> *instanceNames) const
+{
+    if (!m_initialized)
+    {
+        return 0;
+    }
+
+    return m_diskInfo.getInstanceNames(instanceNames);
+}
+
+bool SystemMonitorManager::getDiskCounters(std::vector <double> *diskInstancesUsage,
+                                            std::vector<unsigned long long> *diskInstancesReadBandwidth,
+                                            std::vector<unsigned long long> *diskInstancesWriteBandwidth,
+                                            std::vector<double> *diskInstancesAvgTimeToTransfer) const
+{
+    if (!m_initialized
+        || !diskInstancesUsage
+        || !diskInstancesReadBandwidth
+        || !diskInstancesWriteBandwidth
+        || !diskInstancesAvgTimeToTransfer)
+    {
+        return false;
+    }
+
+    return m_diskInfo.getAllCounters(diskInstancesUsage,
+                                        diskInstancesReadBandwidth,
+                                        diskInstancesWriteBandwidth,
+                                        diskInstancesAvgTimeToTransfer);
+}
+
+size_t SystemMonitorManager::getNicInstances(std::vector<std::wstring> *instanceNames) const
+{
+    if (!m_initialized)
+    {
+        return 0;
+    }
+
+    return m_nicInfo.getInstanceNames(instanceNames);
+}
+
+
+bool SystemMonitorManager::getNicCounters(std::vector<unsigned long long> *nicInstancesBandwidth,
+                                            std::vector<unsigned long long> *nicInstancesSendBytes,
+                                            std::vector<unsigned long long> *nicInstancesRecvBytes) const
+{
+    if (!m_initialized
+        || !nicInstancesBandwidth
+        || !nicInstancesSendBytes
+        || !nicInstancesRecvBytes)
+    {
+        return false;
+    }
+
+    return m_nicInfo.getAllCounters(nicInstancesBandwidth, nicInstancesSendBytes, nicInstancesRecvBytes);
+
+
 }
 
 bool SystemMonitorManager::getPhysicalMemoryAvailable(unsigned long long *bytesAvailable) const
@@ -135,6 +181,28 @@ bool SystemMonitorManager::getVirtualMemoryCommittedPercentUsed(double *committe
     }
 
     return m_memoryInfo.getVirtualMemoryCommittedPercentUsed(committedPercentUsed);
+}
+
+int SystemMonitorManager::getHardwareMemoryInformation(unsigned long long *speed,
+                                                        unsigned long long *capacity,
+                                                        unsigned int *slotsUsed,
+                                                        unsigned int *slotsTotal) const
+{
+    if (!m_initialized
+        || !speed
+        || !capacity
+        || !slotsUsed
+        || !slotsTotal)
+    {
+        // Passed in pointers which aren't valid or Monitor isn't initialized
+        return -1;
+    }
+
+    return m_memoryInfo.getMemoryInformation(speed,
+                                                nullptr,
+                                                capacity,
+                                                slotsUsed,
+                                                slotsTotal);
 }
 
 unsigned long long SystemMonitorManager::getPhysicalMemory()
