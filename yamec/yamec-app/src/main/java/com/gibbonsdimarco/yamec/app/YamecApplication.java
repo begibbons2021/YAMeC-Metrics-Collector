@@ -1,6 +1,8 @@
 package com.gibbonsdimarco.yamec.app;
 
 import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -54,14 +56,15 @@ public class YamecApplication {
 // Test finite components
 //
 
+    private static final Logger logger = LoggerFactory.getLogger(YamecApplication.class);
+
     public static void main(String[] args) {
-        System.out.println(System.getProperty("user.home"));
+        logger.info("User home directory: {}", System.getProperty("user.home"));
 
         SpringApplication.run(YamecApplication.class, args);
-        System.out.println("Yamec Application Started");
+        logger.info("Yamec Application Started");
 
         new SystemMonitorManagerJNI().sayHello();
-
     }
 
 }

@@ -53,6 +53,8 @@ if(WIN32)
             yamec-jni/src/main/cpp/NicInfo.h
             yamec-jni/src/main/cpp/PdhQueryManager.cpp
             yamec-jni/src/main/cpp/PdhQueryManager.h
+            yamec-jni/src/main/cpp/Logger.cpp
+            yamec-jni/src/main/cpp/Logger.h
             yamec-jni/src/main/cpp/SystemMonitorManager.cpp
             yamec-jni/src/main/cpp/SystemMonitorManager.h
             #        yamec-jni/src/main/cpp/system_metrics.cpp

@@ -7,6 +7,15 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/*
+ * Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+ * Method:    initLogger
+ * Signature: (Ljava/lang/Object;)V
+ */
+JNIEXPORT void JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_initLogger
+  (JNIEnv *, jclass, jobject);
+
 /*
  * Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
  * Method:    sayHello
