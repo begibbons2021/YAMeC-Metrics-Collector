@@ -72,6 +72,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initial fetch
     fetchMetrics();
     
-    // Set up periodic updates (every 5 seconds)
-    setInterval(fetchMetrics, 5000);
+    // Set up periodic updates (every second)
+    setInterval(fetchMetrics, 1000);
 }); 
