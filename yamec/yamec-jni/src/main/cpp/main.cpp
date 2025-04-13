@@ -90,6 +90,28 @@ int main()
         std::cerr << "Memory monitoring not available" << std::endl;
     }
 
+    unsigned long long speed;
+    unsigned long long capacity;
+    unsigned int slotsUsed;
+    unsigned int slotsTotal;
+
+    if (const int hr = monitor.getHardwareMemoryInformation(&speed,
+    nullptr,
+    &capacity,
+    &slotsUsed,
+    &slotsTotal); !FAILED(hr))
+    {
+        std::cout << "Physical memory Speed: " << speed << " MT/s" << std::endl;
+        std::cout << "Capacity: " << capacity << " bytes" <<  std::endl;
+        std::cout << "Slots Used: " << slotsUsed << std::endl;
+        std::cout << "Slots Total: " << slotsTotal << std::endl;
+    }
+    else
+    {
+        std::cerr << "Failed to get Hardware Memory Information." << std::endl;
+        std::cerr << "Error code: " << std::hex << hr << std::endl;
+    }
+
     // Disk usage (if available)
     std::vector<std::wstring> diskInstanceNames;
 

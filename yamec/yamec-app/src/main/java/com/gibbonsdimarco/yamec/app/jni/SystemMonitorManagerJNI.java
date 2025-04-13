@@ -24,7 +24,7 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
      * Instantiates the System Monitor Manager.
      *
      * @throws RuntimeException If the System Monitor Manager cannot be instantiated
-     * via the JNI call to C++.
+     * via the JNI call to native code
      *
      */
     public SystemMonitorManagerJNI()

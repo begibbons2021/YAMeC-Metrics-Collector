@@ -51,6 +51,7 @@ public:
                                         std::vector<double> *diskInstancesAvgTimeToTransfer) const;
 
 
+
     [[nodiscard]] size_t getNicInstances(std::vector<std::wstring> *instanceNames) const;
 
     [[nodiscard]] bool getNicCounters(std::vector<unsigned long long> *nicInstancesBandwidth,
@@ -60,6 +61,9 @@ public:
     [[nodiscard]] bool getPhysicalMemoryAvailable(unsigned long long *bytesAvailable) const;
     [[nodiscard]] bool getVirtualMemoryCommitted(unsigned long long *bytesCommitted) const;
     [[nodiscard]] bool getVirtualMemoryCommittedPercentUsed(double *committedPercentUsed) const;
+
+    int getHardwareMemoryInformation(unsigned long long *speed, char *formfactor, unsigned long long *capacity,
+                                     unsigned int *slotsUsed, unsigned int *slotsTotal) const;
 
     [[nodiscard]] unsigned long long getPhysicalMemory();
 

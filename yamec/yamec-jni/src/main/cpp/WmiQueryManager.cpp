@@ -245,3 +245,111 @@ bool WmiQueryManager::initialize()
     return true;
 
 }
+
+int WmiQueryManager::queryCimV2Service(const char *query, IEnumWbemClassObject *&response) const
+{
+    // Query data
+    IEnumWbemClassObject* pIEnum = nullptr; // The address of the current response being processed
+    const HRESULT hr = m_wbemServices_CimV2->ExecQuery(bstr_t(L"WQL"),
+                                    bstr_t(query),
+                                    WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
+                                    nullptr,
+                                    &pIEnum);
+
+    if (FAILED(hr))
+    {
+        std::cerr << "WMI CimV2 Query \"" << query << "\" failed. Error code: "
+                        << std::hex << hr << std::endl;
+        return hr;
+    }
+
+    response = pIEnum;
+    return hr;
+}
+
+// int WmiQueryManager::queryCimV2Service(const char *query, std::vector<std::map<std::wstring, VARIANT>> *responses)
+// {
+//     // Query data
+//     IEnumWbemClassObject* pIEnum = nullptr; // The address of the current response being processed
+//     HRESULT hr = m_wbemServices_CimV2->ExecQuery(bstr_t(L"WQL"),
+//                                     bstr_t(query),
+//                                     WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
+//                                     nullptr,
+//                                     &pIEnum);
+//
+//     if (FAILED(hr))
+//     {
+//         std::cerr << "WMI CimV2 Query \"" << query << "\" failed. Error code: "
+//                         << std::hex << hr << std::endl;
+//         return hr;
+//     }
+//
+//     // Output data
+//     IWbemClassObject *pWbemObject = nullptr; // Returned struct of system data
+//     ULONG ulReturn = 0; // Lines left to return
+//
+//     while (pIEnum)
+//     {
+//         pIEnum->Next(WBEM_INFINITE, 1, &pWbemObject, &ulReturn);
+//
+//         if (0 == ulReturn)
+//         {
+//             break;
+//         }
+//
+//         std::map<std::wstring, std::wstring> currentObjectContents;
+//
+//         // Approach to get names of fields into a vector:
+//         // https://stackoverflow.com/questions/22147575/how-to-copy-values-from-safearray-to-vector
+//         // Get object field names in SafeArray
+//         SAFEARRAY *pSafeArray = nullptr;
+//         hr = pWbemObject->GetNames(nullptr, 0, nullptr, &pSafeArray);
+//
+//         // Get bounds
+//         long arrayLowMemoryBound, arrayHighMemoryBound;
+//         hr = SafeArrayGetLBound(pSafeArray, 0, &arrayLowMemoryBound);
+//         hr = SafeArrayGetUBound(pSafeArray, 0, &arrayHighMemoryBound);
+//
+//         long arraySize = arrayHighMemoryBound - arrayLowMemoryBound + 1;
+//
+//         // Extract data to wide character string
+//         BSTR* fieldNamesPtr;
+//         hr = SafeArrayAccessData(pSafeArray, reinterpret_cast<void **>(&fieldNamesPtr));
+//
+//         // Add fields into std::vector
+//         std::vector<std::wstring> fieldNames(fieldNamesPtr, fieldNamesPtr + arraySize);
+//
+//         // Close safe array
+//         hr = SafeArrayUnaccessData(pSafeArray);
+//
+//         for (const auto & fieldName : fieldNames)
+//         {
+//             VARIANT fieldValue;
+//
+//             VariantInit(&fieldValue);
+//
+//             hr = pWbemObject->Get(fieldName.c_str(),
+//                                     0,
+//                                     &fieldValue,
+//                                     nullptr,
+//                                     nullptr);
+//
+//
+//             currentObjectContents[fieldName] = fieldValue.;
+//
+//         }
+//
+//         responses->emplace_back(currentObjectContents);
+//
+//         pWbemObject->Release();
+//
+//     }
+//
+//     pIEnum->Release();
+//
+//
+//
+//     return 0;
+// }
+
+

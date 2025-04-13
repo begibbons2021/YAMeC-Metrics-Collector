@@ -7,6 +7,10 @@
 
 #include <Wbemidl.h>
 #include <comdef.h>
+#include <any>
+#include <map>
+#include <string>
+#include <vector>
 
 #pragma comment(lib, "wbemuuid.lib")
 
@@ -30,6 +34,31 @@ class WmiQueryManager {
      * successfully, or false if it fails
      */
     bool initialize();
+
+    /**
+     * Queries the CimV2 WMI Service based on the SQL-style query passed by the query parameter,
+     * then returns the response in the response reference variable passed by parameter
+     * and a status code
+     *
+     * Note that all pairs
+     * @param query The query string
+     * @param response The reference to a pointer to hold the returned IEnumWbemClassObject
+     * @return A 32-bit integer containing the WMI Query Status Code
+     */
+    int queryCimV2Service(const char *query, IEnumWbemClassObject *&response) const;
+
+    // /**
+    //  * Queries the CimV2 WMI Service based on the SQL-style query passed by the query parameter, then returns
+    //  * a std::vector containing a map for all returned objects' key-value pairs.
+    //  *
+    //  * Note that all pairs
+    //  * @param query
+    //  * @param responses
+    //  * @return
+    //  */
+    // int queryCimV2Service(const char *query, std::vector<std::map<std::wstring, std::string>> *responses);
+
+
 
     private:
     /**

@@ -36,7 +36,7 @@ bool SystemMonitorManager::initialize()
     }
 
     // Initialize the memory info
-    if (!m_memoryInfo.initialize(&m_pdhManager))
+    if (!m_memoryInfo.initialize(&m_pdhManager, &m_wmiManager))
     {
         return false;
     }
@@ -181,6 +181,29 @@ bool SystemMonitorManager::getVirtualMemoryCommittedPercentUsed(double *committe
     }
 
     return m_memoryInfo.getVirtualMemoryCommittedPercentUsed(committedPercentUsed);
+}
+
+int SystemMonitorManager::getHardwareMemoryInformation(unsigned long long *speed,
+                                                        char *formfactor,
+                                                        unsigned long long *capacity,
+                                                        unsigned int *slotsUsed,
+                                                        unsigned int *slotsTotal) const
+{
+    if (!m_initialized
+        || !speed
+        || !capacity
+        || !slotsUsed
+        || !slotsTotal)
+    {
+        // Passed in pointers which aren't valid or Monitor isn't initialized
+        return -1;
+    }
+
+    return m_memoryInfo.getMemoryInformation(speed,
+                                                formfactor,
+                                                capacity,
+                                                slotsUsed,
+                                                slotsTotal);
 }
 
 unsigned long long SystemMonitorManager::getPhysicalMemory()
