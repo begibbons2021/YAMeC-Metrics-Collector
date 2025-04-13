@@ -34,4 +34,5 @@ public class SystemCpuMetric extends SystemDeviceMetric {
         return usage;
     }
 
+
 }

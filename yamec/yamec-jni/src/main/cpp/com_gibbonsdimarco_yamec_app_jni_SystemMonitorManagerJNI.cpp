@@ -405,3 +405,57 @@ JNIEXPORT jboolean JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMa
 
 }
 
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getHardwareMemoryInformation
+                            (JNIEnv *env, jobject obj, const jlong monitorPtr)
+{
+
+    auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
+
+    // Java Classes & Methods Used
+    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/MemoryHardwareInformation");
+    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(JJJJZZ)V");
+
+    try
+    {
+        // Create buffers to hold the other information temporarily
+        // Metrics Buffers (CPU Usage only has one!)
+        unsigned long long speed;
+        unsigned long long capacity;
+        unsigned int slotsUsed;
+        unsigned int slotsTotal;
+        constexpr bool speedIsUnsigned    = true;
+        constexpr bool capacityIsUnsigned = true;
+
+
+        // Attempt to fill buffers
+        if (0 != monitor->getHardwareMemoryInformation(&speed,
+                                                        &capacity,
+                                                        &slotsUsed,
+                                                        &slotsTotal))
+        {
+            // Add log message
+            // Retrieval of counters failed, so return null
+            return env->NewGlobalRef(nullptr);
+        }
+
+        // Put data into Java objects
+        const jobject systemMetricObject = env->NewObject(systemMetricClass,
+                                                    systemMetricConstructor,
+                                                    static_cast<jlong>(capacity),
+                                                    static_cast<jlong>(speed),
+                                                    static_cast<jlong>(slotsUsed),
+                                                    static_cast<jlong>(slotsTotal),
+                                                    static_cast<jboolean>(capacityIsUnsigned),
+                                                    static_cast<jboolean>(speedIsUnsigned));
+
+        return systemMetricObject;
+
+    }
+    catch (const std::exception &e)
+    {
+        // Add log message
+        return env->NewGlobalRef(nullptr);
+    }
+
+}
+

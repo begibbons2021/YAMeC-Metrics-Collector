@@ -71,6 +71,33 @@ class YamecApplicationTests {
         }
 
         try {
+            System.err.println("Testing Memory Hardware Data Retrieval...");
+            MemoryHardwareInformation memoryHardwareInformation = monitor.getMemoryHardwareInformation();
+            if (memoryHardwareInformation != null) {
+                // Calculate the actual virtual memory use from the amount of committed memory used.
+
+                System.err.println("Memory Information:");
+                System.err.printf("\tTotal Memory (Physical Memory): %d bytes\n",
+                        memoryHardwareInformation.getCapacity());
+                System.err.printf("\tSpeed: %d MT/s\n",
+                        memoryHardwareInformation.getSpeed());
+                System.err.printf("\tSlots Used: %d of %d\n",
+                        memoryHardwareInformation.getSlotsUsed(),
+                        memoryHardwareInformation.getSlotsTotal());
+            }
+            else {
+                System.err.println("Memory Hardware: \n\tNo Memory Hardware Found");
+            }
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Failed to retrieve Memory Hardware Information.");
+            monitor.close();
+            return false;
+        }
+
+        try {
             System.err.println("Testing Memory Metrics Retrieval...");
             SystemMemoryMetric memoryMetrics = monitor.getMemoryMetrics();
             if (memoryMetrics != null) {

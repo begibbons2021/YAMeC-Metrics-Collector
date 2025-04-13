@@ -62,7 +62,7 @@ public:
     [[nodiscard]] bool getVirtualMemoryCommitted(unsigned long long *bytesCommitted) const;
     [[nodiscard]] bool getVirtualMemoryCommittedPercentUsed(double *committedPercentUsed) const;
 
-    int getHardwareMemoryInformation(unsigned long long *speed, char *formfactor, unsigned long long *capacity,
+    [[nodiscard]] int getHardwareMemoryInformation(unsigned long long *speed, unsigned long long *capacity,
                                      unsigned int *slotsUsed, unsigned int *slotsTotal) const;
 
     [[nodiscard]] unsigned long long getPhysicalMemory();

@@ -40,6 +40,14 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                                 (JNIEnv *, jobject, const jlong);
 /*
 * Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+* Method:    getHardwareMemoryInformation
+* Signature: (J)Lcom/gibbonsdimarco/yamec/app/data/MemoryHardwareInformation;
+*/
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getHardwareMemoryInformation
+                                (JNIEnv *env, jobject, const jlong);
+
+/*
+* Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
 * Method:    getMemoryMetrics
 * Signature: (J)Lcom/gibbonsdimarco/yamec/app/data/SystemMemoryMetric;
 */

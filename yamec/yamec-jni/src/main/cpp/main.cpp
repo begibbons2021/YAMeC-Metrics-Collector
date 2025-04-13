@@ -96,10 +96,9 @@ int main()
     unsigned int slotsTotal;
 
     if (const int hr = monitor.getHardwareMemoryInformation(&speed,
-    nullptr,
-    &capacity,
-    &slotsUsed,
-    &slotsTotal); !FAILED(hr))
+                                                            &capacity,
+                                                            &slotsUsed,
+                                                            &slotsTotal); !FAILED(hr))
     {
         std::cout << "Physical memory Speed: " << speed << " MT/s" << std::endl;
         std::cout << "Capacity: " << capacity << " bytes" <<  std::endl;

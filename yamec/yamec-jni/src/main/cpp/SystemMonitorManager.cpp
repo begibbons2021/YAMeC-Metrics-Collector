@@ -184,7 +184,6 @@ bool SystemMonitorManager::getVirtualMemoryCommittedPercentUsed(double *committe
 }
 
 int SystemMonitorManager::getHardwareMemoryInformation(unsigned long long *speed,
-                                                        char *formfactor,
                                                         unsigned long long *capacity,
                                                         unsigned int *slotsUsed,
                                                         unsigned int *slotsTotal) const
@@ -200,7 +199,7 @@ int SystemMonitorManager::getHardwareMemoryInformation(unsigned long long *speed
     }
 
     return m_memoryInfo.getMemoryInformation(speed,
-                                                formfactor,
+                                                nullptr,
                                                 capacity,
                                                 slotsUsed,
                                                 slotsTotal);
