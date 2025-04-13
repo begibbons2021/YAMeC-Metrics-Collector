@@ -1,6 +1,5 @@
 // SystemMonitorManager.cpp
 #include "SystemMonitorManager.h"
-#include "Logger.h"
 
 SystemMonitorManager::SystemMonitorManager() : m_initialized(false) {}
 
@@ -8,8 +7,6 @@ SystemMonitorManager::~SystemMonitorManager() = default;
 
 bool SystemMonitorManager::initialize()
 {
-    Logger::log(Logger::Level::INFO, "SystemMonitorManager.cpp initialized");
-
     if (m_initialized)
     {
         return true;
