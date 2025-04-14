@@ -57,21 +57,21 @@ int SystemMonitorManager::initialize()
     return 0;
 }
 
-bool SystemMonitorManager::getCpuUsage(double *usage) const
+int SystemMonitorManager::getCpuUsage(double *usage) const
 {
     if (!m_initialized || !usage)
     {
-        return false;
+        return -1;
     }
 
     return m_cpuInfo.getUsage(usage);
 }
 
-bool SystemMonitorManager::getGpuUsage(double *usage) const
+int SystemMonitorManager::getGpuUsage(double *usage) const
 {
     if (!m_initialized || !usage)
     {
-        return false;
+        return -1;
     }
 
     return m_gpuInfo.getUsage(usage);
@@ -80,7 +80,7 @@ bool SystemMonitorManager::getGpuUsage(double *usage) const
 /**
 * Retrieves all memory-related performance counters.
 */
-bool SystemMonitorManager::getMemoryCounters(unsigned long long *physicalBytesAvailable,
+int SystemMonitorManager::getMemoryCounters(unsigned long long *physicalBytesAvailable,
                                             unsigned long long *virtualBytesCommitted,
                                             double *committedPercentUsed) const
 {
@@ -105,10 +105,10 @@ size_t SystemMonitorManager::getDiskInstances(std::vector<std::wstring> *instanc
     return m_diskInfo.getInstanceNames(instanceNames);
 }
 
-bool SystemMonitorManager::getDiskCounters(std::vector <double> *diskInstancesUsage,
-                                            std::vector<unsigned long long> *diskInstancesReadBandwidth,
-                                            std::vector<unsigned long long> *diskInstancesWriteBandwidth,
-                                            std::vector<double> *diskInstancesAvgTimeToTransfer) const
+int SystemMonitorManager::getDiskCounters(std::vector<double> *diskInstancesUsage,
+                                          std::vector<unsigned long long> *diskInstancesReadBandwidth,
+                                          std::vector<unsigned long long> *diskInstancesWriteBandwidth,
+                                          std::vector<double> *diskInstancesAvgTimeToTransfer) const
 {
     if (!m_initialized
         || !diskInstancesUsage
@@ -116,7 +116,7 @@ bool SystemMonitorManager::getDiskCounters(std::vector <double> *diskInstancesUs
         || !diskInstancesWriteBandwidth
         || !diskInstancesAvgTimeToTransfer)
     {
-        return false;
+        return -1;
     }
 
     return m_diskInfo.getAllCounters(diskInstancesUsage,
@@ -136,16 +136,16 @@ size_t SystemMonitorManager::getNicInstances(std::vector<std::wstring> *instance
 }
 
 
-bool SystemMonitorManager::getNicCounters(std::vector<unsigned long long> *nicInstancesBandwidth,
-                                            std::vector<unsigned long long> *nicInstancesSendBytes,
-                                            std::vector<unsigned long long> *nicInstancesRecvBytes) const
+int SystemMonitorManager::getNicCounters(std::vector<unsigned long long> *nicInstancesBandwidth,
+                                         std::vector<unsigned long long> *nicInstancesSendBytes,
+                                         std::vector<unsigned long long> *nicInstancesRecvBytes) const
 {
     if (!m_initialized
         || !nicInstancesBandwidth
         || !nicInstancesSendBytes
         || !nicInstancesRecvBytes)
     {
-        return false;
+        return -1;
     }
 
     return m_nicInfo.getAllCounters(nicInstancesBandwidth, nicInstancesSendBytes, nicInstancesRecvBytes);
@@ -153,31 +153,31 @@ bool SystemMonitorManager::getNicCounters(std::vector<unsigned long long> *nicIn
 
 }
 
-bool SystemMonitorManager::getPhysicalMemoryAvailable(unsigned long long *bytesAvailable) const
+int SystemMonitorManager::getPhysicalMemoryAvailable(unsigned long long *bytesAvailable) const
 {
     if (!m_initialized || !bytesAvailable)
     {
-        return false;
+        return -1;
     }
 
     return m_memoryInfo.getPhysicalMemoryAvailable(bytesAvailable);
 }
 
-bool SystemMonitorManager::getVirtualMemoryCommitted(unsigned long long *bytesCommitted) const
+int SystemMonitorManager::getVirtualMemoryCommitted(unsigned long long *bytesCommitted) const
 {
     if (!m_initialized || !bytesCommitted)
     {
-        return false;
+        return -1;
     }
 
     return m_memoryInfo.getVirtualMemoryCommitted(bytesCommitted);
 }
 
-bool SystemMonitorManager::getVirtualMemoryCommittedPercentUsed(double *committedPercentUsed) const
+int SystemMonitorManager::getVirtualMemoryCommittedPercentUsed(double *committedPercentUsed) const
 {
     if (!m_initialized || !committedPercentUsed)
     {
-        return false;
+        return -1;
     }
 
     return m_memoryInfo.getVirtualMemoryCommittedPercentUsed(committedPercentUsed);

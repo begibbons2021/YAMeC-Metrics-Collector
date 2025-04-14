@@ -23,9 +23,9 @@ class NicInfo
 
     [[nodiscard]] size_t getNumNics() const;
 
-    [[nodiscard]] bool getAllCounters(std::vector<unsigned long long> *nicBandwidthBpsValues,
-                                std::vector<unsigned long long> *nicSendBytesValues,
-                                std::vector<unsigned long long> *nicRecvBytesValues) const;
+    [[nodiscard]] int getAllCounters(std::vector<unsigned long long> *nicBandwidthBpsValues,
+                                     std::vector<unsigned long long> *nicSendBytesValues,
+                                     std::vector<unsigned long long> *nicRecvBytesValues) const;
 
     
     private:

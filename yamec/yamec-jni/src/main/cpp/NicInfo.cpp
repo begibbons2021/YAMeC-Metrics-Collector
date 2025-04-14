@@ -117,27 +117,27 @@ size_t NicInfo::getInstanceNames(std::vector<std::wstring> *list) const
     return num_nics;
 }
 
-bool NicInfo::getAllCounters(std::vector<unsigned long long> *nicBandwidthBpsValues,
-                                std::vector<unsigned long long> *nicSendBytesValues,
-                                std::vector<unsigned long long> *nicRecvBytesValues) const
+int NicInfo::getAllCounters(std::vector<unsigned long long> *nicBandwidthBpsValues,
+                            std::vector<unsigned long long> *nicSendBytesValues,
+                            std::vector<unsigned long long> *nicRecvBytesValues) const
 {
     if (!m_pdhManager)
     {
         std::cerr << "PDH manager not initialized" << std::endl;
-        return false;
+        return -1;
     }
 
     // Collect data twice for accurate readings
     if (!m_pdhManager->collectData())
     {
-        return false;
+        return -2;
     }
 
     Sleep(500); // Wait for 500ms
 
     if (!m_pdhManager->collectData())
     {
-        return false;
+        return -2;
     }
 
     // NIC Current Bandwidth in Bps
@@ -147,7 +147,7 @@ bool NicInfo::getAllCounters(std::vector<unsigned long long> *nicBandwidthBpsVal
 
         if (!m_pdhManager->getCounterValue(m_nicBandwidthBpsCounters.at(i), &bandwidth))
         {
-            return false;
+            return -3;
         }
 
         nicBandwidthBpsValues->push_back(bandwidth);
@@ -160,7 +160,7 @@ bool NicInfo::getAllCounters(std::vector<unsigned long long> *nicBandwidthBpsVal
 
         if (!m_pdhManager->getCounterValue(m_nicRecvBytesCounters.at(i), &bytesRecv))
         {
-            return false;
+            return -4;
         }
 
         nicRecvBytesValues->push_back(bytesRecv);
@@ -173,12 +173,12 @@ bool NicInfo::getAllCounters(std::vector<unsigned long long> *nicBandwidthBpsVal
 
         if (!m_pdhManager->getCounterValue(m_nicSendBytesCounters.at(i), &bytesSent))
         {
-            return false;
+            return -5;
         }
 
         nicSendBytesValues->push_back(bytesSent);
     }
 
-    return true;
+    return 0;
 
 }

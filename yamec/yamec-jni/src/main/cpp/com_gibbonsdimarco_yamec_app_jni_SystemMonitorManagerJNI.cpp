@@ -20,7 +20,7 @@ JNIEXPORT jlong JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManag
     // Also Marcus thought of it too!
 
     // Allocate memory for new SystemMonitorManager and initialize
-    if (auto *monitor = new SystemMonitorManager; monitor->initialize())
+    if (auto *monitor = new SystemMonitorManager; 0 == monitor->initialize())
     {
         return reinterpret_cast<jlong>(monitor); // Return the memory address
     }
@@ -38,11 +38,12 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                             (JNIEnv *env, jobject obj, const jlong monitorPtr)
 {
 
-    auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
+    const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
-    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemCpuMetric");
-    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(Ljava/lang/String;D)V");
+    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemCpuMetric");
+    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>",
+                                                            "(Ljava/lang/String;D)V");
 
 
     // Create buffers to hold the other information temporarily
@@ -51,14 +52,14 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     double usageBuffer;
 
     // Attempt to fill buffers
-    if (!monitor->getCpuUsage(&usageBuffer))
+    if (const int status = monitor->getCpuUsage(&usageBuffer); 0 != status)
     {
         // Retrieval of counters failed, so return null
         return env->NewGlobalRef(nullptr);
     }
 
     // Put data into Java objects
-    jobject systemMetricObject = env->NewObject(systemMetricClass,
+    const jobject systemMetricObject = env->NewObject(systemMetricClass,
                                                 systemMetricConstructor,
                                                 env->NewStringUTF(deviceName.c_str()),
                                                 usageBuffer);
@@ -71,11 +72,11 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                             (JNIEnv *env, jobject obj, const jlong monitorPtr)
 {
 
-    auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
+    const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
-    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemGpuMetric");
-    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(Ljava/lang/String;D)V");
+    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemGpuMetric");
+    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(Ljava/lang/String;D)V");
 
 
     // Create buffers to hold the other information temporarily
@@ -84,14 +85,14 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     double usageBuffer;
 
     // Attempt to fill buffers
-    if (!monitor->getGpuUsage(&usageBuffer))
+    if (const int status = monitor->getGpuUsage(&usageBuffer); 0 != status)
     {
         // Retrieval of counters failed, so return null
         return env->NewGlobalRef(nullptr);
     }
 
     // Put data into Java objects
-    jobject systemMetricObject = env->NewObject(systemMetricClass,
+    const jobject systemMetricObject = env->NewObject(systemMetricClass,
                                                 systemMetricConstructor,
                                                 env->NewStringUTF(deviceName.c_str()),
                                                 usageBuffer);
@@ -104,12 +105,12 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getMemoryMetrics
                             (JNIEnv *env, jobject obj, const jlong monitorPtr)
 {
-    auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
+    const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
-    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemMemoryMetric");
+    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemMemoryMetric");
     // long long, long long, double, bool, bool
-    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(JJDZZ)V");
+    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(JJDZZ)V");
 
 
     // Create buffers to hold the other information temporarily
@@ -121,14 +122,16 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     constexpr bool isVirtualMemoryCommittedUnsigned = true;
 
     // Attempt to fill buffers
-    if (!monitor->getMemoryCounters(&physicalMemoryAvailable, &virtualMemoryCommitted, &committedVirtualMemoryUsage))
+    if (const int status = monitor->getMemoryCounters(&physicalMemoryAvailable,
+                            &virtualMemoryCommitted,
+                            &committedVirtualMemoryUsage); 0 != status)
     {
         // Retrieval of counters failed, so return null
         return env->NewGlobalRef(nullptr);
     }
 
     // Put data into Java objects
-    jobject systemMetricObject = env->NewObject(systemMetricClass,
+    const jobject systemMetricObject = env->NewObject(systemMetricClass,
                                                 systemMetricConstructor,
                                                 static_cast<jlong>(physicalMemoryAvailable),
                                                 static_cast<jlong>(virtualMemoryCommitted),
@@ -144,16 +147,16 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                             (JNIEnv *env, jobject obj, const jlong monitorPtr)
 {
 
-    auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
+    const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
-    jclass arrayListClass = env->FindClass("java/util/ArrayList");
-    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemDiskMetric");
-    jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
+    const jclass arrayListClass = env->FindClass("java/util/ArrayList");
+    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemDiskMetric");
+    const jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
     // Java does Generic type checks at compile time but not runtime, so we add objects of type Object
-    jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
+    const jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
     // Ljava/lang/string; double, long long, long long, double, bool, bool
-    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(Ljava/lang/String;DJJDZZ)V");
+    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(Ljava/lang/String;DJJDZZ)V");
 
     // Create buffers to hold the disk instance names and disk instance count
     std::vector<std::wstring> diskInstanceNames;
@@ -164,6 +167,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         diskInstanceCount = monitor->getDiskInstances(&diskInstanceNames);
     }
     catch (...)
+
     {
         // If the monitor's pointer is incorrect or some error occurs in retrieval
         return env->NewGlobalRef(nullptr); // An error occurs when retrieving data
@@ -184,10 +188,11 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     constexpr bool isWriteBandwidthUnsigned = true;
 
     // Attempt to fill buffers
-    if (!monitor->getDiskCounters(&diskInstancesUsage,
+    if (const int status = monitor->getDiskCounters(&diskInstancesUsage,
                                             &diskInstancesReadBandwidth,
                                             &diskInstancesWriteBandwidth,
-                                            &diskInstancesAvgTimeToTransfer))
+                                            &diskInstancesAvgTimeToTransfer);
+                                            0 != status)
     {
         // Retrieval of counters failed, so return null
         return env->NewGlobalRef(nullptr);
@@ -196,7 +201,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     // Put data into Java objects
 
     // Create ArrayList of size diskInstanceCount
-    jobject diskInstanceArrayList = env->NewObject(arrayListClass,
+    const jobject diskInstanceArrayList = env->NewObject(arrayListClass,
                                                     arrayListConstructor,
                                                     static_cast<jlong>(diskInstanceCount));
 
@@ -222,7 +227,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         }
 
         // Fill character buffer
-        auto utf8String = new char[utf8Length + 1];
+        const auto utf8String = new char[utf8Length + 1];
         utf8Length = WideCharToMultiByte(CP_UTF8,
                             0,
                             diskInstanceNames[i].c_str(),
@@ -241,7 +246,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 
         // Allocate Java SystemDiskMetric object
         // Ljava/lang/String; double, long long, long long, double, bool, bool
-        jobject diskInstanceObject = env->NewObject(systemMetricClass,
+        const jobject diskInstanceObject = env->NewObject(systemMetricClass,
                                                         systemMetricConstructor,
                                                         env->NewStringUTF(utf8String),
                                                         diskInstancesUsage[i],
@@ -252,7 +257,9 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                                                         static_cast<jboolean>(isWriteBandwidthUnsigned));
 
         // Try to add the object to the ArrayList
-        if (const jboolean success = env->CallBooleanMethod(diskInstanceArrayList, arrayListAddMethod, diskInstanceObject); !success)
+        if (const jboolean success = env->CallBooleanMethod(diskInstanceArrayList,
+                                        arrayListAddMethod,
+                                        diskInstanceObject); !success)
         {
             return env->NewGlobalRef(nullptr);
         }
@@ -268,16 +275,16 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                             (JNIEnv *env, jobject obj, const jlong monitorPtr)
 {
 
-    auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
+    const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
-    jclass arrayListClass = env->FindClass("java/util/ArrayList");
-    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemNicMetric");
-    jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
+    const jclass arrayListClass = env->FindClass("java/util/ArrayList");
+    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemNicMetric");
+    const jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
     // Java does Generic type checks at compile time but not runtime, so we add objects of type Object
-    jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
+    const jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
     // Ljava/lang/string; long long, long long, long long, bool, bool, bool
-    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(Ljava/lang/String;JJJZZZ)V");
+    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(Ljava/lang/String;JJJZZZ)V");
 
     // Create buffers to hold the NIC instance names and NIC instance count
     std::vector<std::wstring> nicInstanceNames;
@@ -308,9 +315,10 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     constexpr bool isBytesReceivedUnsigned = true;
 
     // Attempt to fill buffers
-    if (!monitor->getNicCounters(&nicInstancesBandwidth,
+    if (const int status = monitor->getNicCounters(&nicInstancesBandwidth,
                                             &nicInstancesBytesSent,
-                                            &nicInstancesBytesReceived))
+                                            &nicInstancesBytesReceived);
+                                            0 != status)
     {
         // Retrieval of counters failed, so return null
         return env->NewGlobalRef(nullptr);
@@ -319,7 +327,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     // Put data into Java objects
 
     // Create ArrayList of size nicInstanceCount
-    jobject nicInstanceArrayList = env->NewObject(arrayListClass,
+    const jobject nicInstanceArrayList = env->NewObject(arrayListClass,
                                                     arrayListConstructor,
                                                     static_cast<jlong>(nicInstanceCount));
 
@@ -345,7 +353,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         }
 
         // Fill character buffer
-        auto utf8String = new char[utf8Length + 1];
+        const auto utf8String = new char[utf8Length + 1];
         utf8Length = WideCharToMultiByte(CP_UTF8,
                             0,
                             nicInstanceNames[i].c_str(),
@@ -364,7 +372,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 
         // Allocate Java SystemNicMetric object
         // Ljava/lang/String; long long, long long, long long, bool, bool, bool
-        jobject nicInstanceObject = env->NewObject(systemMetricClass,
+        const jobject nicInstanceObject = env->NewObject(systemMetricClass,
                                                         systemMetricConstructor,
                                                         env->NewStringUTF(utf8String),
                                                         static_cast<jlong>(nicInstancesBandwidth[i]),
@@ -409,11 +417,11 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                             (JNIEnv *env, jobject obj, const jlong monitorPtr)
 {
 
-    auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
+    const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
-    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/MemoryHardwareInformation");
-    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(JJJJZZ)V");
+    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/MemoryHardwareInformation");
+    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(JJJJZZ)V");
 
     try
     {
@@ -428,10 +436,10 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 
 
         // Attempt to fill buffers
-        if (0 != monitor->getHardwareMemoryInformation(&speed,
+        if (const int status = monitor->getHardwareMemoryInformation(&speed,
                                                         &capacity,
                                                         &slotsUsed,
-                                                        &slotsTotal))
+                                                        &slotsTotal); 0 != status)
         {
             // Add log message
             // Retrieval of counters failed, so return null

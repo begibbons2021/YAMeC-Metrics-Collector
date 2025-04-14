@@ -27,7 +27,7 @@ public:
 
     [[nodiscard]] bool initialize(PdhQueryManager *pdhManager);
 
-    [[nodiscard]] bool getUsage(double *usage) const;
+    [[nodiscard]] int getUsage(double *usage) const;
 
     [[nodiscard]] static std::vector<GpuDevice> getDevices();
 

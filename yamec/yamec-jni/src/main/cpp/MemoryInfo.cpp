@@ -53,133 +53,133 @@ bool MemoryInfo::initialize(PdhQueryManager *pdhManager,
     return true;
 }
 
-bool MemoryInfo::getAllCounters(unsigned long long *physicalMemoryAvailable,
-                                        unsigned long long *virtualMemoryCommitted,
-                                        double *virtualMemoryCommittedPercentUsed) const
+int MemoryInfo::getAllCounters(unsigned long long *physicalMemoryAvailable,
+                               unsigned long long *virtualMemoryCommitted,
+                               double *virtualMemoryCommittedPercentUsed) const
 {
     if (!m_pdhManager)
     {
         std::cerr << "PDH manager not initialized" << std::endl;
-        return false;
+        return -1;
     }
 
     // Collect data twice for accurate readings
     if (!m_pdhManager->collectData())
     {
-        return false;
+        return -2;
     }
 
     Sleep(500); // Wait for 500ms
 
     if (!m_pdhManager->collectData())
     {
-        return false;
+        return -2;
     }
 
     if (!m_pdhManager->getCounterValue(m_physicalMemoryAvailableCounter, physicalMemoryAvailable))
     {
-        return false;
+        return -3;
     }
 
     if (!m_pdhManager->getCounterValue(m_virtualMemoryCommittedCounter, virtualMemoryCommitted))
     {
-        return false;
+        return -4;
     }
 
     if (!m_pdhManager->getCounterValue(m_virtualMemoryCommittedPercentUsedCounter, virtualMemoryCommittedPercentUsed))
     {
-        return false;
+        return -5;
     }
 
-    return true;
+    return 0;
 
 }
 
-bool MemoryInfo::getPhysicalMemoryAvailable(unsigned long long *physicalMemoryAvailable) const
+int MemoryInfo::getPhysicalMemoryAvailable(unsigned long long *physicalMemoryAvailable) const
 {
     if (!m_pdhManager)
     {
         std::cerr << "PDH manager not initialized" << std::endl;
-        return false;
+        return -1;
     }
 
     // Collect data twice for accurate readings
     if (!m_pdhManager->collectData())
     {
-        return false;
+        return -2;
     }
 
     Sleep(500); // Wait for 500ms
 
     if (!m_pdhManager->collectData())
     {
-        return false;
+        return -2;
     }
 
     if (!m_pdhManager->getCounterValue(m_physicalMemoryAvailableCounter, physicalMemoryAvailable))
     {
-        return false;
+        return -3;
     }
 
-    return true;
+    return 0;
 }
 
-bool MemoryInfo::getVirtualMemoryCommitted(unsigned long long *virtualMemoryCommitted) const
+int MemoryInfo::getVirtualMemoryCommitted(unsigned long long *virtualMemoryCommitted) const
 {
     if (!m_pdhManager)
     {
         std::cerr << "PDH manager not initialized" << std::endl;
-        return false;
+        return -1;
     }
 
     // Collect data twice for accurate readings
     if (!m_pdhManager->collectData())
     {
-        return false;
+        return -2;
     }
 
     Sleep(500); // Wait for 500ms
 
     if (!m_pdhManager->collectData())
     {
-        return false;
+        return -2;
     }
 
     if (!m_pdhManager->getCounterValue(m_virtualMemoryCommittedCounter, virtualMemoryCommitted))
     {
-        return false;
+        return -3;
     }
 
-    return true;
+    return false;
 }
 
-bool MemoryInfo::getVirtualMemoryCommittedPercentUsed(double *virtualMemoryCommittedPercentUsed) const
+int MemoryInfo::getVirtualMemoryCommittedPercentUsed(double *virtualMemoryCommittedPercentUsed) const
 {
     if (!m_pdhManager)
     {
         std::cerr << "PDH manager not initialized" << std::endl;
-        return false;
+        return -1;
     }
 
     // Collect data twice for accurate readings
     if (!m_pdhManager->collectData())
     {
-        return false;
+        return -2;
     }
 
     Sleep(500); // Wait for 500ms
 
     if (!m_pdhManager->collectData())
     {
-        return false;
+        return -2;
     }
 
     if (!m_pdhManager->getCounterValue(m_virtualMemoryCommittedPercentUsedCounter, virtualMemoryCommittedPercentUsed))
     {
-        return false;
+        return -3;
     }
 
-    return true;
+    return 0;
 }
 
 unsigned long long MemoryInfo::getPhysicalMemory()

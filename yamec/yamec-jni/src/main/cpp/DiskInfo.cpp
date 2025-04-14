@@ -136,31 +136,28 @@ size_t DiskInfo::getInstanceNames(std::vector<std::wstring> *list) const
 }
 
 
-
-
-
-bool DiskInfo::getAllCounters(std::vector<double> *diskUsageValues,
-                                std::vector<unsigned long long> *diskReadBandwidthValues,
-                                std::vector<unsigned long long> *diskWriteBandwidthValues,
-                                std::vector<double> *diskTimeToTransferValues) const
+int DiskInfo::getAllCounters(std::vector<double> *diskUsageValues,
+                             std::vector<unsigned long long> *diskReadBandwidthValues,
+                             std::vector<unsigned long long> *diskWriteBandwidthValues,
+                             std::vector<double> *diskTimeToTransferValues) const
 {
     if (!m_pdhManager)
     {
         std::cerr << "PDH manager not initialized" << std::endl;
-        return false;
+        return -1;
     }
 
     // Collect data twice for accurate readings
     if (!m_pdhManager->collectData())
     {
-        return false;
+        return -2;
     }
 
     Sleep(500); // Wait for 500ms
 
     if (!m_pdhManager->collectData())
     {
-        return false;
+        return -2;
     }
 
     // Disk Utilization
@@ -170,7 +167,7 @@ bool DiskInfo::getAllCounters(std::vector<double> *diskUsageValues,
 
         if (!m_pdhManager->getCounterValue(m_diskUsagePercentCounters.at(i), &diskUsage))
         {
-            return false;
+            return -3;
         }
 
         diskUsageValues->push_back(diskUsage);
@@ -183,7 +180,7 @@ bool DiskInfo::getAllCounters(std::vector<double> *diskUsageValues,
 
         if (!m_pdhManager->getCounterValue(m_diskReadBandwidthCounters.at(i), &bytesRead))
         {
-            return false;
+            return -4;
         }
 
         diskReadBandwidthValues->push_back(bytesRead);
@@ -196,7 +193,7 @@ bool DiskInfo::getAllCounters(std::vector<double> *diskUsageValues,
 
         if (!m_pdhManager->getCounterValue(m_diskWriteBandwidthCounters.at(i), &bytesWritten))
         {
-            return false;
+            return -5;
         }
 
         diskWriteBandwidthValues->push_back(bytesWritten);
@@ -209,12 +206,12 @@ bool DiskInfo::getAllCounters(std::vector<double> *diskUsageValues,
 
         if (!m_pdhManager->getCounterValue(m_diskTimeToTransferCounters.at(i), &avgTimeToTransfer))
         {
-            return false;
+            return -6;
         }
 
         diskTimeToTransferValues->push_back(avgTimeToTransfer);
     }
 
-    return true;
+    return 0;
 
 }

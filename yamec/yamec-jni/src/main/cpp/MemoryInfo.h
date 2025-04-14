@@ -43,15 +43,15 @@ public:
                                            unsigned int *slotsUsed,
                                            unsigned int *slotsTotal) const;
 
-    [[nodiscard]] bool getAllCounters(unsigned long long *physicalMemoryAvailable,
-                                        unsigned long long *virtualMemoryCommitted,
-                                        double *virtualMemoryCommittedPercentUsed) const;
+    [[nodiscard]] int getAllCounters(unsigned long long *physicalMemoryAvailable,
+                                     unsigned long long *virtualMemoryCommitted,
+                                     double *virtualMemoryCommittedPercentUsed) const;
 
-    [[nodiscard]] bool getPhysicalMemoryAvailable(unsigned long long *physicalMemoryAvailable) const;
+    [[nodiscard]] int getPhysicalMemoryAvailable(unsigned long long *physicalMemoryAvailable) const;
 
-    [[nodiscard]] bool getVirtualMemoryCommitted(unsigned long long *virtualMemoryCommitted) const;
+    [[nodiscard]] int getVirtualMemoryCommitted(unsigned long long *virtualMemoryCommitted) const;
 
-    [[nodiscard]] bool getVirtualMemoryCommittedPercentUsed(double *virtualMemoryCommittedPercentUsed) const;
+    [[nodiscard]] int getVirtualMemoryCommittedPercentUsed(double *virtualMemoryCommittedPercentUsed) const;
 
     private:
     PDH_HCOUNTER m_physicalMemoryAvailableCounter{};
