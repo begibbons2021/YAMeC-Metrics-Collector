@@ -20,7 +20,8 @@ JNIEXPORT jlong JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManag
     // Also Marcus thought of it too!
 
     // Allocate memory for new SystemMonitorManager and initialize
-    if (auto *monitor = new SystemMonitorManager; 0 == monitor->initialize())
+    auto *monitor = new SystemMonitorManager;
+    if (const int status = monitor->initialize(); 0 == status)
     {
         return reinterpret_cast<jlong>(monitor); // Return the memory address
     }
@@ -28,6 +29,8 @@ JNIEXPORT jlong JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManag
     {
         // If initialization fails, clear memory
         delete monitor;
+
+
 
         return -1; // Failed
     }
