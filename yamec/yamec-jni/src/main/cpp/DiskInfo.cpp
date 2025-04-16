@@ -318,7 +318,7 @@ int DiskInfo::getDiskInformation(std::vector<std::wstring> *hardwareNames,
     response->Release();
 
     // // Query MSFT_Partition for Partition Letters
-    // hr = m_wmiManager->queryWindowsStorageService("SELECT * FROM MSFT_Partition", response);
+    hr = m_wmiManager->queryWindowsStorageService("SELECT * FROM MSFT_Partition", response);
 
     if (FAILED(hr))
     {
@@ -326,44 +326,62 @@ int DiskInfo::getDiskInformation(std::vector<std::wstring> *hardwareNames,
     }
 
     // Output data
-    // ulReturn = 0; // Lines left to return
+    ulReturn = 0; // Lines left to return
     std::map<std::wstring, unsigned int> diskPartitionToUniqueIdMappingsTemp;
 
-    // while (response)
-    // {
-    //     hr = response->Next(WBEM_INFINITE, 1, &pWbemObject, &ulReturn);
-    //
-    //     if (0 == ulReturn)
-    //     {
-    //         break;
-    //     }
-    //
-    //     VARIANT driveLetterVar,
-    //             diskNumberVar;
-    //
-    //     VariantInit(&diskNumberVar);
-    //     VariantInit(&driveLetterVar);
-    //
-    //     hr = pWbemObject->Get(L"DiskNumber", 0, &diskNumberVar, nullptr, nullptr);
-    //     hr = pWbemObject->Get(L"DriveLetter", 0, &driveLetterVar, nullptr, nullptr);
-    //
-    //     // Map drive letter to disk number
-    //     // This can change between boots and on hardware updates
-    //     // So we can't rely on drive letter as the only source to associate disks and
-    //     // partitions, which is why the database will store the unique id and
-    //     // partition letters currently associated with it, but not the disk numbers
-    //     //
-    //     // It also doesn't matter if not all drives have partitions mapped to them (some won't)
-    //
-    //     diskPartitionToUniqueIdMappingsTemp[driveLetterVar.bstrVal] = diskNumberVar.ulVal;
-    //
-    //     VariantClear(&diskNumberVar);
-    //     VariantClear(&driveLetterVar);
-    //
-    //     pWbemObject->Release();
-    // }
-    //
-    // response->Release();
+    while (response)
+    {
+        hr = response->Next(WBEM_INFINITE, 1, &pWbemObject, &ulReturn);
+
+        if (0 == ulReturn)
+        {
+            break;
+        }
+
+        VARIANT driveLetterVar,
+                diskNumberVar;
+
+        VariantInit(&diskNumberVar);
+        VariantInit(&driveLetterVar);
+
+        hr = pWbemObject->Get(L"DiskNumber", 0, &diskNumberVar, nullptr, nullptr);
+        hr = pWbemObject->Get(L"DriveLetter", 0, &driveLetterVar, nullptr, nullptr);
+
+        // Map drive letter to disk number
+        // This can change between boots and on hardware updates
+        // So we can't rely on drive letter as the only source to associate disks and
+        // partitions, which is why the database will store the unique id and
+        // partition letters currently associated with it, but not the disk numbers
+        //
+        // It also doesn't matter if not all drives have partitions mapped to them (some won't)
+
+        // All this work just to get this into a widestring is crazy but
+        // a string was chosen with consideration of other platforms
+        // which use different directories (though this code still has to
+        // change for other platforms because this uses native code, so idk)
+
+        std::string driveLetterStr(1, driveLetterVar.cVal);
+        int driveLetterAsStrLen = 1;
+        auto partitionNameAsWchar = new wchar_t[2];
+        size_t convertedChars = 0;
+        mbstowcs_s(&convertedChars, partitionNameAsWchar,
+            driveLetterAsStrLen + 1, driveLetterStr.c_str(),
+            driveLetterAsStrLen);
+        std::wstring partitionName(partitionNameAsWchar);
+
+        std::cout << driveLetterStr << std::endl;
+
+        diskPartitionToUniqueIdMappingsTemp[partitionName] = diskNumberVar.ulVal;
+
+        VariantClear(&diskNumberVar);
+        VariantClear(&driveLetterVar);
+
+        // delete driveLetter;
+
+        pWbemObject->Release();
+    }
+
+    response->Release();
 
     // Phew! At last! We're done!
     // Copy contents to pointer objects
