@@ -376,8 +376,6 @@ int DiskInfo::getDiskInformation(std::vector<std::wstring> *hardwareNames,
         VariantClear(&diskNumberVar);
         VariantClear(&driveLetterVar);
 
-        // delete driveLetter;
-
         pWbemObject->Release();
     }
 

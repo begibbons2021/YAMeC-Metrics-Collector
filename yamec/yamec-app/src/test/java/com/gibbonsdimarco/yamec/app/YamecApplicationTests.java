@@ -143,7 +143,7 @@ class YamecApplicationTests {
                         System.err.printf("\t\tUnique ID: %s\n", diskHardwareInformation.getUniqueId());
                         System.err.printf("\t\tCapacity: %s bytes\n",
                                             diskHardwareInformation.getCapacityAsUnsignedString());
-                        System.err.printf("\t\tMedia Type: %s bytes\n",
+                        System.err.printf("\t\tMedia Type: %s\n",
                                 DiskHardwareInformation.getMediaTypeString(diskHardwareInformation.getMediaType()));
                         System.err.print("\t\tPartitions: ");
                         ArrayList<String> partitions = diskHardwareInformation.getPartitions();
