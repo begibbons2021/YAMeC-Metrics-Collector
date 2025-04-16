@@ -42,7 +42,7 @@ int SystemMonitorManager::initialize()
     }
 
     // Initialize the disk info
-    if (!m_diskInfo.initialize(&m_pdhManager))
+    if (!m_diskInfo.initialize(&m_pdhManager, &m_wmiManager))
     {
         return -6;
     }
@@ -203,6 +203,24 @@ int SystemMonitorManager::getHardwareMemoryInformation(unsigned long long *speed
                                                 capacity,
                                                 slotsUsed,
                                                 slotsTotal);
+}
+
+int SystemMonitorManager::getHardwareDiskInformation(std::vector<std::wstring> *hardwareNames,
+                                                     std::vector<std::wstring> *uniqueIds,
+                                                     std::vector<unsigned int> *mediaTypes,
+                                                     std::vector<unsigned long long> *capacities,
+                                                     std::vector<unsigned int> *diskNumbers,
+                                                     std::map<std::wstring, unsigned int> *partitionMappings) const
+{
+    if (!m_initialized)
+    {
+        return -1;
+    }
+
+    return m_diskInfo.getDiskInformation(hardwareNames, uniqueIds,
+                                         mediaTypes, capacities,
+                                         diskNumbers,
+                                         partitionMappings);
 }
 
 unsigned long long SystemMonitorManager::getPhysicalMemory()

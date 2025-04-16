@@ -267,6 +267,48 @@ int WmiQueryManager::queryCimV2Service(const char *query, IEnumWbemClassObject *
     return hr;
 }
 
+int WmiQueryManager::queryStandardCimv2Service(const char *query, IEnumWbemClassObject *&response) const
+{
+    // Query data
+    IEnumWbemClassObject* pIEnum = nullptr; // The address of the current response being processed
+    const HRESULT hr = m_wbemServices_StandardCimv2->ExecQuery(bstr_t(L"WQL"),
+                                    bstr_t(query),
+                                    WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
+                                    nullptr,
+                                    &pIEnum);
+
+    if (FAILED(hr))
+    {
+        std::cerr << "WMI StandardCimV2 Query \"" << query << "\" failed. Error code: "
+                        << std::hex << hr << std::endl;
+        return hr;
+    }
+
+    response = pIEnum;
+    return hr;
+}
+
+int WmiQueryManager::queryWindowsStorageService(const char *query, IEnumWbemClassObject *&response) const
+{
+    // Query data
+    IEnumWbemClassObject* pIEnum = nullptr; // The address of the current response being processed
+    const HRESULT hr = m_wbemServices_WindowsStorage->ExecQuery(bstr_t(L"WQL"),
+                                    bstr_t(query),
+                                    WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
+                                    nullptr,
+                                    &pIEnum);
+
+    if (FAILED(hr))
+    {
+        std::cerr << "WMI Windows/Storage Query \"" << query << "\" failed. Error code: "
+                        << std::hex << hr << std::endl;
+        return hr;
+    }
+
+    response = pIEnum;
+    return hr;
+}
+
 // int WmiQueryManager::queryCimV2Service(const char *query, std::vector<std::map<std::wstring, VARIANT>> *responses)
 // {
 //     // Query data

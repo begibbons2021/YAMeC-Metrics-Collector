@@ -5,6 +5,8 @@ import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+
 @SpringBootTest
 class YamecApplicationTests {
 
@@ -121,6 +123,58 @@ class YamecApplicationTests {
         catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to retrieve Memory Metrics.");
+            monitor.close();
+            return false;
+        }
+
+        try {
+            System.err.println("Testing Disk Hardware Data Retrieval...");
+            ArrayList<DiskHardwareInformation> diskHardwareInformationList = monitor.getDiskHardwareInformation();
+            if (diskHardwareInformationList != null) {
+                // Calculate the actual virtual memory use from the amount of committed memory used.
+                System.err.println("Disk Information:");
+                if (diskHardwareInformationList.isEmpty()) {
+                    System.err.println("\tNo Disk Hardware Found");
+                }
+                else {
+                    for (DiskHardwareInformation diskHardwareInformation : diskHardwareInformationList) {
+                        System.err.printf("\t%s (Drive #: %d)\n", diskHardwareInformation.getFriendlyName(),
+                                                                    diskHardwareInformation.getDiskNumber());
+                        System.err.printf("\t\tUnique ID: %s\n", diskHardwareInformation.getUniqueId());
+                        System.err.printf("\t\tCapacity: %s bytes\n",
+                                            diskHardwareInformation.getCapacityAsUnsignedString());
+                        System.err.printf("\t\tMedia Type: %s bytes\n",
+                                DiskHardwareInformation.getMediaTypeString(diskHardwareInformation.getMediaType()));
+                        System.err.print("\t\tPartitions: ");
+                        ArrayList<String> partitions = diskHardwareInformation.getPartitions();
+                        int numPartitions = partitions.size();
+                        if (numPartitions == 0) {
+                            System.err.println("No Partitions");
+                        }
+                        else {
+                            for (int partitionNum = 0; partitionNum < numPartitions; partitionNum++) {
+                                System.err.printf("%s", partitions.get(partitionNum));
+                                if (partitionNum != numPartitions - 1) {
+                                    System.err.print("; ");
+                                }
+                                else {
+                                    System.err.println();
+                                }
+                            }
+                        }
+
+                        System.err.println();
+                    }
+                }
+            }
+            else {
+                System.err.println("Disk Hardware: \n\tDisk Hardware Could Not Be Identified");
+            }
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Failed to retrieve Memory Hardware Information.");
             monitor.close();
             return false;
         }

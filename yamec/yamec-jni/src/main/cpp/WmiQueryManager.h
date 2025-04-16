@@ -47,6 +47,30 @@ class WmiQueryManager {
      */
     int queryCimV2Service(const char *query, IEnumWbemClassObject *&response) const;
 
+    /**
+     * Queries the StandardCimV2 WMI Service based on the SQL-style query passed by the query parameter,
+     * then returns the response in the response reference variable passed by parameter
+     * and a status code
+     *
+     * Note that all pairs
+     * @param query The query string
+     * @param response The reference to a pointer to hold the returned IEnumWbemClassObject
+     * @return A 32-bit integer containing the WMI Query Status Code
+     */
+    int queryStandardCimv2Service(const char *query, IEnumWbemClassObject *&response) const;
+
+    /**
+     * Queries the Microsoft/Windows/Services WMI Service based on the SQL-style query
+     * passed by the query parameter, then returns the response in the response
+     * reference variable passed by parameter and a status code
+     *
+     * Note that all pairs
+     * @param query The query string
+     * @param response The reference to a pointer to hold the returned IEnumWbemClassObject
+     * @return A 32-bit integer containing the WMI Query Status Code
+     */
+    int queryWindowsStorageService(const char *query, IEnumWbemClassObject *&response) const;
+
     // /**
     //  * Queries the CimV2 WMI Service based on the SQL-style query passed by the query parameter, then returns
     //  * a std::vector containing a map for all returned objects' key-value pairs.

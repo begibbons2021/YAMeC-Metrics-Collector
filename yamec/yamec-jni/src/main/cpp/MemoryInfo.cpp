@@ -249,14 +249,10 @@ int MemoryInfo::getMemoryInformation(unsigned long long *speed,
         hr = pWbemObject->Get(L"ConfiguredClockSpeed", 0, &speedVar, nullptr, nullptr);
         hr = pWbemObject->Get(L"Formfactor", 0, &formfactorVar, nullptr, nullptr);
 
-        // std::wcout << "Memory Capacity: " << capacityVar.bstrVal << " bytes" << std::endl;
-        // std::wcout << "Memory Speed: " << speedVar.ullVal << "MT/s" <<  std::endl;
-        // std::wcout << "Memory Formfactor: " << formfactorVar.uintVal << std::endl;
-
         ++memorySlotsUsed;
 
         // WMI uint64 doesn't become a ullVal, so it must be converted to a wstring, then
-        // parsed as am unsigned long long
+        // parsed as an unsigned long long
         auto capacityAsWString = std::wstring(capacityVar.bstrVal);
         unsigned long long capacityAsUINT64 = std::stoull(capacityAsWString);
 

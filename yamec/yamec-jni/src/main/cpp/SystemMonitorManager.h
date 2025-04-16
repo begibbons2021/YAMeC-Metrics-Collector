@@ -65,6 +65,12 @@ public:
     [[nodiscard]] int getHardwareMemoryInformation(unsigned long long *speed, unsigned long long *capacity,
                                      unsigned int *slotsUsed, unsigned int *slotsTotal) const;
 
+    int getHardwareDiskInformation(std::vector<std::wstring> *hardwareNames,
+                                   std::vector<std::wstring> *uniqueIds,
+                                   std::vector<unsigned int> *mediaTypes, std::vector<unsigned long long> *capacities,
+                                   std::vector<unsigned int> *diskNumbers,
+                                   std::map<std::wstring, unsigned int> *partitionMappings) const;
+
     [[nodiscard]] unsigned long long getPhysicalMemory();
 
 private:

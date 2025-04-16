@@ -3,6 +3,45 @@
 #include <iostream>
 /* com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI */
 
+int convertFromWideStrToStr(std::string &dest, const std::wstring &src)
+{
+
+    // Convert wchar instance name to char
+    // Suggested method: https://stackoverflow.com/a/870444
+    // Determining new length
+    int utf8Length = WideCharToMultiByte(CP_UTF8,
+                                            0,
+                                            src.c_str(),
+                                            -1,
+                                            nullptr,
+                                            0,
+                                            nullptr,
+                                            nullptr);
+
+    // Fill character buffer
+    const auto utf8String = new char[utf8Length + 1];
+    utf8Length = WideCharToMultiByte(CP_UTF8,
+                        0,
+                        src.c_str(),
+                        -1,
+                        utf8String,
+                        utf8Length,
+                        nullptr,
+                        nullptr);
+
+    // Conversion failure fail-safe: Return -1
+    if (utf8Length == 0)
+    {
+        std::wcerr << "Conversion of " << src << " to UTF-8 failed!" << std::endl;
+        // TODO: Add log message
+        return -1;
+    }
+
+    dest = utf8String;
+
+    return 0;
+}
+
 /*
  * Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
  * Method:    sayHello
@@ -462,11 +501,195 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         return systemMetricObject;
 
     }
-    catch (const std::exception &e)
+    catch (std::exception &e)
     {
         // Add log message
         return env->NewGlobalRef(nullptr);
     }
 
 }
+
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getHardwareDiskInformation
+                            (JNIEnv *env, jobject obj, const jlong monitorPtr)
+{
+    // I apologize if this seems like spaghetti code because of the way the data is being managed
+    // Please let me know if this could benefit from a major refactor. (std::map<wstring, any>?)
+
+    const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
+
+    // Java Classes & Methods Used
+    const jclass arrayListClass = env->FindClass("java/util/ArrayList");
+    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/DiskHardwareInformation");
+    const jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
+    // Java does Generic type checks at compile time but not runtime, so we add objects of type Object
+    const jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
+    // String;String;long long;long long;long long;boolean;ArrayList
+    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>",
+                                        "(Ljava/lang/String;Ljava/lang/String;JJJZLjava/util/ArrayList;)V");
+
+    // Create buffers to hold the disk information temporarily
+    std::vector<std::wstring> diskFriendlyNames;
+    std::vector<std::wstring> diskUniqueIds;
+    std::vector<unsigned int> diskMediaTypes;
+    std::vector<unsigned long long> diskCapacities;
+    std::vector<unsigned int> diskNumbers;
+    std::map<std::wstring, unsigned int> diskPartitionNameToDiskNumberMaps;
+
+    try
+    {
+        // Attempt to fill buffers
+        if (const int status = monitor->getHardwareDiskInformation(&diskFriendlyNames,
+                                                                    &diskUniqueIds,
+                                                                    &diskMediaTypes,
+                                                                    &diskCapacities,
+                                                                    &diskNumbers,
+                                                                    &diskPartitionNameToDiskNumberMaps);
+                                                0 != status)
+        {
+            std::wcerr << "Hardware disk information could not be retrieved. "
+                        << std::endl;
+            std::wcerr << "Error Code: " << std::hex << status << std::endl;
+            // Retrieval of counters failed, so return null
+            return env->NewGlobalRef(nullptr);
+        }
+    }
+    catch (std::exception &e)
+    {
+        std::cerr << "GetHardwareDiskInformation failed: \n Error: "
+                        << e.what() << std::endl;
+        return env->NewGlobalRef(nullptr);
+    }
+    catch (std::runtime_error &e)
+    {
+        std::cerr << "GetHardwareDiskInformation failed: \n Runtime Error: "
+                        << e.what() << std::endl;
+        return env->NewGlobalRef(nullptr);
+    }
+
+
+    // Put data into Java objects
+
+    // Initialize list of ArrayLists
+
+    std::vector<jobject> diskPartitionLists;
+
+    for (int i = 0; i < diskNumbers.size(); ++i)
+    {
+        jobject arrayList = env->NewObject(arrayListClass, arrayListConstructor);
+
+        for (const std::pair<std::wstring, unsigned int> partition : diskPartitionNameToDiskNumberMaps)
+        {
+            // Compare disk numbers to add to appropriate ArrayLists
+            if (partition.second == diskNumbers[i])
+            {
+                // Get partition name
+                std::string partitionNameAsUTF8Str;
+
+                if (int utf8Length = convertFromWideStrToStr(partitionNameAsUTF8Str, partition.first);
+                                utf8Length < 0)
+                {
+                    // Error converting partition name string
+                    return env->NewGlobalRef(nullptr);
+                }
+
+                // Skip this partition if there is no
+                if (partitionNameAsUTF8Str.size() == 0)
+                {
+                    continue;
+                }
+
+                // If not successfully added to array list, we can't proceed
+                if (const jboolean success =
+                    env->CallBooleanMethod(arrayList, arrayListAddMethod,
+                                            reinterpret_cast<jobject>
+                                            (env->NewStringUTF(partitionNameAsUTF8Str.c_str())));
+                                            !success)
+                {
+                    // TODO: Add log message
+                    return env->NewGlobalRef(nullptr);
+                }
+            }
+        }
+
+        diskPartitionLists.emplace_back(arrayList);
+    }
+
+    // Create an ArrayList to return all object instances in
+    jobject diskHardwareInformationArrayList = env->NewObject(arrayListClass, arrayListConstructor);
+
+    for (size_t i = 0; i < diskFriendlyNames.size(); ++i)
+    {
+        // Convert the friendlyName to UTF8
+        std::string friendlyNameAsUTF8Str;
+
+        if (int utf8Length = convertFromWideStrToStr(friendlyNameAsUTF8Str, diskFriendlyNames.at(i));
+            utf8Length < 0)
+        {
+
+            return env->NewGlobalRef(nullptr);
+        }
+
+        // Skip this drive if the friendly name is not a valid string
+        if (friendlyNameAsUTF8Str.size() == 0)
+        {
+            continue;
+        }
+
+        // Convert the uniqueId to UTF8
+        std::string uniqueIdAsUTF8Str;
+
+        if (int utf8Length = convertFromWideStrToStr(uniqueIdAsUTF8Str, diskUniqueIds.at(i)); utf8Length < 0)
+        {
+            return env->NewGlobalRef(nullptr);
+        }
+
+        // Skip this drive if the unique ID is not a valid string
+        if (uniqueIdAsUTF8Str.size() == 0)
+        {
+            continue;
+        }
+
+        unsigned int mediaType = diskMediaTypes.at(i);
+        unsigned long long capacity = diskCapacities.at(i);
+        unsigned int diskNumber = diskNumbers.at(i);
+        constexpr bool diskCapacityIsUnsigned = true;
+        jobject partitionList = diskPartitionLists.at(i);
+
+
+        // Allocate Java DiskHardwareInformation object
+        // String;String;long long;long long;long long;boolean;ArrayList
+        const jobject diskHardwareInformationObject = env->NewObject(systemMetricClass,
+                                                        systemMetricConstructor,
+                                                        env->NewStringUTF(friendlyNameAsUTF8Str.c_str()),
+                                                        env->NewStringUTF(uniqueIdAsUTF8Str.c_str()),
+                                                        static_cast<jlong>(diskNumber),
+                                                        static_cast<jlong>(mediaType),
+                                                        static_cast<jlong>(capacity),
+                                                        static_cast<jboolean>(diskCapacityIsUnsigned),
+                                                        partitionList);
+
+        // Try to add the object to the ArrayList
+
+        if (const jboolean success = env->CallBooleanMethod(diskHardwareInformationArrayList,
+                                        arrayListAddMethod,
+                                        diskHardwareInformationObject); !success)
+        {
+            return env->NewGlobalRef(nullptr);
+        }
+
+    }
+
+    // Return created ArrayList
+    return diskHardwareInformationArrayList;
+    return env->NewGlobalRef(nullptr);
+
+}
+
+/*
+*std::vector<std::wstring> *hardwareNames,
+std::map<std::wstring, unsigned int> *uniqueIdsToDiskIdMappings,
+std::vector<std::wstring> *uniqueIds, std::vector<unsigned int> *mediaTypes,
+std::vector<unsigned long long> *capacities,
+std::map<std::wstring, unsigned int> *partitionMappings
+*/
 

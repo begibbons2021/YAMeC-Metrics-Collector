@@ -140,6 +140,14 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
         return getHardwareMemoryInformation(this.monitorAddress);
     }
 
+    public java.util.ArrayList<DiskHardwareInformation> getDiskHardwareInformation() {
+        if (closed) {
+            return null;
+        }
+
+        return getHardwareDiskInformation(this.monitorAddress);
+    }
+
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Native Calls
@@ -173,6 +181,8 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
     private native java.util.ArrayList<SystemNicMetric> getNicMetrics(long ptr);
 
     private native MemoryHardwareInformation getHardwareMemoryInformation(long ptr);
+
+    private native java.util.ArrayList<DiskHardwareInformation> getHardwareDiskInformation(long ptr);
 
     /**
      * Releases the memory allocated to the SystemMonitorManager
