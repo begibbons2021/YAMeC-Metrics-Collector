@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard | YAMeC</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>YAMeC System Dashboard</h1>
+            <p class="subtitle">Real-time system metrics monitoring</p>
+        </header>
+        
+        <div class="dashboard">
+            <!-- CPU Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">CPU Usage</h2>
+                    <i class="fas fa-microchip card-icon"></i>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Current Usage</div>
+                    <div class="metric-value" id="cpu-usage" th:text="${#numbers.formatDecimal(metrics.cpuUsage, 1, 1) + '%'}">0%</div>
+                    <div class="progress-container">
+                        <div class="progress-bar progress-cpu" id="cpu-progress" th:style="'width: ' + ${metrics.cpuUsage} + '%'"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Memory Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Memory Usage</h2>
+                    <i class="fas fa-memory card-icon"></i>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Current Usage</div>
+                    <div class="metric-value" id="memory-usage" th:text="${#numbers.formatDecimal((metrics.usedMemory / metrics.totalMemory) * 100, 1, 1) + '%'}">0%</div>
+                    <div class="progress-container">
+                        <div class="progress-bar progress-memory" id="memory-progress" th:style="'width: ' + ${(metrics.usedMemory / metrics.totalMemory) * 100} + '%'"></div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Total Memory</div>
+                    <div class="metric-value" id="total-memory" th:text="${#numbers.formatDecimal(metrics.totalMemory / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Used Memory</div>
+                    <div class="metric-value" id="used-memory" th:text="${#numbers.formatDecimal(metrics.usedMemory / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Free Memory</div>
+                    <div class="metric-value" id="free-memory" th:text="${#numbers.formatDecimal(metrics.freeMemory / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                </div>
+            </div>
+            
+            <!-- Disk Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Disk Usage</h2>
+                    <i class="fas fa-hdd card-icon"></i>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Current Usage</div>
+                    <div class="metric-value" id="disk-usage" th:if="${metrics.diskTotal > 0}" th:text="${#numbers.formatDecimal((metrics.diskUsed / metrics.diskTotal) * 100, 1, 1) + '%'}">0%</div>
+                    <div class="metric-value" th:unless="${metrics.diskTotal > 0}">N/A</div>
+                    <div class="progress-container" th:if="${metrics.diskTotal > 0}">
+                        <div class="progress-bar progress-disk" id="disk-progress" th:style="'width: ' + ${(metrics.diskUsed / metrics.diskTotal) * 100} + '%'"></div>
+                    </div>
+                </div>
+                <div class="metric" th:if="${metrics.diskTotal > 0}">
+                    <div class="metric-label">Total Disk</div>
+                    <div class="metric-value" id="total-disk" th:text="${#numbers.formatDecimal(metrics.diskTotal / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                </div>
+                <div class="metric" th:if="${metrics.diskTotal > 0}">
+                    <div class="metric-label">Used Disk</div>
+                    <div class="metric-value" id="used-disk" th:text="${#numbers.formatDecimal(metrics.diskUsed / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                </div>
+                <div class="metric" th:if="${metrics.diskTotal > 0}">
+                    <div class="metric-label">Free Disk</div>
+                    <div class="metric-value" id="free-disk" th:text="${#numbers.formatDecimal(metrics.diskFree / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                </div>
+            </div>
+            
+            <!-- Network Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Network Traffic</h2>
+                    <i class="fas fa-network-wired card-icon"></i>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Data Sent</div>
+                    <div class="metric-value" id="network-sent" th:if="${metrics.networkSent > 0}" th:text="${#numbers.formatDecimal(metrics.networkSent / (1024 * 1024), 1, 2) + ' MB'}">0 MB</div>
+                    <div class="metric-value" th:unless="${metrics.networkSent > 0}">N/A</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Data Received</div>
+                    <div class="metric-value" id="network-received" th:if="${metrics.networkReceived > 0}" th:text="${#numbers.formatDecimal(metrics.networkReceived / (1024 * 1024), 1, 2) + ' MB'}">0 MB</div>
+                    <div class="metric-value" th:unless="${metrics.networkReceived > 0}">N/A</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Last updated: <span id="last-updated" th:text="${#dates.format(#dates.createNow(), 'HH:mm:ss')}">00:00:00</span></p>
+            <p>YAMeC - Yet Another Metrics Collector</p>
+        </div>
+    </div>
+    
+    <script th:src="@{/js/dashboard.js}"></script>
+</body>
+</html>
