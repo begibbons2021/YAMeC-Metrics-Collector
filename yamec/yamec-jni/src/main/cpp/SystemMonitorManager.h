@@ -15,6 +15,7 @@
 #include "MemoryInfo.h"
 #include "GpuInfo.h"
 #include "NicInfo.h"
+#include "WmiQueryManager.h"
 
 
 class SystemMonitorManager
@@ -24,7 +25,7 @@ public:
 
     ~SystemMonitorManager();
 
-    [[nodiscard]] bool initialize();
+    [[nodiscard]] int initialize();
 
     [[nodiscard]] CpuInfo *getCpuInfo() { return &m_cpuInfo; }
     [[nodiscard]] MemoryInfo *getMemoryInfo() { return &m_memoryInfo; }
@@ -33,21 +34,53 @@ public:
     [[nodiscard]] NicInfo *getNicInfo() { return &m_nicInfo; }
 
     // Convenience methods
-    [[nodiscard]] bool getCpuUsage(double *usage) const;
+    [[nodiscard]] int getCpuUsage(double *usage) const;
 
-    [[nodiscard]] bool getGpuUsage(double *usage) const;
+    [[nodiscard]] int getGpuUsage(double *usage) const;
 
-    [[nodiscard]] bool getMemoryCounters(unsigned long long *physicalBytesAvailable,
-                                            unsigned long long *virtualBytesCommitted,
-                                            double *committedPercentUsed) const;
-    [[nodiscard]] bool getPhysicalMemoryAvailable(unsigned long long *bytesAvailable) const;
-    [[nodiscard]] bool getVirtualMemoryCommitted(unsigned long long *bytesCommitted) const;
-    [[nodiscard]] bool getVirtualMemoryCommittedPercentUsed(double *committedPercentUsed) const;
+    [[nodiscard]] int getMemoryCounters(unsigned long long *physicalBytesAvailable,
+                                        unsigned long long *virtualBytesCommitted,
+                                        double *committedPercentUsed) const;
+
+
+    [[nodiscard]] size_t getDiskInstances(std::vector<std::wstring> *instanceNames) const;
+
+    [[nodiscard]] int getDiskCounters(std::vector<double> *diskInstancesUsage,
+                                      std::vector<unsigned long long> *diskInstancesReadBandwidth,
+                                      std::vector<unsigned long long> *diskInstancesWriteBandwidth,
+                                      std::vector<double> *diskInstancesAvgTimeToTransfer) const;
+
+
+
+    [[nodiscard]] size_t getNicInstances(std::vector<std::wstring> *instanceNames) const;
+
+    [[nodiscard]] int getNicCounters(std::vector<unsigned long long> *nicInstancesBandwidth,
+                                     std::vector<unsigned long long> *nicInstancesSendBytes,
+                                     std::vector<unsigned long long> *nicInstancesRecvBytes) const;
+
+    [[nodiscard]] int getPhysicalMemoryAvailable(unsigned long long *bytesAvailable) const;
+    [[nodiscard]] int getVirtualMemoryCommitted(unsigned long long *bytesCommitted) const;
+    [[nodiscard]] int getVirtualMemoryCommittedPercentUsed(double *committedPercentUsed) const;
+
+    [[nodiscard]] int getHardwareMemoryInformation(unsigned long long *speed, unsigned long long *capacity,
+                                     unsigned int *slotsUsed, unsigned int *slotsTotal) const;
+
+    [[nodiscard]] int getHardwareDiskInformation(std::vector<std::wstring> *hardwareNames,
+                                   std::vector<std::wstring> *uniqueIds,
+                                   std::vector<unsigned int> *mediaTypes, std::vector<unsigned long long> *capacities,
+                                   std::vector<unsigned int> *diskNumbers,
+                                   std::map<std::wstring, unsigned int> *partitionMappings) const;
+
+    [[nodiscard]] int getHardwareNicInformation(std::vector<std::wstring> *hardwareNames,
+                                            std::vector<std::wstring> *labels,
+                                            std::vector<std::wstring> *uniqueIds,
+                                            std::vector<unsigned int> *nicTypes) const;
 
     [[nodiscard]] unsigned long long getPhysicalMemory();
 
 private:
     PdhQueryManager m_pdhManager;
+    WmiQueryManager m_wmiManager;
     CpuInfo m_cpuInfo;
     MemoryInfo m_memoryInfo;
     DiskInfo m_diskInfo;

@@ -5,94 +5,82 @@ SystemMonitorManager::SystemMonitorManager() : m_initialized(false) {}
 
 SystemMonitorManager::~SystemMonitorManager() = default;
 
-bool SystemMonitorManager::initialize()
+int SystemMonitorManager::initialize()
 {
     if (m_initialized)
     {
-        return true;
+        return 0;
     }
 
     // Initialize the PDH query manager
     if (!m_pdhManager.initialize())
     {
-        return false;
+        return -1;
+    }
+
+    if (!m_wmiManager.initialize())
+    {
+        return -2;
     }
 
     // Initialize the CPU info
     if (!m_cpuInfo.initialize(&m_pdhManager))
     {
-        return false;
+        return -3;
     }
 
     // Initialize the GPU info (this may fail if no compatible GPU is present)
     if (!m_gpuInfo.initialize(&m_pdhManager))
     {
-        return false;
+        return -4;
     }
 
     // Initialize the memory info
-    if (!m_memoryInfo.initialize(&m_pdhManager))
+    if (!m_memoryInfo.initialize(&m_pdhManager, &m_wmiManager))
     {
-        return false;
+        return -5;
     }
 
     // Initialize the disk info
-    if (!m_diskInfo.initialize(&m_pdhManager))
+    if (!m_diskInfo.initialize(&m_pdhManager, &m_wmiManager))
     {
-        return false;
+        return -6;
     }
 
     // Initialize the NIC info
-    if (!m_nicInfo.initialize(&m_pdhManager))
+    if (!m_nicInfo.initialize(&m_pdhManager, &m_wmiManager))
     {
-        return false;
+        return -7;
     }
 
     m_initialized = true;
-    return true;
+    return 0;
 }
 
-bool SystemMonitorManager::getCpuUsage(double *usage) const
+int SystemMonitorManager::getCpuUsage(double *usage) const
 {
     if (!m_initialized || !usage)
     {
-        return false;
+        return -1;
     }
 
     return m_cpuInfo.getUsage(usage);
 }
 
-bool SystemMonitorManager::getGpuUsage(double *usage) const
+int SystemMonitorManager::getGpuUsage(double *usage) const
 {
     if (!m_initialized || !usage)
     {
-        return false;
+        return -1;
     }
 
     return m_gpuInfo.getUsage(usage);
 }
 
 /**
- * JNIEXPORT jobject JNICALL getMemoryCounters(JNIenv) const
- * {
-        unsigned long long physicalBytesAvailable;
-        unsigned long long virtualBytesCommitted;
-        double committedPercentUsed;
-
-        if (!getMemoryCounters(&physicalBytesAvailable, &virtualBytesCommitted, &committedPercentUsed))
-        {
-            return NULL;
-        }
-
-
-
-   }
- */
-
-/**
 * Retrieves all memory-related performance counters.
 */
-bool SystemMonitorManager::getMemoryCounters(unsigned long long *physicalBytesAvailable,
+int SystemMonitorManager::getMemoryCounters(unsigned long long *physicalBytesAvailable,
                                             unsigned long long *virtualBytesCommitted,
                                             double *committedPercentUsed) const
 {
@@ -107,34 +95,146 @@ bool SystemMonitorManager::getMemoryCounters(unsigned long long *physicalBytesAv
     return m_memoryInfo.getAllCounters(physicalBytesAvailable, virtualBytesCommitted, committedPercentUsed);
 }
 
-bool SystemMonitorManager::getPhysicalMemoryAvailable(unsigned long long *bytesAvailable) const
+size_t SystemMonitorManager::getDiskInstances(std::vector<std::wstring> *instanceNames) const
+{
+    if (!m_initialized)
+    {
+        return 0;
+    }
+
+    return m_diskInfo.getInstanceNames(instanceNames);
+}
+
+int SystemMonitorManager::getDiskCounters(std::vector<double> *diskInstancesUsage,
+                                          std::vector<unsigned long long> *diskInstancesReadBandwidth,
+                                          std::vector<unsigned long long> *diskInstancesWriteBandwidth,
+                                          std::vector<double> *diskInstancesAvgTimeToTransfer) const
+{
+    if (!m_initialized
+        || !diskInstancesUsage
+        || !diskInstancesReadBandwidth
+        || !diskInstancesWriteBandwidth
+        || !diskInstancesAvgTimeToTransfer)
+    {
+        return -1;
+    }
+
+    return m_diskInfo.getAllCounters(diskInstancesUsage,
+                                        diskInstancesReadBandwidth,
+                                        diskInstancesWriteBandwidth,
+                                        diskInstancesAvgTimeToTransfer);
+}
+
+size_t SystemMonitorManager::getNicInstances(std::vector<std::wstring> *instanceNames) const
+{
+    if (!m_initialized)
+    {
+        return 0;
+    }
+
+    return m_nicInfo.getInstanceNames(instanceNames);
+}
+
+
+int SystemMonitorManager::getNicCounters(std::vector<unsigned long long> *nicInstancesBandwidth,
+                                         std::vector<unsigned long long> *nicInstancesSendBytes,
+                                         std::vector<unsigned long long> *nicInstancesRecvBytes) const
+{
+    if (!m_initialized
+        || !nicInstancesBandwidth
+        || !nicInstancesSendBytes
+        || !nicInstancesRecvBytes)
+    {
+        return -1;
+    }
+
+    return m_nicInfo.getAllCounters(nicInstancesBandwidth, nicInstancesSendBytes, nicInstancesRecvBytes);
+
+
+}
+
+int SystemMonitorManager::getPhysicalMemoryAvailable(unsigned long long *bytesAvailable) const
 {
     if (!m_initialized || !bytesAvailable)
     {
-        return false;
+        return -1;
     }
 
     return m_memoryInfo.getPhysicalMemoryAvailable(bytesAvailable);
 }
 
-bool SystemMonitorManager::getVirtualMemoryCommitted(unsigned long long *bytesCommitted) const
+int SystemMonitorManager::getVirtualMemoryCommitted(unsigned long long *bytesCommitted) const
 {
     if (!m_initialized || !bytesCommitted)
     {
-        return false;
+        return -1;
     }
 
     return m_memoryInfo.getVirtualMemoryCommitted(bytesCommitted);
 }
 
-bool SystemMonitorManager::getVirtualMemoryCommittedPercentUsed(double *committedPercentUsed) const
+int SystemMonitorManager::getVirtualMemoryCommittedPercentUsed(double *committedPercentUsed) const
 {
     if (!m_initialized || !committedPercentUsed)
     {
-        return false;
+        return -1;
     }
 
     return m_memoryInfo.getVirtualMemoryCommittedPercentUsed(committedPercentUsed);
+}
+
+int SystemMonitorManager::getHardwareMemoryInformation(unsigned long long *speed,
+                                                        unsigned long long *capacity,
+                                                        unsigned int *slotsUsed,
+                                                        unsigned int *slotsTotal) const
+{
+    if (!m_initialized
+        || !speed
+        || !capacity
+        || !slotsUsed
+        || !slotsTotal)
+    {
+        // Passed in pointers which aren't valid or Monitor isn't initialized
+        return -1;
+    }
+
+    return m_memoryInfo.getMemoryInformation(speed,
+                                                nullptr,
+                                                capacity,
+                                                slotsUsed,
+                                                slotsTotal);
+}
+
+int SystemMonitorManager::getHardwareDiskInformation(std::vector<std::wstring> *hardwareNames,
+                                                     std::vector<std::wstring> *uniqueIds,
+                                                     std::vector<unsigned int> *mediaTypes,
+                                                     std::vector<unsigned long long> *capacities,
+                                                     std::vector<unsigned int> *diskNumbers,
+                                                     std::map<std::wstring, unsigned int> *partitionMappings) const
+{
+    if (!m_initialized)
+    {
+        return -1;
+    }
+
+    return m_diskInfo.getDiskInformation(hardwareNames, uniqueIds,
+                                         mediaTypes, capacities,
+                                         diskNumbers,
+                                         partitionMappings);
+}
+
+int SystemMonitorManager::getHardwareNicInformation(std::vector<std::wstring> *hardwareNames,
+                                            std::vector<std::wstring> *labels,
+                                            std::vector<std::wstring> *uniqueIds,
+                                            std::vector<unsigned int> *nicTypes) const
+{
+    if (!m_initialized)
+    {
+        return -1;
+    }
+
+    return m_nicInfo.getNicInformation(hardwareNames, labels,
+                                            uniqueIds, nicTypes);
 }
 
 unsigned long long SystemMonitorManager::getPhysicalMemory()

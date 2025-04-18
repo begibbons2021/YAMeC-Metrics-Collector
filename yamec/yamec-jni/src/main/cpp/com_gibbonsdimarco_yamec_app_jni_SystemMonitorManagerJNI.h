@@ -15,6 +15,85 @@ extern "C" {
 JNIEXPORT void JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_sayHello
   (JNIEnv *, jobject);
 
+/*
+ * Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+ * Method:    initialize
+ * Signature: ()J
+ */
+JNIEXPORT jlong JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_initialize
+                                  (JNIEnv *, jobject);
+
+/*
+* Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+* Method:    getCpuMetrics
+* Signature: (J)Lcom/gibbonsdimarco/yamec/app/data/SystemCpuMetric;
+*/
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getCpuMetrics
+                                (JNIEnv *, jobject, const jlong);
+
+/*
+* Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+* Method:    getGpuMetrics
+* Signature: (J)Lcom/gibbonsdimarco/yamec/app/data/SystemGpuMetric;
+*/
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getGpuMetrics
+                                (JNIEnv *, jobject, const jlong);
+/*
+* Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+* Method:    getHardwareMemoryInformation
+* Signature: (J)Lcom/gibbonsdimarco/yamec/app/data/MemoryHardwareInformation;
+*/
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getHardwareMemoryInformation
+                                (JNIEnv *env, jobject, const jlong);
+
+/*
+* Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+* Method:    getMemoryMetrics
+* Signature: (J)Lcom/gibbonsdimarco/yamec/app/data/SystemMemoryMetric;
+*/
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getMemoryMetrics
+                                (JNIEnv *, jobject, const jlong);
+
+/*
+* Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+* Method:    getHardwareDiskInformation
+* Signature: (J)Ljava/util/ArrayList;
+*/
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getHardwareDiskInformation
+                                (JNIEnv *, jobject, const jlong);
+
+/*
+* Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+* Method:    getDiskMetrics
+* Signature: (J)Ljava/util/ArrayList;
+*/
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getDiskMetrics
+                                    (JNIEnv *, jobject, const jlong);
+
+/*
+* Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+* Method:    getHardwareNicInformation
+* Signature: (J)Ljava/util/ArrayList;
+*/
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getHardwareNicInformation
+                                (JNIEnv *, jobject, const jlong);
+
+/*
+* Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+* Method:    getNicMetrics
+* Signature: (J)Ljava/util/ArrayList;
+*/
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getNicMetrics
+                                    (JNIEnv *, jobject, const jlong);
+
+/*
+ * Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+ * Method:    release
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_release
+                              (JNIEnv *, jobject, jlong);
+
 #ifdef __cplusplus
 }
 #endif
