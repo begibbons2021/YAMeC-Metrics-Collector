@@ -1,9 +1,33 @@
 package com.gibbonsdimarco.yamec.app.data;
 
-public class MediaType {
-    public static final int UNSPECIFIED = 0;
-    public static final int HDD = 3;
-    public static final int SSD = 4;
-    public static final int SCM = 5;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
+/**
+ * Enum representing the different types of storage media
+ */
+public enum MediaType {
+    UNSPECIFIED(0),
+    HDD(3),
+    SSD(4),
+    SCM(5);
+
+    private final int value;
+
+    MediaType(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public static MediaType fromValue(int value) {
+        for (MediaType type : MediaType.values()) {
+            if (type.value == value) {
+                return type;
+            }
+        }
+        return UNSPECIFIED;
+    }
 }

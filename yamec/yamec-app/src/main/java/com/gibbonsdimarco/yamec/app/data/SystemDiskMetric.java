@@ -1,28 +1,37 @@
 package com.gibbonsdimarco.yamec.app.data;
 
+import jakarta.persistence.*;
+
 /**
  * Contains collected secondary storage device metrics passed from the
  * SystemMonitorManager
  *
  */
+@Entity
+@Table(name = "disk_metrics", indexes = {
+    @Index(name = "idx_disk_metrics_timestamp", columnList = "timestamp")
+})
 public class SystemDiskMetric extends SystemDeviceMetric {
 
     /**
      * The percentage of total disk utilization for the device,
      * or the percentage of time the disk spends active
      */
+    @Column(name = "usage", nullable = false)
     private double usage;
 
     /**
      * The number of bytes read per second on the device
      * (at the time of metrics collection)
      */
+    @Column(name = "read_bandwidth", nullable = false)
     private long readBandwidth;
 
     /**
      * The number of bytes written per second on the device
      * (at the time of metrics collection)
      */
+    @Column(name = "write_bandwidth", nullable = false)
     private long writeBandwidth;
 
     /**
@@ -30,18 +39,21 @@ public class SystemDiskMetric extends SystemDeviceMetric {
      * between the system and the Disk which this SystemDiskMetric relates
      * to, on average (at the time of metrics collection)
      */
+    @Column(name = "average_time_to_transfer", nullable = false)
     private double averageTimeToTransfer;
 
     /**
      * Whether the read bandwidth should be represented using an
      * unsigned value
      */
+    @Column(name = "read_bandwidth_is_unsigned")
     private boolean readBandwidthIsUnsigned;
 
     /**
      * Whether the write bandwidth should be represented using an
      * unsigned value
      */
+    @Column(name = "write_bandwidth_is_unsigned")
     private boolean writeBandwidthIsUnsigned;
 
     public SystemDiskMetric(String deviceName,
@@ -71,6 +83,15 @@ public class SystemDiskMetric extends SystemDeviceMetric {
     }
 
     /**
+     * Sets the disk utilization percentage
+     *
+     * @param usage The disk utilization percentage
+     */
+    public void setUsage(double usage) {
+        this.usage = usage;
+    }
+
+    /**
      * Returns the number of bytes read per second on the device (at the time
      * of metrics collection) when this SystemDiskMetric was collected.
      * This value returns signed
@@ -79,6 +100,15 @@ public class SystemDiskMetric extends SystemDeviceMetric {
      */
     public long getReadBandwidth() {
         return readBandwidth;
+    }
+
+    /**
+     * Sets the read bandwidth in bytes per second
+     *
+     * @param readBandwidth The read bandwidth in bytes per second
+     */
+    public void setReadBandwidth(long readBandwidth) {
+        this.readBandwidth = readBandwidth;
     }
 
     /**
@@ -104,6 +134,15 @@ public class SystemDiskMetric extends SystemDeviceMetric {
     }
 
     /**
+     * Sets the write bandwidth in bytes per second
+     *
+     * @param writeBandwidth The write bandwidth in bytes per second
+     */
+    public void setWriteBandwidth(long writeBandwidth) {
+        this.writeBandwidth = writeBandwidth;
+    }
+
+    /**
      * Returns the number of bytes written per second on the device (at the time
      * of metrics collection) when this SystemDiskMetric was collected as an
      * unsigned String
@@ -125,6 +164,15 @@ public class SystemDiskMetric extends SystemDeviceMetric {
     }
 
     /**
+     * Sets the average time to transfer data in seconds
+     *
+     * @param averageTimeToTransfer The average time to transfer in seconds
+     */
+    public void setAverageTimeToTransfer(double averageTimeToTransfer) {
+        this.averageTimeToTransfer = averageTimeToTransfer;
+    }
+
+    /**
      * Returns whether the readBandwidthIsUnsigned value is supposed to be signed
      * or unsigned as a boolean value
      *
@@ -136,6 +184,15 @@ public class SystemDiskMetric extends SystemDeviceMetric {
     }
 
     /**
+     * Sets whether the read bandwidth value should be treated as unsigned
+     *
+     * @param readBandwidthIsUnsigned Whether to treat the value as unsigned
+     */
+    public void setReadBandwidthUnsigned(boolean readBandwidthIsUnsigned) {
+        this.readBandwidthIsUnsigned = readBandwidthIsUnsigned;
+    }
+
+    /**
      * Returns whether the writeBandwidthIsUnsigned value is supposed to be signed
      * or unsigned as a boolean value
      *
@@ -144,6 +201,15 @@ public class SystemDiskMetric extends SystemDeviceMetric {
      */
     public boolean isWriteBandwidthUnsigned() {
         return writeBandwidthIsUnsigned;
+    }
+
+    /**
+     * Sets whether the write bandwidth value should be treated as unsigned
+     *
+     * @param writeBandwidthIsUnsigned Whether to treat the value as unsigned
+     */
+    public void setWriteBandwidthUnsigned(boolean writeBandwidthIsUnsigned) {
+        this.writeBandwidthIsUnsigned = writeBandwidthIsUnsigned;
     }
 
 }

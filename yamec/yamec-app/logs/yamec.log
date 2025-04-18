@@ -3,3 +3,9 @@
 2025-04-10 21:01:59 [main] INFO  c.g.yamec.app.YamecApplicationTests - No active profile set, falling back to 1 default profile: "default"
 2025-04-10 21:01:59 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
 2025-04-10 21:02:00 [main] INFO  c.g.yamec.app.YamecApplicationTests - Started YamecApplicationTests in 1.32 seconds (process running for 2.209)
+2025-04-18 17:25:47 [main] INFO  c.g.yamec.app.YamecApplicationTests - Starting YamecApplicationTests using Java 23.0.2 with PID 15188 (started by cmarc in C:\Users\cmarc\IdeaProjects\yamec\yamec\yamec-app)
+2025-04-18 17:25:47 [main] DEBUG c.g.yamec.app.YamecApplicationTests - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-04-18 17:25:47 [main] INFO  c.g.yamec.app.YamecApplicationTests - No active profile set, falling back to 1 default profile: "default"
+2025-04-18 17:25:48 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-04-18 17:25:48 [main] INFO  c.g.yamec.app.YamecApplicationTests - Started YamecApplicationTests in 1.36 seconds (process running for 2.288)
+2025-04-18 17:25:49 [main] INFO  com.github.fommil.jni.JniLoader - successfully loaded C:\Users\cmarc\AppData\Local\Temp\jniloader16360104784933303902yamecjni.dll

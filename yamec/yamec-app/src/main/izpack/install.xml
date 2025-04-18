@@ -1,0 +1,6 @@
+<pack name="Database" required="yes">
+    <description>Database initialization files</description>
+    <file src="db/init.sql" targetdir="$INSTALL_PATH/db"/>
+    <executable targetfile="$INSTALL_PATH/bin/init-database.sh" os="unix"/>
+    <executable targetfile="$INSTALL_PATH/bin/init-database.bat" os="windows"/>
+</pack>

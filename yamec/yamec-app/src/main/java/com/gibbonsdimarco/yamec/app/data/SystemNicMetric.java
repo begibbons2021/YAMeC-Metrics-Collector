@@ -1,46 +1,58 @@
 package com.gibbonsdimarco.yamec.app.data;
 
+import jakarta.persistence.*;
+
 /**
  * Contains collected hardware network interface metrics passed from the
  * SystemMonitorManager
  *
  */
+@Entity
+@Table(name = "nic_metrics", indexes = {
+    @Index(name = "idx_nic_metrics_timestamp", columnList = "timestamp")
+})
 public class SystemNicMetric extends SystemDeviceMetric {
 
     /**
      * The number of bits sent per second currently supported
      * on the device (at the time of metrics collection)
      */
+    @Column(name = "nic_bandwidth", nullable = false)
     private long nicBandwidth;
 
     /**
      * The number of bytes sent per second on the device
      * (at the time of metrics collection)
      */
+    @Column(name = "bytes_sent", nullable = false)
     private long bytesSent;
 
     /**
      * The number of bytes received per second on the device
      * (at the time of metrics collection)
      */
+    @Column(name = "bytes_received", nullable = false)
     private long bytesReceived;
 
     /**
      * Whether the NIC bandwidth should be represented using an
      * unsigned value
      */
+    @Column(name = "nic_bandwidth_is_unsigned")
     private boolean nicBandwidthIsUnsigned;
 
     /**
      * Whether the bytes sent should be represented using an
      * unsigned value
      */
+    @Column(name = "bytes_sent_is_unsigned")
     private boolean bytesSentIsUnsigned;
 
     /**
      * Whether the bytes received should be represented using an
      * unsigned value
      */
+    @Column(name = "bytes_received_is_unsigned")
     private boolean bytesReceivedIsUnsigned;
 
     public SystemNicMetric(String deviceName,
@@ -57,8 +69,6 @@ public class SystemNicMetric extends SystemDeviceMetric {
         this.nicBandwidthIsUnsigned = nicBandwidthIsUnsigned;
         this.bytesSentIsUnsigned = bytesSentIsUnsigned;
         this.bytesReceivedIsUnsigned = bytesReceivedIsUnsigned;
-
-
     }
 
     /**
@@ -73,6 +83,15 @@ public class SystemNicMetric extends SystemDeviceMetric {
     }
 
     /**
+     * Sets the NIC bandwidth in bits per second
+     *
+     * @param nicBandwidth The NIC bandwidth in bits per second
+     */
+    public void setNicBandwidth(long nicBandwidth) {
+        this.nicBandwidth = nicBandwidth;
+    }
+
+    /**
      * Returns the number of bits per second of bandwidth passed through
      * the device (at the time of metrics collection) when this SystemNicMetric
      * was collected as an unsigned String
@@ -83,7 +102,6 @@ public class SystemNicMetric extends SystemDeviceMetric {
         return Long.toUnsignedString(nicBandwidth);
     }
 
-
     /**
      * Returns the number of bytes sent per second on the device (at the time
      * of metrics collection) when this SystemNicMetric was collected.
@@ -93,6 +111,15 @@ public class SystemNicMetric extends SystemDeviceMetric {
      */
     public long getBytesSent() {
         return bytesSent;
+    }
+
+    /**
+     * Sets the number of bytes sent per second
+     *
+     * @param bytesSent The number of bytes sent per second
+     */
+    public void setBytesSent(long bytesSent) {
+        this.bytesSent = bytesSent;
     }
 
     /**
@@ -118,6 +145,15 @@ public class SystemNicMetric extends SystemDeviceMetric {
     }
 
     /**
+     * Sets the number of bytes received per second
+     *
+     * @param bytesReceived The number of bytes received per second
+     */
+    public void setBytesReceived(long bytesReceived) {
+        this.bytesReceived = bytesReceived;
+    }
+
+    /**
      * Returns the number of bytes received per second on the device (at the time
      * of metrics collection) when this SystemNicMetric was collected as an
      * unsigned String
@@ -140,6 +176,15 @@ public class SystemNicMetric extends SystemDeviceMetric {
     }
 
     /**
+     * Sets whether the NIC bandwidth value should be treated as unsigned
+     *
+     * @param nicBandwidthIsUnsigned Whether to treat the value as unsigned
+     */
+    public void setNicBandwidthUnsigned(boolean nicBandwidthIsUnsigned) {
+        this.nicBandwidthIsUnsigned = nicBandwidthIsUnsigned;
+    }
+
+    /**
      * Returns whether the bytesSent value is supposed to be signed
      * or unsigned as a boolean value
      *
@@ -148,6 +193,15 @@ public class SystemNicMetric extends SystemDeviceMetric {
      */
     public boolean isBytesSentUnsigned() {
         return bytesSentIsUnsigned;
+    }
+
+    /**
+     * Sets whether the bytes sent value should be treated as unsigned
+     *
+     * @param bytesSentIsUnsigned Whether to treat the value as unsigned
+     */
+    public void setBytesSentUnsigned(boolean bytesSentIsUnsigned) {
+        this.bytesSentIsUnsigned = bytesSentIsUnsigned;
     }
 
     /**
@@ -161,4 +215,12 @@ public class SystemNicMetric extends SystemDeviceMetric {
         return bytesReceivedIsUnsigned;
     }
 
+    /**
+     * Sets whether the bytes received value should be treated as unsigned
+     *
+     * @param bytesReceivedIsUnsigned Whether to treat the value as unsigned
+     */
+    public void setBytesReceivedUnsigned(boolean bytesReceivedIsUnsigned) {
+        this.bytesReceivedIsUnsigned = bytesReceivedIsUnsigned;
+    }
 }

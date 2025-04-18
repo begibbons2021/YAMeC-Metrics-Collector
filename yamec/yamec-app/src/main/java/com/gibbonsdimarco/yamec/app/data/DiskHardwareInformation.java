@@ -1,27 +1,38 @@
 package com.gibbonsdimarco.yamec.app.data;
 
+import jakarta.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Contains hardware information for Disk Devices connected to the System
  *
  */
-public class DiskHardwareInformation {
+@Entity
+@Table(name = "disk_hardware_information")
+public class DiskHardwareInformation implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     /**
      * The name of the Disk Device this DiskHardwareInformation object pertains to as a human-readable
      * string
      */
+    @Column(name = "friendly_name", nullable = false)
     private String friendlyName;
 
     /**
      * The locally unique hardware ID assigned to the Disk Device this DiskHardwareInformation object pertains to
      */
+    @Column(name = "unique_id", nullable = false)
     private String uniqueId;
 
     /**
      * The positive number associated with the Disk Device this DiskHardwareInformation object pertains to
      */
+    @Column(name = "disk_number", nullable = false)
     private long diskNumber;
 
     /**
@@ -34,24 +45,36 @@ public class DiskHardwareInformation {
      * @see <a href="https://learn.microsoft.com/en-us/windows-hardware/drivers/storage/msft-physicaldisk">
      *          WMI MSFT_PhysicalDisk</a>}
      */
+    @Column(name = "media_type", nullable = false)
     private long mediaType;
 
     /**
      * The amount of storage, in bytes, of the Disk Device this DiskHardwareInformation object pertains to
      */
+    @Column(name = "capacity", nullable = false)
     private long capacity;
 
     /**
      * Whether this DiskHardwareInformation object's storage capacity should be treated
      * as an unsigned value (true) or not (false)
      */
+    @Column(name = "capacity_is_unsigned")
     private boolean capacityIsUnsigned;
 
     /**
      * The partitions (drive letters, system paths, etc.) associated
      * with the Disk Device this DiskHardwareInformation object pertains to
      */
-    private java.util.ArrayList<String> partitions;
+    @ElementCollection
+    @CollectionTable(name = "disk_partitions", joinColumns = @JoinColumn(name = "disk_id"))
+    @Column(name = "partition")
+    private ArrayList<String> partitions;
+
+    /**
+     * Default constructor for JPA
+     */
+    protected DiskHardwareInformation() {
+    }
 
     /**
      *
@@ -107,16 +130,16 @@ public class DiskHardwareInformation {
     public static String getMediaTypeString(long mediaType) {
         // Switch doesn't support long but we need 32 bit unsigned value
 
-        if (mediaType == MediaType.HDD) {
+        if (mediaType == MediaType.HDD.getValue()) {
             return "HDD";
         }
-        else if (mediaType == MediaType.SSD) {
+        else if (mediaType == MediaType.SSD.getValue()) {
             return "SSD";
         }
-        else if (mediaType == MediaType.SCM) {
+        else if (mediaType == MediaType.SCM.getValue()) {
             return "SCM";
         }
-        else if (mediaType == MediaType.UNSPECIFIED) {
+        else if (mediaType == MediaType.UNSPECIFIED.getValue()) {
             return "Unspecified";
         }
         else {

@@ -1,6 +1,18 @@
 package com.gibbonsdimarco.yamec.app.data;
 
-public class NicHardwareInformation {
+import jakarta.persistence.*;
+import java.io.Serializable;
+
+/**
+ * Contains hardware information for Network Interface Cards (NICs) connected to the System
+ */
+@Entity
+@Table(name = "nic_hardware_information")
+public class NicHardwareInformation implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     /**
      * The friendly name of the NIC device associated with this NicHardwareInformation object as
@@ -8,6 +20,7 @@ public class NicHardwareInformation {
      * <br>
      * Note: In WMI, this is actually the "Interface Description"
      */
+    @Column(name = "friendly_name", nullable = false)
     private String friendlyName;
 
     /**
@@ -21,11 +34,13 @@ public class NicHardwareInformation {
      * would be something like "eth3"
      *
      */
+    @Column(name = "label", nullable = false)
     private String label;
 
     /**
-     * The locally unique hardware ID assigned to the Disk Device this DiskHardwareInformation object pertains to
+     * The locally unique hardware ID assigned to the NIC Device this NicHardwareInformation object pertains to
      */
+    @Column(name = "unique_id", nullable = false)
     private String uniqueId;
 
     /**
@@ -41,7 +56,14 @@ public class NicHardwareInformation {
      *     their mappings to different types of network adapters
      *     </a>
      */
+    @Column(name = "nic_type", nullable = false)
     private long nicType;
+
+    /**
+     * Default constructor for JPA
+     */
+    protected NicHardwareInformation() {
+    }
 
     /**
      *
@@ -97,40 +119,40 @@ public class NicHardwareInformation {
     public static String getNicTypeString(long nicType) {
         // Switch doesn't support long but we need 32 bit unsigned value
 
-        if (nicType == NicType.ETHERNET
-            || nicType == NicType.ETHERNET_3_MEGABIT
-            || nicType == NicType.FAST_ETHERNET_FX
-            || nicType == NicType.FAST_ETHERNET_T
-            || nicType == NicType.GIGABIT_ETHERNET) {
+        if (nicType == NicType.ETHERNET.getValue()
+            || nicType == NicType.ETHERNET_3_MEGABIT.getValue()
+            || nicType == NicType.FAST_ETHERNET_FX.getValue()
+            || nicType == NicType.FAST_ETHERNET_T.getValue()
+            || nicType == NicType.GIGABIT_ETHERNET.getValue()) {
             return "Ethernet";
         }
-        else if (nicType == NicType.WIFI) {
+        else if (nicType == NicType.WIFI.getValue()) {
             return "Wi-Fi (802.11)";
         }
-        else if (nicType == NicType.LOOPBACK) {
+        else if (nicType == NicType.LOOPBACK.getValue()) {
             return "Loopback Device";
         }
-        else if (nicType == NicType.TOKEN_RING) {
+        else if (nicType == NicType.TOKEN_RING.getValue()) {
             return "Token Ring";
         }
-        else if (nicType == NicType.WIMAX) {
+        else if (nicType == NicType.WIMAX.getValue()) {
             return "WiMax";
         }
-        else if (nicType == NicType.CELLULAR_GSM
-                    || nicType == NicType.CELLULAR_CDMA) {
+        else if (nicType == NicType.CELLULAR_GSM.getValue()
+                    || nicType == NicType.CELLULAR_CDMA.getValue()) {
             return "Cellular (GSM/CDMA)";
         }
-        else if (nicType == NicType.TUNNEL) {
+        else if (nicType == NicType.TUNNEL.getValue()) {
             return "Tunnel";
         }
-        else if (nicType == NicType.MODEM) {
+        else if (nicType == NicType.MODEM.getValue()) {
             return "Modem (Dial-Up)";
         }
-        else if (nicType == NicType.DSL_ASYMMETRIC
-                    || nicType == NicType.DSL_SYMMETRIC
-                    || nicType == NicType.DSL_RATE_ADAPTIVE
-                    || nicType == NicType.DSL_MULTI_RATE_SYMMETRICAL
-                    || nicType == NicType.DSL_VERY_HIGH_SPEED) {
+        else if (nicType == NicType.DSL_ASYMMETRIC.getValue()
+                    || nicType == NicType.DSL_SYMMETRIC.getValue()
+                    || nicType == NicType.DSL_RATE_ADAPTIVE.getValue()
+                    || nicType == NicType.DSL_MULTI_RATE_SYMMETRICAL.getValue()
+                    || nicType == NicType.DSL_VERY_HIGH_SPEED.getValue()) {
             return "DSL (Digital Subscriber Line)";
         }
         else {
