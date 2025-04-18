@@ -1,14 +1,19 @@
 package com.gibbonsdimarco.yamec.app.jni;
 import com.gibbonsdimarco.yamec.app.data.*;
 import com.github.fommil.jni.JniLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import jakarta.websocket.OnClose;
 
 public class SystemMonitorManagerJNI implements AutoCloseable {
+    private static final Logger logger = LoggerFactory.getLogger(SystemMonitorManagerJNI.class);
+
     static {
         try {
             JniLoader.load("native/windows/x64/yamecjni.dll");
+            initLogger(logger);
         } catch (UnsatisfiedLinkError e) {
-            System.err.println("Native code library failed to load: " + e);
+            logger.error("Native code library failed to load", e);
         }
     }
 
@@ -164,6 +169,7 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
     /**
      * A test function which prints "Hello World" from native code
      */
+    private static native void initLogger(Object javaLogger);
     public native void sayHello();
 
     /**
