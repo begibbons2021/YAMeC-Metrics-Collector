@@ -57,7 +57,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 /*
 * Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
 * Method:    getHardwareDiskInformation
-* Signature: (J)Lcom/gibbonsdimarco/yamec/app/data/ArrayList;
+* Signature: (J)Ljava/util/ArrayList;
 */
 JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getHardwareDiskInformation
                                 (JNIEnv *, jobject, const jlong);
@@ -69,6 +69,14 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 */
 JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getDiskMetrics
                                     (JNIEnv *, jobject, const jlong);
+
+/*
+* Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+* Method:    getHardwareNicInformation
+* Signature: (J)Ljava/util/ArrayList;
+*/
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getHardwareNicInformation
+                                (JNIEnv *, jobject, const jlong);
 
 /*
 * Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI

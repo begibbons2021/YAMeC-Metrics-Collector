@@ -10,7 +10,7 @@
 NicInfo::NicInfo() : m_pdhManager(nullptr) {}
 NicInfo::~NicInfo() = default;
 
-bool NicInfo::initialize(PdhQueryManager *pdhManager)
+bool NicInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManager)
 {
     if (!pdhManager)
     {
@@ -18,7 +18,15 @@ bool NicInfo::initialize(PdhQueryManager *pdhManager)
         return false;
     }
 
+    if (!wmiManager)
+    {
+        std::cerr << "Invalid WMI manager" << std::endl;
+        return false;
+    }
+
     m_pdhManager = pdhManager;
+
+    m_wmiManager = wmiManager;
 
     if (initInstances() == 0)
     {
@@ -181,4 +189,135 @@ int NicInfo::getAllCounters(std::vector<unsigned long long> *nicBandwidthBpsValu
 
     return 0;
 
+}
+
+
+int NicInfo::getNicInformation(std::vector<std::wstring> *hardwareNames,
+                                            std::vector<std::wstring> *labels,
+                                            std::vector<std::wstring> *uniqueIds,
+                                            std::vector<unsigned int> *nicTypes) const
+{
+    if (!m_wmiManager)
+    {
+        std::cerr << "WMI manager not initialized" << std::endl;
+        return -1;
+    }
+
+    IEnumWbemClassObject *response;
+
+    // Get general disk information from this query
+    HRESULT hr = m_wmiManager->queryStandardCimv2Service("SELECT * FROM MSFT_NetAdapter", response);
+
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+
+    // Output data
+    IWbemClassObject *pWbemObject = nullptr; // Returned struct of system data
+    ULONG ulReturn = 0; // Lines left to return
+    std::vector<std::wstring> hardwareNamesTemp;
+    std::vector<std::wstring> labelsTemp;
+    std::vector<std::wstring> uniqueIdsTemp;
+    std::vector<unsigned int> interfaceTypesTemp;
+
+    while (response)
+    {
+        hr = response->Next(WBEM_INFINITE, 1, &pWbemObject, &ulReturn);
+
+        if (0 == ulReturn)
+        {
+            break;
+        }
+
+        VARIANT nameVar,
+                isHardwareInterfaceVar,
+                uniqueIdVar,
+                interfaceTypeVar,
+                labelVar;
+
+        VariantInit(&nameVar);
+        VariantInit(&uniqueIdVar);
+        VariantInit(&isHardwareInterfaceVar);
+        VariantInit(&labelVar);
+        VariantInit(&interfaceTypeVar);
+
+        hr = pWbemObject->Get(L"InterfaceDescription", 0, &nameVar, nullptr, nullptr);
+        // Technically Windows stores this as an unsigned long long, but this is stored
+        // as a String for consistency with the Disk UniqueId
+        hr = pWbemObject->Get(L"NetLuid", 0, &uniqueIdVar, nullptr, nullptr);
+        hr = pWbemObject->Get(L"Name", 0, &labelVar, nullptr, nullptr);
+        hr = pWbemObject->Get(L"InterfaceType", 0, &interfaceTypeVar, nullptr, nullptr);
+        hr = pWbemObject->Get(L"HardwareInterface", 0, &isHardwareInterfaceVar, nullptr, nullptr);
+
+        // Device ID should always be a drive number
+        // So we should always be able to convert it to an unsigned
+        // 32-bit integer
+        // If not, skip adding this drive to the return object as its data is malformed
+
+        // Only add this NIC if it's a hardware-level Network Adapter
+        if (isHardwareInterfaceVar.boolVal == VARIANT_TRUE)
+        {
+            hardwareNamesTemp.emplace_back(nameVar.bstrVal);
+            uniqueIdsTemp.emplace_back(uniqueIdVar.bstrVal);
+            labelsTemp.emplace_back(labelVar.bstrVal);
+            interfaceTypesTemp.emplace_back(interfaceTypeVar.ulVal);
+        }
+
+        VariantClear(&nameVar);
+        VariantClear(&uniqueIdVar);
+        VariantClear(&isHardwareInterfaceVar);
+        VariantClear(&labelVar);
+        VariantClear(&interfaceTypeVar);
+
+        pWbemObject->Release();
+    }
+
+    response->Release();
+
+    // Copy contents to pointer objects
+    if (hardwareNames != nullptr)
+    {
+        hardwareNames->clear();
+        hardwareNames->reserve(hardwareNamesTemp.size());
+        for (std::wstring hardwareName : hardwareNamesTemp)
+        {
+            hardwareNames->emplace_back(hardwareName);
+        }
+    }
+
+
+    if (uniqueIds != nullptr)
+    {
+        uniqueIds->clear();
+        uniqueIds->reserve(uniqueIdsTemp.size());
+        for (std::wstring uniqueId : uniqueIdsTemp)
+        {
+            uniqueIds->emplace_back(uniqueId);
+        }
+    }
+
+    if (labels != nullptr)
+    {
+        labels->clear();
+        labels->reserve(labelsTemp.size());
+        for (std::wstring label : labelsTemp)
+        {
+            labels->emplace_back(label);
+        }
+    }
+
+    if (nicTypes != nullptr)
+    {
+        nicTypes->clear();
+        nicTypes->reserve(interfaceTypesTemp.size());
+        for (unsigned long long nicType : interfaceTypesTemp)
+        {
+            nicTypes->emplace_back(nicType);
+        }
+    }
+
+
+    // Success!
+    return 0;
 }

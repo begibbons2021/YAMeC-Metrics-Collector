@@ -48,7 +48,7 @@ int SystemMonitorManager::initialize()
     }
 
     // Initialize the NIC info
-    if (!m_nicInfo.initialize(&m_pdhManager))
+    if (!m_nicInfo.initialize(&m_pdhManager, &m_wmiManager))
     {
         return -7;
     }
@@ -221,6 +221,20 @@ int SystemMonitorManager::getHardwareDiskInformation(std::vector<std::wstring> *
                                          mediaTypes, capacities,
                                          diskNumbers,
                                          partitionMappings);
+}
+
+int SystemMonitorManager::getHardwareNicInformation(std::vector<std::wstring> *hardwareNames,
+                                            std::vector<std::wstring> *labels,
+                                            std::vector<std::wstring> *uniqueIds,
+                                            std::vector<unsigned int> *nicTypes) const
+{
+    if (!m_initialized)
+    {
+        return -1;
+    }
+
+    return m_nicInfo.getNicInformation(hardwareNames, labels,
+                                            uniqueIds, nicTypes);
 }
 
 unsigned long long SystemMonitorManager::getPhysicalMemory()

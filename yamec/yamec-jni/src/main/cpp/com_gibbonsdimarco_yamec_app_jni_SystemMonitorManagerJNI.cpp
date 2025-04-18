@@ -681,7 +681,131 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 
     // Return created ArrayList
     return diskHardwareInformationArrayList;
-    return env->NewGlobalRef(nullptr);
+
+}
+
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getHardwareNicInformation
+                            (JNIEnv *env, jobject obj, const jlong monitorPtr)
+{
+    // I apologize if this seems like spaghetti code because of the way the data is being managed
+    // Please let me know if this could benefit from a major refactor. (std::map<wstring, any>?)
+
+    const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
+
+    // Java Classes & Methods Used
+    const jclass arrayListClass = env->FindClass("java/util/ArrayList");
+    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/NicHardwareInformation");
+    const jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
+    // Java does Generic type checks at compile time but not runtime, so we add objects of type Object
+    const jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
+    // String;String;long long;long long;long long;boolean;ArrayList
+    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>",
+                                        "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;J)V");
+
+    // Create buffers to hold the disk information temporarily
+    std::vector<std::wstring> nicFriendlyNames;
+    std::vector<std::wstring> nicUniqueIds;
+    std::vector<std::wstring> nicLabels;
+    std::vector<unsigned int> nicTypes;
+
+    try
+    {
+        // Attempt to fill buffers
+        if (const int status = monitor->getHardwareNicInformation(&nicFriendlyNames,
+                                                                    &nicLabels,
+                                                                    &nicUniqueIds,
+                                                                    &nicTypes); 0 != status)
+        {
+            std::wcerr << "Hardware NIC information could not be retrieved. "
+                        << std::endl;
+            std::wcerr << "Error Code: " << std::hex << status << std::endl;
+            // Retrieval of counters failed, so return null
+            return env->NewGlobalRef(nullptr);
+        }
+    }
+    catch (std::exception &e)
+    {
+        std::cerr << "GetHardwareNicInformation failed: \n Error: "
+                        << e.what() << std::endl;
+        return env->NewGlobalRef(nullptr);
+    }
+    catch (std::runtime_error &e)
+    {
+        std::cerr << "GetHardwareNicInformation failed: \n Runtime Error: "
+                        << e.what() << std::endl;
+        return env->NewGlobalRef(nullptr);
+    }
+
+
+    // Put data into Java objects
+
+
+    // Create an ArrayList to return all object instances in
+    jobject nicHardwareInformationArrayList = env->NewObject(arrayListClass, arrayListConstructor);
+
+    for (size_t i = 0; i < nicFriendlyNames.size(); ++i)
+    {
+        // Convert the friendlyName to UTF8
+        std::string friendlyNameAsUTF8Str;
+
+        if (const int utf8Length = convertFromWideStrToStr(friendlyNameAsUTF8Str, nicFriendlyNames.at(i));
+            utf8Length < 0)
+        {
+
+            return env->NewGlobalRef(nullptr);
+        }
+
+        // Skip this drive if the friendly name is not a valid string
+        if (friendlyNameAsUTF8Str.size() == 0)
+        {
+            continue;
+        }
+
+        // Convert the uniqueId to UTF8
+        std::string uniqueIdAsUTF8Str;
+
+        if (const int utf8Length = convertFromWideStrToStr(uniqueIdAsUTF8Str, nicUniqueIds.at(i)); utf8Length < 0)
+        {
+            return env->NewGlobalRef(nullptr);
+        }
+
+        // Convert the uniqueId to UTF8
+        std::string labelAsUTF8Str;
+
+        if (const int utf8Length = convertFromWideStrToStr(labelAsUTF8Str, nicLabels.at(i)); utf8Length < 0)
+        {
+            return env->NewGlobalRef(nullptr);
+        }
+
+        // Skip this drive if the unique ID is not a valid string
+        if (labelAsUTF8Str.size() == 0)
+        {
+            continue;
+        }
+
+        const unsigned int nicType = nicTypes.at(i);
+
+        // Allocate Java DiskHardwareInformation object
+        // String;String;String;long long
+        const jobject nicHardwareInformationObject = env->NewObject(systemMetricClass,
+                                                        systemMetricConstructor,
+                                                        env->NewStringUTF(friendlyNameAsUTF8Str.c_str()),
+                                                        env->NewStringUTF(labelAsUTF8Str.c_str()),
+                                                        env->NewStringUTF(uniqueIdAsUTF8Str.c_str()),
+                                                        static_cast<jlong>(nicType));
+
+        // Try to add the object to the ArrayList
+        if (const jboolean success = env->CallBooleanMethod(nicHardwareInformationArrayList,
+                                                            arrayListAddMethod,
+                                                            nicHardwareInformationObject); !success)
+        {
+            return env->NewGlobalRef(nullptr);
+        }
+
+    }
+
+    // Return created ArrayList
+    return nicHardwareInformationArrayList;
 
 }
 

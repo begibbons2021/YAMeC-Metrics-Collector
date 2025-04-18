@@ -213,6 +213,38 @@ class YamecApplicationTests {
         }
 
         try {
+            System.err.println("Testing NIC Hardware Data Retrieval...");
+            ArrayList<NicHardwareInformation> nicHardwareInformationList = monitor.getNicHardwareInformation();
+            if (nicHardwareInformationList != null) {
+                // Calculate the actual virtual memory use from the amount of committed memory used.
+                System.err.println("NIC Information:");
+                if (nicHardwareInformationList.isEmpty()) {
+                    System.err.println("\tNo NIC Hardware Found");
+                }
+                else {
+                    for (NicHardwareInformation nicHardwareInformation : nicHardwareInformationList) {
+                        System.err.printf("\t%s (%s)\n", nicHardwareInformation.getFriendlyName(),
+                                nicHardwareInformation.getLabel());
+                        System.err.printf("\t\tUnique ID: %s\n", nicHardwareInformation.getUniqueId());
+                        System.err.printf("\t\tInterface Type: %s\n",
+                                NicHardwareInformation.getNicTypeString(nicHardwareInformation.getNicType()));
+                        System.err.println();
+                    }
+                }
+            }
+            else {
+                System.err.println("Disk Hardware: \n\tDisk Hardware Could Not Be Identified");
+            }
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Failed to retrieve Memory Hardware Information.");
+            monitor.close();
+            return false;
+        }
+
+        try {
             System.err.println("Testing NIC Metrics Retrieval...");
             java.util.ArrayList<SystemNicMetric> nicMetrics = monitor.getNicMetrics();
             if (nicMetrics != null) {

@@ -32,7 +32,7 @@ public class DiskHardwareInformation {
      * The numbers utilized to represent different types of Disk Devices are based
      * on the WMI type mappings from the WMI MSFT_PhysicalDisk object class
      * @see <a href="https://learn.microsoft.com/en-us/windows-hardware/drivers/storage/msft-physicaldisk">
-     *          WMI MSFT_Physical</a>}
+     *          WMI MSFT_PhysicalDisk</a>}
      */
     private long mediaType;
 
