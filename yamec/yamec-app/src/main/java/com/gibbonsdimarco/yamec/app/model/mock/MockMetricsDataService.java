@@ -17,6 +17,15 @@ public class MockMetricsDataService {
         metrics.setTotalMemory(16 * 1024 * 1024 * 1024L); // 16GB
         metrics.setUsedMemory((long) (metrics.getTotalMemory() * random.nextDouble()));
         metrics.setFreeMemory(metrics.getTotalMemory() - metrics.getUsedMemory());
+        
+        // Add disk metrics
+        metrics.setDiskTotal(500 * 1024 * 1024 * 1024L); // 500GB
+        metrics.setDiskUsed((long) (metrics.getDiskTotal() * (0.3 + random.nextDouble() * 0.4))); // 30-70% used
+        metrics.setDiskFree(metrics.getDiskTotal() - metrics.getDiskUsed());
+        
+        // Add network metrics
+        metrics.setNetworkSent(random.nextLong(100 * 1024 * 1024)); // Up to 100MB sent
+        metrics.setNetworkReceived(random.nextLong(200 * 1024 * 1024)); // Up to 200MB received
 
         return metrics;
     }
