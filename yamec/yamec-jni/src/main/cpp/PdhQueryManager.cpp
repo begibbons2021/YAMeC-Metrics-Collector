@@ -53,7 +53,8 @@ size_t PdhQueryManager::getInstances(const std::string& objectName, std::vector<
                                     PERF_DETAIL_WIZARD, 0);
     if (status != ERROR_SUCCESS && status != PDH_MORE_DATA)
     {
-        std::wcerr << "Failed to get " << TEXT(objectName.c_str()) << " instance list. Error code: " << std::hex << status << std::endl;
+        std::wcerr << "Failed to get " << TEXT(objectName.c_str()) << " instance list. Error code: "
+        << std::hex << status << std::endl;
         return 0;
     }
 
@@ -62,7 +63,8 @@ size_t PdhQueryManager::getInstances(const std::string& objectName, std::vector<
     auto objectNameLength = objectName.length();
     auto objectNameAsWchar = new wchar_t[objectNameLength + 1];
     size_t convertedChars = 0;
-    mbstowcs_s(&convertedChars, objectNameAsWchar, objectNameLength + 1, objectNamePtr, objectNameLength);
+    mbstowcs_s(&convertedChars, objectNameAsWchar, objectNameLength + 1, objectNamePtr,
+        objectNameLength);
 
 
     // Then fill the buffer of counter and instance characters
@@ -212,3 +214,23 @@ bool PdhQueryManager::getCounterValue(const PDH_HCOUNTER counter, double *value)
     *value = counterValue.doubleValue;
     return true;
 }
+
+// size_t PdhQueryManager::getCounterArray(const PDH_HCOUNTER counter, double *values[]) const
+// {
+//     if (!m_initialized)
+//     {
+//         std::cerr << "Query not initialized." << std::endl;
+//         return false;
+//     }
+//
+//     PDH_FMT_COUNTERVALUE counterValues[];
+//     PDH_STATUS status = PdhGetFormattedCounterArray(counter, PDH_FMT_DOUBLE, nullptr, &counterValue);
+//     if (status)
+//     {
+//         std::cerr << "Failed to get formatted counter value." << std::endl;
+//         return false;
+//     }
+//
+//
+//     return true;
+// }

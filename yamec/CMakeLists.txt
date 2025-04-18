@@ -62,6 +62,8 @@ if(WIN32)
             # yamec-jni/src/main/jni/SystemMetricsJNI.cpp
             yamec-jni/src/main/cpp/com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI.cpp
             yamec-jni/src/main/cpp/com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI.h
+            yamec-jni/src/main/cpp/WmiQueryManager.cpp
+            yamec-jni/src/main/cpp/WmiQueryManager.h
 
     )
 

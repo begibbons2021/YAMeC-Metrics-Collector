@@ -29,33 +29,33 @@ bool CpuInfo::initialize(PdhQueryManager *pdhManager)
     return true;
 }
 
-bool CpuInfo::getUsage(double *usage) const
+int CpuInfo::getUsage(double *usage) const
 {
     if (!m_pdhManager)
     {
         std::cerr << "PDH manager not initialized" << std::endl;
-        return false;
+        return -1;
     }
 
     // Collect data twice for accurate readings
     if (!m_pdhManager->collectData())
     {
-        return false;
+        return -2;
     }
 
     Sleep(500); // Wait for 500ms
 
     if (!m_pdhManager->collectData())
     {
-        return false;
+        return -3;
     }
 
     if (!m_pdhManager->getCounterValue(m_usageCounter, usage))
     {
-        return false;
+        return -4;
     }
 
-    return true;
+    return 0;
 }
 
 std::string CpuInfo::getBrandString()
