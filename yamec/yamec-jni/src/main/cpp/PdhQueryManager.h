@@ -4,6 +4,7 @@
 
 #ifndef PDHQUERYMANAGER_H
 #define PDHQUERYMANAGER_H
+#include <map>
 #include <vector>
 #include <pdh.h>
 #include <string>
@@ -32,6 +33,15 @@ public:
     bool getCounterValue(PDH_HCOUNTER counter, unsigned long long *value) const;
     bool getCounterValue(PDH_HCOUNTER counter, long long *value) const;
     bool getCounterValue(PDH_HCOUNTER counter, double *value) const;
+
+    bool getCounterValues(PDH_HCOUNTER counter,
+        std::vector<std::wstring> *instanceNames, std::vector<long long> *instanceValues) const;
+
+    bool getCounterValues(PDH_HCOUNTER counter,
+        std::vector<std::wstring> *instanceNames, std::vector<int> *instanceValues) const;
+
+    bool getCounterValues(PDH_HCOUNTER counter,
+        std::vector<std::wstring> *instanceNames, std::vector<double> *instanceValues) const;
 
 private:
     PDH_HQUERY m_query;
