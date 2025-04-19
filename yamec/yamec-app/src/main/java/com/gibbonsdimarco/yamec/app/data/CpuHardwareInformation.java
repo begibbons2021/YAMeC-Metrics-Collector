@@ -76,7 +76,7 @@ public class CpuHardwareInformation {
      *                      present in the CPU
      * @param l1CacheSize The number of bytes of level 1 cache in the CPU
      * @param l2CacheSize The number of bytes of level 2 cache in the CPU
-     * @param l3CacheSize The number of bytes of level 3 cahce in the CPU
+     * @param l3CacheSize The number of bytes of level 3 cache in the CPU
      * @param virtualizationEnabled A boolean value representing whether hardware
      *                              virtualization technology is supported by
      *                              the CPU
