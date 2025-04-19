@@ -33,3 +33,8 @@
 2025-04-19 15:14:31 [main] INFO  c.g.yamec.app.YamecApplicationTests - No active profile set, falling back to 1 default profile: "default"
 2025-04-19 15:14:32 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
 2025-04-19 15:14:33 [main] INFO  c.g.yamec.app.YamecApplicationTests - Started YamecApplicationTests in 1.703 seconds (process running for 4.154)
+2025-04-19 15:47:03 [main] INFO  c.g.yamec.app.YamecApplicationTests - Starting YamecApplicationTests using Java 23.0.2 with PID 52944 (started by Brendan in C:\Users\Brendan\Documents\Project\MetricsLogger\yamec\yamec-app)
+2025-04-19 15:47:03 [main] DEBUG c.g.yamec.app.YamecApplicationTests - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-04-19 15:47:03 [main] INFO  c.g.yamec.app.YamecApplicationTests - No active profile set, falling back to 1 default profile: "default"
+2025-04-19 15:47:04 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-04-19 15:47:04 [main] INFO  c.g.yamec.app.YamecApplicationTests - Started YamecApplicationTests in 1.616 seconds (process running for 3.112)

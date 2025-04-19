@@ -2,6 +2,7 @@ package com.gibbonsdimarco.yamec.app;
 
 import com.gibbonsdimarco.yamec.app.data.*;
 import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.annotation.Order;
@@ -135,6 +136,70 @@ class YamecApplicationTests {
         assertTrue("getMemoryMetrics().getVirtualMemoryCommittedUsage() should be returning a value <= 100%"
                         + " but it is " + metric.getCommittedVirtualMemoryUsage(),
                 metric.getCommittedVirtualMemoryUsage() <= 100.0);
+
+    }
+
+
+    @Test
+    void testGetDiskMetricsReturnsValidData() {
+        ArrayList<SystemDiskMetric> metrics = monitor.getDiskMetrics();
+//        MemoryHardwareInformation memoryHardware = monitor.getMemoryHardwareInformation();
+
+        // Returns not null
+        assertNotNull(metrics,
+                "getDiskMetrics() should not return null.");
+
+        // Returns at least one metric (_Total on Windows and a single Disk instance)
+        assertTrue("getDiskMetrics() should not return no metrics (there should at "
+                    + "least be a \"_Total\" member (on Windows) and one other Disk if the query was successful)",
+                    !metrics.isEmpty());
+
+        boolean hasOneUniqueDisk = false;
+
+        for (SystemDiskMetric diskMetric : metrics) {
+            // Disk name should not be null
+            assertNotNull(diskMetric, "getDiskMetrics() should not return null.");
+
+            // Check for a uniquely named Disk Instance
+            if (!hasOneUniqueDisk) {
+                if (!diskMetric.getDeviceName().equals("_Total") || !SystemUtils.IS_OS_WINDOWS) {
+                    hasOneUniqueDisk = true;
+                }
+            }
+
+            if (!diskMetric.isReadBandwidthUnsigned())
+            {
+                // Read bandwidth must not be a negative number
+                assertTrue("Disk Read Bandwidth must be greater than or equal to 0, but it is "
+                                + diskMetric.getReadBandwidth() + "B/s for Disk " + diskMetric.getDeviceName(),
+                        diskMetric.getReadBandwidth() >= 0);
+            }
+
+            if (!diskMetric.isWriteBandwidthUnsigned())
+            {
+                // Write bandwidth must not be a negative number
+                assertTrue("Disk write bandwidth must be greater than or equal to 0, but it is "
+                                + diskMetric.getWriteBandwidth() + "B/s for Disk " + diskMetric.getDeviceName(),
+                        diskMetric.getWriteBandwidth() >= 0);
+            }
+
+            // Average time to transfer must not be a negative number
+            assertTrue("Disk write bandwidth must be greater than or equal to 0, but it is "
+                            + diskMetric.getAverageTimeToTransfer() + "sec/Transfer for Disk "
+                            + diskMetric.getDeviceName(),
+                    diskMetric.getAverageTimeToTransfer() >= 0);
+
+            // A percentage of committed memory in use must be between 0% and 100%
+            // Likely, if it's close to 100%, the memory committed will be increased to prevent it,
+            // but if the commit limit is reached and the page size limit is reached, it may not.
+            assertTrue("diskMetric.getUsage() should be returning a value >= 0%"
+                            + " but it is " + diskMetric.getUsage() + "% for Disk " + diskMetric.getDeviceName(),
+                    diskMetric.getUsage() >= 0.0);
+            assertTrue("diskMetric.getUsage() should be returning a value <= 100%"
+                            + " but it is " + diskMetric.getUsage() + "% for Disk " + diskMetric.getDeviceName(),
+                    diskMetric.getUsage() <= 100.0);
+
+        }
 
     }
 
