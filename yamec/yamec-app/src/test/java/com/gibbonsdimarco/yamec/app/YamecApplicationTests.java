@@ -157,8 +157,11 @@ class YamecApplicationTests {
         boolean hasOneUniqueDisk = false;
 
         for (SystemDiskMetric diskMetric : metrics) {
-            // Disk name should not be null
-            assertNotNull(diskMetric, "getDiskMetrics() should not return null.");
+            // Disk Metric should not be null
+            assertNotNull(diskMetric, "No SystemDiskMetric in the returned metrics list should be null");
+
+            // The name of the Disk Metric device should not be null, either
+            assertNotNull(diskMetric.getDeviceName(), "diskMetric.getDeviceName() should not be null");
 
             // Check for a uniquely named Disk Instance
             if (!hasOneUniqueDisk) {
@@ -189,9 +192,7 @@ class YamecApplicationTests {
                             + diskMetric.getDeviceName(),
                     diskMetric.getAverageTimeToTransfer() >= 0);
 
-            // A percentage of committed memory in use must be between 0% and 100%
-            // Likely, if it's close to 100%, the memory committed will be increased to prevent it,
-            // but if the commit limit is reached and the page size limit is reached, it may not.
+            // A percentage of disk utilization must be between 0% and 100%
             assertTrue("diskMetric.getUsage() should be returning a value >= 0%"
                             + " but it is " + diskMetric.getUsage() + "% for Disk " + diskMetric.getDeviceName(),
                     diskMetric.getUsage() >= 0.0);
@@ -202,6 +203,54 @@ class YamecApplicationTests {
         }
 
     }
+
+    @Test
+    void testGetNicMetricsReturnsValidData() {
+        ArrayList<SystemNicMetric> metrics = monitor.getNicMetrics();
+
+        // Returns not null
+        assertNotNull(metrics,
+                "getNicMetrics() should not return null.");
+
+        // Not all collections of NicMetrics have data collected (all NICs could be disabled, for example)
+
+        for (SystemNicMetric nicMetric : metrics) {
+            // NIC Metric should not be null
+            assertNotNull(nicMetric, "No SystemNicMetric in the returned metrics list should be null");
+
+            // The name of the NIC Metric device should not be null, either
+            assertNotNull(nicMetric.getDeviceName(), "nicMetric.getDeviceName() should not be null");
+
+
+            if (!nicMetric.isBytesSentUnsigned())
+            {
+                // Read bandwidth must not be a negative number
+                assertTrue("NIC Sent Bytes must be greater than or equal to 0, but it is "
+                                + nicMetric.getBytesSent() + "B/s for Disk " + nicMetric.getDeviceName(),
+                        nicMetric.getBytesSent() >= 0);
+            }
+
+            if (!nicMetric.isBytesReceivedUnsigned())
+            {
+                // Write bandwidth must not be a negative number
+                assertTrue("NIC Received Bytes must be greater than or equal to 0, but it is "
+                                + nicMetric.getBytesReceived() + "B/s for Disk " + nicMetric.getDeviceName(),
+                        nicMetric.getBytesReceived() >= 0);
+            }
+
+            if (!nicMetric.isNicBandwidthUnsigned())
+            {
+                // Write bandwidth must not be a negative number
+                assertTrue("NIC Received Bytes must be greater than or equal to 0, but it is "
+                                + nicMetric.getNicBandwidth() + "B/s for Disk " + nicMetric.getDeviceName(),
+                        nicMetric.getNicBandwidth() >= 0);
+            }
+
+
+        }
+
+    }
+
 
     @Test
     void systemMonitorManagerCpuHardwareInfoTests()
@@ -301,6 +350,7 @@ class YamecApplicationTests {
             return false;
         }
 
+        // GPU support was cut
         try {
             System.err.println("Testing GPU Metrics Retrieval...");
             SystemGpuMetric gpuMetrics = monitor.getGpuMetrics();
