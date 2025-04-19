@@ -298,7 +298,7 @@ int SystemMonitorManager::getHardwareCpuInformation(std::wstring *brandString,
     if (numLogicalProcessors != nullptr)
     {
         // Set dereferenced core count
-        *numCores = cacheInfo.logicalProcessorCount;
+        *numLogicalProcessors = cacheInfo.logicalProcessorCount;
     }
 
     if (numNumaNodes != nullptr)
