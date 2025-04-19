@@ -5,6 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.websocket.OnClose;
 
+/**
+ *
+ * This class should never be instantiated more than once! It will fail to run if it is
+ * re-initiated due to a native dependency's behavior.
+ */
 public class SystemMonitorManagerJNI implements AutoCloseable {
     private static final Logger logger = LoggerFactory.getLogger(SystemMonitorManagerJNI.class);
 
@@ -137,6 +142,14 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
         return getNicMetrics(this.monitorAddress);
     }
 
+    public java.util.ArrayList<ProcessMetric> getProcessMetrics() {
+        if (closed) {
+            return null;
+        }
+
+        return getProcessMetrics(this.monitorAddress);
+    }
+
     public MemoryHardwareInformation getMemoryHardwareInformation() {
         if (closed) {
             return null;
@@ -193,6 +206,8 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
     private native java.util.ArrayList<SystemDiskMetric> getDiskMetrics(long ptr);
 
     private native java.util.ArrayList<SystemNicMetric> getNicMetrics(long ptr);
+
+    private native java.util.ArrayList<ProcessMetric> getProcessMetrics(long ptr);
 
     private native MemoryHardwareInformation getHardwareMemoryInformation(long ptr);
 

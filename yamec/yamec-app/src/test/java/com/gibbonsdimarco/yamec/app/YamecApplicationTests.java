@@ -2,16 +2,37 @@ package com.gibbonsdimarco.yamec.app;
 
 import com.gibbonsdimarco.yamec.app.data.*;
 import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.annotation.Order;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class YamecApplicationTests {
 
+    private static SystemMonitorManagerJNI monitor;
+
     @Test
+    @Order(1)
     void contextLoads() {
+    }
+
+    @BeforeAll
+    static void systemMonitorManagerCreation() {
+        try {
+            System.err.println("Starting System Monitor Manager...");
+            monitor = new SystemMonitorManagerJNI();
+        }
+        catch (Exception e) {
+            fail("An exception was thrown while creating the SystemMonitorManager.\n\n"
+                    + e.getMessage() + "\n"
+                    + Arrays.toString(e.getStackTrace()));
+        }
     }
 
     @Test
@@ -19,20 +40,48 @@ class YamecApplicationTests {
         assert(testSystemMonitorManager());
     }
 
+    @Test
+    void systemMonitorGetsProcessData() {
+
+
+        try {
+            System.err.println("Testing Process Data Retrieval");
+
+            ArrayList<ProcessMetric> processData = monitor.getProcessMetrics();
+
+            assert(processData != null);
+
+            assert(!processData.isEmpty());
+
+            System.err.println("Printing 5 random processes...");
+
+            for (int i = 0; i < 5; i++) {
+                java.util.Random random = new java.util.Random();
+                int selectedProcessIndex = random.nextInt(processData.size());
+
+                System.err.printf("%s (pid: %d)\n", processData.get(selectedProcessIndex).getProcessName(),
+                                                        processData.get(selectedProcessIndex).getProcessId());
+                System.err.printf("\tCPU Usage: %f\n", processData.get(selectedProcessIndex).getCpuUsage());
+                System.err.printf("\tPhysical Memory Usage: %d bytes\n",
+                        processData.get(selectedProcessIndex).getPhysicalMemoryUsage());
+                System.err.printf("\tVirtual Memory Usage: %d bytes\n",
+                        processData.get(selectedProcessIndex).getVirtualMemoryUsage());
+                System.err.println();
+            }
+
+        } catch (Exception e) {
+            fail("An exception was thrown while getting the process data.\n\n"
+                    + e.getMessage() + "\n"
+                    + Arrays.toString(e.getStackTrace()));
+        }
+
+
+
+    }
+
     boolean testSystemMonitorManager() {
         System.err.println("Testing System Monitor Manager...");
 
-        SystemMonitorManagerJNI monitor;
-
-        try {
-            System.err.println("Creating System Monitor Manager...");
-            monitor = new SystemMonitorManagerJNI();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Failed to create System Monitor Manager.");
-            return false;
-        }
 
         try {
             System.err.println("Testing CPU Metrics Retrieval...");
@@ -49,7 +98,6 @@ class YamecApplicationTests {
         catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to retrieve CPU Metrics.");
-            monitor.close();
             return false;
         }
 
@@ -68,7 +116,6 @@ class YamecApplicationTests {
         catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to retrieve GPU Metrics.");
-            monitor.close();
             return false;
         }
 
@@ -95,7 +142,6 @@ class YamecApplicationTests {
         catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to retrieve Memory Hardware Information.");
-            monitor.close();
             return false;
         }
 
@@ -123,7 +169,6 @@ class YamecApplicationTests {
         catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to retrieve Memory Metrics.");
-            monitor.close();
             return false;
         }
 
@@ -175,7 +220,6 @@ class YamecApplicationTests {
         catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to retrieve Memory Hardware Information.");
-            monitor.close();
             return false;
         }
 
@@ -208,7 +252,6 @@ class YamecApplicationTests {
         catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to retrieve Disk Metrics.");
-            monitor.close();
             return false;
         }
 
@@ -240,7 +283,6 @@ class YamecApplicationTests {
         catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to retrieve Memory Hardware Information.");
-            monitor.close();
             return false;
         }
 
@@ -272,27 +314,30 @@ class YamecApplicationTests {
         catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to retrieve NIC Metrics.");
-            monitor.close();
-            return false;
-        }
-
-        try {
-            System.err.println("Closing System Monitor Manager... ");
-            monitor.close();
-
-            if (monitor.isOpen()) {
-                throw new Exception("The status of the System Monitor Manager did not change to closed.");
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Failed to close System Monitor Manager.");
             return false;
         }
 
         System.err.println("Testing complete.");
 
         return true;
+    }
+
+    @AfterAll
+    public static void testSystemMonitorManagerClose()
+    {
+        try {
+            System.err.println("Closing System Monitor Manager... ");
+            monitor.close();
+
+            if (monitor.isOpen()) {
+                fail("The status of the System Monitor Manager did not change to closed when it was closed.");
+            }
+        }
+        catch (Exception e) {
+            fail("An exception was thrown while closing the System Monitor Manager.\n\n"
+                    + e.getMessage() + "\n"
+                    + Arrays.toString(e.getStackTrace()));
+        }
     }
 
 }

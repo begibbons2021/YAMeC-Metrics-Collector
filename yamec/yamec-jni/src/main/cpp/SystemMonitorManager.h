@@ -9,6 +9,7 @@
 // SystemMonitorManager.h
 #pragma once
 
+#include "ApplicationInfo.h"
 #include "PdhQueryManager.h"
 #include "CpuInfo.h"
 #include "DiskInfo.h"
@@ -32,6 +33,7 @@ public:
     [[nodiscard]] GpuInfo *getGpuInfo() { return &m_gpuInfo; }
     [[nodiscard]] DiskInfo *getDiskInfo() { return &m_diskInfo; }
     [[nodiscard]] NicInfo *getNicInfo() { return &m_nicInfo; }
+    [[nodiscard]] ApplicationInfo *getApplicationInfo() { return &m_applicationInfo; }
 
     // Convenience methods
     [[nodiscard]] int getCpuUsage(double *usage) const;
@@ -57,6 +59,27 @@ public:
     [[nodiscard]] int getNicCounters(std::vector<unsigned long long> *nicInstancesBandwidth,
                                      std::vector<unsigned long long> *nicInstancesSendBytes,
                                      std::vector<unsigned long long> *nicInstancesRecvBytes) const;
+
+    /**
+    * Retrieves information pertaining to all currently executing processes/applications on
+    * the system
+    * @param processNames A pointer to a std::vector of wide strings to hold process names
+    * @param processIds A pointer to a std::vector of integers to hold process IDs
+    * @param cpuUsages A pointer to a std::vector of double precision decimals to hold
+    * processes' CPU usages. The System Monitor Manager scales all usage values by the number
+    * of processors available on the system, if it can be identified.
+    * @param physicalMemoryUsed A pointer to a std::vector of 64-bit long integers containing the
+    * amount of physical memory in use for a process, derived from its working set size
+    * @param virtualMemoryUsed A pointer to a std::vector of 64-bit long integers containing the
+    * amount of virtual memory in use for a process, derived from its page file size
+    * @return A status code either as part of the PDH standard or 0 for success or a negative number
+    *          for a failure of some kind (as an int)
+    */
+    [[nodiscard]] int getApplicationCounters(std::vector<std::wstring> *processNames,
+                                                std::vector<int> *processIds,
+                                                std::vector<double> *cpuUsages,
+                                                std::vector<long long> *physicalMemoryUsed,
+                                                std::vector<long long> *virtualMemoryUsed) const;
 
     [[nodiscard]] int getPhysicalMemoryAvailable(unsigned long long *bytesAvailable) const;
     [[nodiscard]] int getVirtualMemoryCommitted(unsigned long long *bytesCommitted) const;
@@ -86,6 +109,7 @@ private:
     DiskInfo m_diskInfo;
     GpuInfo m_gpuInfo;
     NicInfo m_nicInfo;
+    ApplicationInfo m_applicationInfo;
     bool m_initialized;
 };
 

@@ -80,7 +80,8 @@ JNIEXPORT jlong JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManag
         // If initialization fails, clear memory
         delete monitor;
 
-
+        Logger::log(Logger::Level::WARN, "System Monitor Manager could not be initialized.");
+        Logger::log(Logger::Level::WARN, "Error Code: " + std::to_string(status));
 
         return -1; // Failed
     }
@@ -448,6 +449,111 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 
 }
 
+
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getProcessMetrics
+                            (JNIEnv *env, jobject obj, const jlong monitorPtr)
+{
+    // I apologize if this seems like spaghetti code because of the way the data is being managed
+    // Please let me know if this could benefit from a major refactor. (std::map<wstring, any>?)
+
+    const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
+
+    // Java Classes & Methods Used
+    const jclass arrayListClass = env->FindClass("java/util/ArrayList");
+    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/ProcessMetric");
+    const jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
+    // Java does Generic type checks at compile time but not runtime, so we add objects of type Object
+    const jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
+    // String;int;double;long long;long long
+    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>",
+                                        "(Ljava/lang/String;IDJJ)V");
+
+    // Create buffers to hold the disk information temporarily
+    std::vector<std::wstring> processNames;
+    std::vector<int> processIds;
+    std::vector<double> cpuUsages;
+    std::vector<long long> physicalMemoryUsedBytes;
+    std::vector<long long> virtualMemoryUsedBytes;
+
+    try
+    {
+        // Attempt to fill buffers
+        if (const int status = monitor->getApplicationCounters(&processNames,
+                                                                &processIds,
+                                                                &cpuUsages,
+                                                                &physicalMemoryUsedBytes,
+                                                                &virtualMemoryUsedBytes);
+                                                                0 != status)
+        {
+            std::wcerr << "Application metrics could not be retrieved. "
+                        << std::endl;
+            std::wcerr << "Error Code: " << std::hex << status << std::endl;
+            // Retrieval of counters failed, so return null
+            return env->NewGlobalRef(nullptr);
+        }
+    }
+    catch (std::exception &e)
+    {
+        std::cerr << "GetProcessMetrics failed: \n Error: "
+                        << e.what() << std::endl;
+        return env->NewGlobalRef(nullptr);
+    }
+    catch (std::runtime_error &e)
+    {
+        std::cerr << "GetProcessMetrics failed: \n Runtime Error: "
+                        << e.what() << std::endl;
+        return env->NewGlobalRef(nullptr);
+    }
+
+
+    // Put data into Java objects
+
+
+    // Create an ArrayList to return all object instances in
+    jobject processMetricArrayList = env->NewObject(arrayListClass, arrayListConstructor);
+
+    for (size_t i = 0; i < processNames.size(); ++i)
+    {
+        // Convert the friendlyName to UTF8
+        std::string processNameAsUTF8Str;
+
+        if (const int utf8Length = convertFromWideStrToStr(processNameAsUTF8Str, processNames.at(i));
+            utf8Length < 0)
+        {
+
+            return env->NewGlobalRef(nullptr);
+        }
+
+        const int processId = processIds.at(i);
+        const double cpuUsage = cpuUsages.at(i);
+        const long long physicalMemory = physicalMemoryUsedBytes.at(i);
+        const long long virtualMemory = virtualMemoryUsedBytes.at(i);
+
+        // Allocate Java ProcessMetric object
+        // String;int;double;long long; long long
+        const _jobject *processMetricObject = env->NewObject(systemMetricClass,
+                                                        systemMetricConstructor,
+                                                        env->NewStringUTF(processNameAsUTF8Str.c_str()),
+                                                        static_cast<jint>(processId),
+                                                        static_cast<jdouble>(cpuUsage),
+                                                        static_cast<jlong>(physicalMemory),
+                                                        static_cast<jlong>(virtualMemory));
+
+        // Try to add the object to the ArrayList
+        if (const jboolean success = env->CallBooleanMethod(processMetricArrayList,
+                                                            arrayListAddMethod,
+                                                            processMetricObject); !success)
+        {
+            return env->NewGlobalRef(nullptr);
+        }
+
+    }
+
+    // Return created ArrayList
+    return processMetricArrayList;
+
+}
+
 JNIEXPORT jboolean JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_release
                             (JNIEnv *env, jobject obj, const jlong monitorPtr)
 {
@@ -698,9 +804,6 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getHardwareNicInformation
                             (JNIEnv *env, jobject obj, const jlong monitorPtr)
 {
-    // I apologize if this seems like spaghetti code because of the way the data is being managed
-    // Please let me know if this could benefit from a major refactor. (std::map<wstring, any>?)
-
     const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
@@ -819,6 +922,8 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     return nicHardwareInformationArrayList;
 
 }
+
+
 
 /*
 *std::vector<std::wstring> *hardwareNames,

@@ -53,6 +53,13 @@ int SystemMonitorManager::initialize()
         return -7;
     }
 
+    // Initialize the Application info module
+    if (const int applicationInfoInitialized = m_applicationInfo.initialize(&m_pdhManager, &m_wmiManager);
+        applicationInfoInitialized != 0)
+    {
+        return -8*10 + applicationInfoInitialized;
+    }
+
     m_initialized = true;
     return 0;
 }
@@ -150,6 +157,43 @@ int SystemMonitorManager::getNicCounters(std::vector<unsigned long long> *nicIns
 
     return m_nicInfo.getAllCounters(nicInstancesBandwidth, nicInstancesSendBytes, nicInstancesRecvBytes);
 
+
+}
+
+int SystemMonitorManager::getApplicationCounters(std::vector<std::wstring> *processNames,
+                                         std::vector<int> *processIds,
+                                         std::vector<double> *cpuUsages,
+                                         std::vector<long long> *physicalMemoryUsed,
+                                         std::vector<long long> *virtualMemoryUsed) const
+{
+    if (!m_initialized)
+    {
+        return -1;
+    }
+
+    const int status = m_applicationInfo.getProcessCounters(processNames,
+                                                            processIds,
+                                                            cpuUsages,
+                                                            physicalMemoryUsed,
+                                                            virtualMemoryUsed);
+
+    // System Monitor Manager will scale the CPU usages down to match the number of
+    // processors on the system
+    if (status == 0)
+    {
+        if (const unsigned int numLogicalProcessors = m_cpuInfo.getSystemInfo().numberOfProcessors;
+            numLogicalProcessors != 0)
+        {
+            // Oh right, we can address these as references!
+            for (double & cpuUsage : *cpuUsages)
+            {
+                // Divide storage
+                cpuUsage = cpuUsage / static_cast<double>(numLogicalProcessors);
+            }
+        }
+    }
+
+    return status;
 
 }
 
