@@ -122,6 +122,124 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 
 }
 
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getHardwareCpuInformation
+                            (JNIEnv *env, jobject obj, const jlong monitorPtr)
+{
+
+    const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
+
+    // Java Classes & Methods Used
+    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/CpuHardwareInformation");
+    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>",
+                                                            "(Ljava/lang/String;JJLjava/lang/String;JJJJZ)V");
+
+
+    // Create buffers to hold the other information temporarily
+    // Information data buffers
+    std::wstring brandString;
+    unsigned int numCores;
+    unsigned int numLogicalProcessors;
+    std::wstring architecture;
+    unsigned int numNumaNodes;
+    unsigned int l1CacheSize;
+    unsigned int l2CacheSize;
+    unsigned int l3CacheSize;
+    bool supportsVirtualization;
+
+    // Attempt to fill buffers
+    try
+    {
+        if (const int status = monitor->getHardwareCpuInformation(&brandString,
+                                                                &numCores,
+                                                                &numLogicalProcessors,
+                                                                &architecture,
+                                                                &numNumaNodes,
+                                                                &l1CacheSize,
+                                                                &l2CacheSize,
+                                                                &l3CacheSize,
+                                                                &supportsVirtualization);
+                                                                0 != status)
+        {
+            Logger::log(Logger::Level::WARN, "CPU Hardware information retrieval failed.");
+            Logger::log(Logger::Level::WARN, "Error Code: " + std::to_string(status));
+            // Retrieval of counters failed, so return null
+            return env->NewGlobalRef(nullptr);
+        }
+    }
+    catch (std::exception &e)
+    {
+        Logger::log(Logger::Level::WARN, "CPU Hardware information retrieval failed due to an exception:");
+        Logger::log(Logger::Level::WARN, e.what());
+        return env->NewGlobalRef(nullptr);
+    }
+    catch (std::runtime_error &e)
+    {
+        Logger::log(Logger::Level::WARN, "CPU Hardware information retrieval failed due to a runtime error:");
+        Logger::log(Logger::Level::WARN, e.what());
+        return env->NewGlobalRef(nullptr);
+    }
+
+    std::string brandStringAsBSTR;
+    if (const int success = convertFromWideStrToStr(brandStringAsBSTR, brandString);
+        0 != success)
+    {
+        const std::string message("CPU Hardware information retrieval failed because the ",
+            "brand string could not be converted to a standard width string.");
+
+        Logger::log(Logger::Level::WARN, message);
+        return env->NewGlobalRef(nullptr);
+    }
+
+    std::string architectureAsBSTR;
+    if (const int success = convertFromWideStrToStr(architectureAsBSTR, architecture);
+        0 != success)
+    {
+        const std::string message("CPU Hardware information retrieval failed because the ",
+            "CPU architecture string could not be converted to a standard width string.");
+
+        Logger::log(Logger::Level::WARN, message);
+        return env->NewGlobalRef(nullptr);
+    }
+
+    // Put data into Java objects
+    jobject systemMetricObject;
+
+    try
+    {
+
+        systemMetricObject = env->NewObject(systemMetricClass,
+                                            systemMetricConstructor,
+                                            env->NewStringUTF(brandStringAsBSTR.c_str()),
+                                            static_cast<jlong>(numCores),
+                                            static_cast<jlong>(numLogicalProcessors),
+                                            env->NewStringUTF(architectureAsBSTR.c_str()),
+                                            static_cast<jlong>(numNumaNodes),
+                                            static_cast<jlong>(l1CacheSize),
+                                            static_cast<jlong>(l2CacheSize),
+                                            static_cast<jlong>(l3CacheSize),
+                                            static_cast<jboolean>(supportsVirtualization));
+    }
+    catch (std::exception &e)
+    {
+        const std::string message("CPU Hardware Retrieval failed because the CpuHardwareInformation object ",
+            "containing the data could not be created due to an exception: ");
+        Logger::log(Logger::Level::WARN, message);
+        Logger::log(Logger::Level::WARN, e.what());
+        return env->NewGlobalRef(nullptr);
+    }
+    catch (std::runtime_error &e)
+    {
+        const std::string message("CPU Hardware Retrieval failed because the CpuHardwareInformation object ",
+            "containing the data could not be created due to a runtime error: ");
+        Logger::log(Logger::Level::WARN, message);
+        Logger::log(Logger::Level::WARN, e.what());
+        return env->NewGlobalRef(nullptr);
+    }
+
+    return systemMetricObject;
+
+}
+
 JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getGpuMetrics
                             (JNIEnv *env, jobject obj, const jlong monitorPtr)
 {

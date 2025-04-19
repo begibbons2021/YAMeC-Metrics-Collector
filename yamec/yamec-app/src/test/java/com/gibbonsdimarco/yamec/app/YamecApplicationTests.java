@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -38,6 +39,43 @@ class YamecApplicationTests {
     @Test
     void systemMonitorDataTests() {
         assert(testSystemMonitorManager());
+    }
+
+    @Test
+    void systemMonitorManagerCpuHardwareInfoTests()
+    {
+        try {
+            CpuHardwareInformation cpuInfo = monitor.getCpuHardwareInformation();
+
+            assertTrue("No CPU information was able to be retrieved (returned null).",
+                    cpuInfo != null);
+
+            assert(cpuInfo != null);
+
+            System.err.println("CPU Information: ");
+            System.err.printf("\tProcessor: %s\n", cpuInfo.getFriendlyName());
+            System.err.printf("\t\t%d core(s), %d thread(s)\n",
+                    cpuInfo.getCoreCount(), cpuInfo.getLogicalProcessorCount());
+            System.err.printf("\t\tArchitecture: %s\n", cpuInfo.getArchitecture());
+            System.err.printf("\t\tVirtualization: %s\n", cpuInfo.isVirtualizationEnabled() ? "Enabled" : "Disabled");
+            System.err.printf("\t\tNUMA Node Count: %d\n", cpuInfo.getNumaNodeCount());
+            System.err.println("\t\tCache Sizes: ");
+            System.err.printf("\t\t\tL1: %d bytes\n", cpuInfo.getL1CacheSize());
+            System.err.printf("\t\t\tL2: %d bytes\n", cpuInfo.getL2CacheSize());
+            System.err.printf("\t\t\tL3: %d bytes\n", cpuInfo.getL3CacheSize());
+            System.out.println();
+
+            assertTrue("CPU Friendly Name was a null value, which should not happen",
+                        cpuInfo.getFriendlyName() != null);
+            assertTrue("CPU Architecture was a null/empty value, which should not happen",
+                    cpuInfo.getArchitecture() != null || !cpuInfo.getFriendlyName().isEmpty());
+
+        } catch (Exception e) {
+            fail("An exception was thrown while getting the CPU hardware data.\n\n"
+                    + e.getMessage() + "\n"
+                    + Arrays.toString(e.getStackTrace()));
+        }
+
     }
 
     @Test

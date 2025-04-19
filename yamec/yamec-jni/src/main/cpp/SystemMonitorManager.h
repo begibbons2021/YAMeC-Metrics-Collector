@@ -85,8 +85,12 @@ public:
     [[nodiscard]] int getVirtualMemoryCommitted(unsigned long long *bytesCommitted) const;
     [[nodiscard]] int getVirtualMemoryCommittedPercentUsed(double *committedPercentUsed) const;
 
+    int getHardwareCpuInformation(std::wstring *brandString, unsigned int *numCores, unsigned int *numLogicalProcessors,
+                                  std::wstring *architecture, unsigned int *numNumaNodes, unsigned int *l1CacheSize,
+                                  unsigned int *l2CacheSize, unsigned int *l3CacheSize, bool *supportsVirtualization) const;
+
     [[nodiscard]] int getHardwareMemoryInformation(unsigned long long *speed, unsigned long long *capacity,
-                                     unsigned int *slotsUsed, unsigned int *slotsTotal) const;
+                                                   unsigned int *slotsUsed, unsigned int *slotsTotal) const;
 
     [[nodiscard]] int getHardwareDiskInformation(std::vector<std::wstring> *hardwareNames,
                                    std::vector<std::wstring> *uniqueIds,

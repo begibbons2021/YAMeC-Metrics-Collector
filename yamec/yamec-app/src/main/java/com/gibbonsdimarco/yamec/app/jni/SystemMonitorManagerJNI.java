@@ -150,6 +150,14 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
         return getProcessMetrics(this.monitorAddress);
     }
 
+    public CpuHardwareInformation getCpuHardwareInformation() {
+        if (closed) {
+            return null;
+        }
+
+        return getHardwareCpuInformation(this.monitorAddress);
+    }
+
     public MemoryHardwareInformation getMemoryHardwareInformation() {
         if (closed) {
             return null;
@@ -208,6 +216,8 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
     private native java.util.ArrayList<SystemNicMetric> getNicMetrics(long ptr);
 
     private native java.util.ArrayList<ProcessMetric> getProcessMetrics(long ptr);
+
+    private native CpuHardwareInformation getHardwareCpuInformation(long ptr);
 
     private native MemoryHardwareInformation getHardwareMemoryInformation(long ptr);
 

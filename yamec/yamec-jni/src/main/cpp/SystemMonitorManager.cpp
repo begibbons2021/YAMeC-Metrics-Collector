@@ -1,6 +1,8 @@
 // SystemMonitorManager.cpp
 #include "SystemMonitorManager.h"
 
+#include <sstream>
+
 SystemMonitorManager::SystemMonitorManager() : m_initialized(false) {}
 
 SystemMonitorManager::~SystemMonitorManager() = default;
@@ -225,6 +227,113 @@ int SystemMonitorManager::getVirtualMemoryCommittedPercentUsed(double *committed
     }
 
     return m_memoryInfo.getVirtualMemoryCommittedPercentUsed(committedPercentUsed);
+}
+
+int SystemMonitorManager::getHardwareCpuInformation(std::wstring *brandString,
+                                                    unsigned int *numCores,
+                                                    unsigned int *numLogicalProcessors,
+                                                    std::wstring *architecture,
+                                                    unsigned int *numNumaNodes,
+                                                    unsigned int *l1CacheSize,
+                                                    unsigned int *l2CacheSize,
+                                                    unsigned int *l3CacheSize,
+                                                    bool *supportsVirtualization) const
+{
+    // Check if the Monitor is initialized
+    if (!m_initialized)
+    {
+        return -1;
+    }
+
+    const std::string brandStringAsBSTR = m_cpuInfo.getBrandString();
+    std::wostringstream converter;
+
+    converter << brandStringAsBSTR.c_str();
+
+    if (brandString != nullptr)
+    {
+        brandString->clear();
+        brandString->append(converter.str());
+    }
+
+    converter.clear();
+
+    const auto [numberOfProcessorsTemp, architectureTemp] = m_cpuInfo.getSystemInfo();
+
+    const CacheInfo cacheInfo = m_cpuInfo.getCacheInfo();
+
+    const int architectureAsInt = architectureTemp;
+    if (architecture != nullptr)
+    {
+        architecture->clear();
+        switch (architectureAsInt)
+        {
+            case 0:
+                architecture->append(L"x86");
+                break;
+            case 5:
+                architecture->append(L"ARM");
+                break;
+            case 6:
+                architecture->append(L"Intel Itanium-based");
+                break;
+            case 9:
+                architecture->append(L"x64");
+                break;
+            case 12:
+                architecture->append(L"ARM64");
+                break;
+            default:
+                architecture->append(L"Unknown");
+                break;
+        }
+    }
+
+    if (numCores != nullptr)
+    {
+        // Set dereferenced core count
+        *numCores = cacheInfo.processorCoreCount;
+    }
+
+    if (numLogicalProcessors != nullptr)
+    {
+        // Set dereferenced core count
+        *numCores = cacheInfo.logicalProcessorCount;
+    }
+
+    if (numNumaNodes != nullptr)
+    {
+        // Set dereferenced core count
+        *numNumaNodes = cacheInfo.numaNodeCount;
+    }
+
+    if (l1CacheSize != nullptr)
+    {
+        // Set dereferenced core count
+        *l1CacheSize = cacheInfo.processorL1CacheSize;
+    }
+
+    if (l2CacheSize != nullptr)
+    {
+        // Set dereferenced core count
+        *l2CacheSize = cacheInfo.processorL2CacheSize;
+    }
+
+    if (l3CacheSize != nullptr)
+    {
+        // Set dereferenced core count
+        *l3CacheSize = cacheInfo.processorL3CacheSize;
+    }
+
+    if (supportsVirtualization != nullptr)
+    {
+        // Set dereferenced core count
+        *supportsVirtualization = m_cpuInfo.isVirtualizationAvailable();
+    }
+
+    return 0;
+
+
 }
 
 int SystemMonitorManager::getHardwareMemoryInformation(unsigned long long *speed,
