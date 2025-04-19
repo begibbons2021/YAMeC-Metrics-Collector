@@ -8,6 +8,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Try to use find_package first, which is the recommended approach
 find_package(JNI QUIET)
 
+# Include GoogleTest library - https://google.github.io/googletest/quickstart-cmake.html
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
 if(JNI_FOUND)
     include_directories(${JNI_INCLUDE_DIRS})
     message(STATUS "JNI found via find_package: ${JNI_INCLUDE_DIRS}")
@@ -64,6 +74,8 @@ if(WIN32)
             yamec-jni/src/main/cpp/com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI.h
             yamec-jni/src/main/cpp/WmiQueryManager.cpp
             yamec-jni/src/main/cpp/WmiQueryManager.h
+            yamec-jni/src/main/cpp/ApplicationInfo.cpp
+            yamec-jni/src/main/cpp/ApplicationInfo.h
 
     )
 

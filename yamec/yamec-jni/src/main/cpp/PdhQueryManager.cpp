@@ -215,6 +215,226 @@ bool PdhQueryManager::getCounterValue(const PDH_HCOUNTER counter, double *value)
     return true;
 }
 
+bool PdhQueryManager::getCounterValues(const PDH_HCOUNTER counter,
+                                        std::vector<std::wstring> *instanceNames,
+                                        std::vector<double> *instanceValues) const
+{
+    if (!m_initialized)
+    {
+        std::cerr << "Query not initialized." << std::endl;
+        return false;
+    }
+
+    if (instanceNames == nullptr || instanceValues == nullptr)
+    {
+        return false;
+    }
+
+    // Query for buffer sizes for counter item data
+    PDH_FMT_COUNTERVALUE_ITEM *counterItems  = nullptr;
+    DWORD numItems = 0;
+    DWORD bufferLength = 0;
+    if (const PDH_STATUS status = PdhGetFormattedCounterArray(counter, PDH_FMT_DOUBLE | PDH_FMT_NOCAP100,
+                                        &bufferLength, &numItems, counterItems);
+                                        status != PDH_MORE_DATA)
+    {
+        std::cerr << "Failed to get formatted counter array." << std::endl;
+        return false;
+    }
+
+    // Allocate a buffer for objects returned
+    counterItems = static_cast<PDH_FMT_COUNTERVALUE_ITEM *>(malloc(bufferLength));
+
+    if (!counterItems)
+    {
+        free(counterItems);
+        return false;
+    }
+
+    // Fill the buffer
+    if (const PDH_STATUS status = PdhGetFormattedCounterArray(counter, PDH_FMT_DOUBLE | PDH_FMT_NOCAP100,
+                                    &bufferLength, &numItems, counterItems);
+                                    status != ERROR_SUCCESS)
+    {
+        std::cerr << "Failed to get formatted counter array." << std::endl;
+        free(counterItems);
+        counterItems = nullptr;
+        bufferLength = numItems = 0;
+        return false;
+    }
+
+    instanceNames->clear();
+    instanceValues->clear();
+
+    // Copy all data to a map
+    for (DWORD i = 0; i < numItems; ++i)
+    {
+        std::string nameAsStr = counterItems[i].szName;
+        // Convert to wide string
+        std::wstring name(nameAsStr.begin(), nameAsStr.end());
+
+        double value = counterItems[i].FmtValue.doubleValue;
+
+        // Add to vectors
+        instanceNames->emplace_back(name);
+        instanceValues->emplace_back(value);
+    }
+
+    // Clean up memory
+    free(counterItems);
+    counterItems = nullptr;
+    bufferLength = numItems = 0;
+
+    return true;
+}
+
+bool PdhQueryManager::getCounterValues(const PDH_HCOUNTER counter,
+                                        std::vector<std::wstring> *instanceNames,
+                                        std::vector<long long> *instanceValues) const
+{
+    if (!m_initialized)
+    {
+        std::cerr << "Query not initialized." << std::endl;
+        return false;
+    }
+
+    if (instanceNames == nullptr || instanceValues == nullptr)
+    {
+        return false;
+    }
+
+    // Query for buffer sizes for counter item data
+    PDH_FMT_COUNTERVALUE_ITEM *counterItems  = nullptr;
+    DWORD numItems = 0;
+    DWORD bufferLength = 0;
+    if (const PDH_STATUS status = PdhGetFormattedCounterArray(counter, PDH_FMT_LARGE,
+                                        &bufferLength, &numItems, counterItems);
+                                        status != PDH_MORE_DATA)
+    {
+        std::cerr << "Failed to get formatted counter array." << std::endl;
+        return false;
+    }
+
+    // Allocate a buffer for objects returned
+    counterItems = static_cast<PDH_FMT_COUNTERVALUE_ITEM *>(malloc(bufferLength));
+
+    if (!counterItems)
+    {
+        free(counterItems);
+        return false;
+    }
+
+    // Fill the buffer
+    if (const PDH_STATUS status = PdhGetFormattedCounterArray(counter, PDH_FMT_LARGE,
+                                    &bufferLength, &numItems, counterItems);
+                                    status != ERROR_SUCCESS)
+    {
+        std::cerr << "Failed to get formatted counter array." << std::endl;
+        free(counterItems);
+        counterItems = nullptr;
+        bufferLength = numItems = 0;
+        return false;
+    }
+
+    instanceNames->clear();
+    instanceValues->clear();
+
+    // Copy all data to a map
+    for (DWORD i = 0; i < numItems; ++i)
+    {
+        std::string nameAsStr = counterItems[i].szName;
+        // Convert to wide string
+        std::wstring name(nameAsStr.begin(), nameAsStr.end());
+
+        long long value = counterItems[i].FmtValue.largeValue;
+
+        // Add to vectors
+        instanceNames->emplace_back(name);
+        instanceValues->emplace_back(value);
+    }
+
+    // Clean up memory
+    free(counterItems);
+    counterItems = nullptr;
+    bufferLength = numItems = 0;
+
+    return true;
+}
+
+bool PdhQueryManager::getCounterValues(const PDH_HCOUNTER counter,
+                                        std::vector<std::wstring> *instanceNames,
+                                        std::vector<int> *instanceValues) const
+{
+    if (!m_initialized)
+    {
+        std::cerr << "Query not initialized." << std::endl;
+        return false;
+    }
+
+    if (instanceNames == nullptr || instanceValues == nullptr)
+    {
+        return false;
+    }
+
+    // Query for buffer sizes for counter item data
+    PDH_FMT_COUNTERVALUE_ITEM *counterItems  = nullptr;
+    DWORD numItems = 0;
+    DWORD bufferLength = 0;
+    if (const PDH_STATUS status = PdhGetFormattedCounterArray(counter, PDH_FMT_LONG,
+                                        &bufferLength, &numItems, counterItems);
+                                        status != PDH_MORE_DATA)
+    {
+        std::cerr << "Failed to get formatted counter array." << std::endl;
+        return false;
+    }
+
+    // Allocate a buffer for objects returned
+    counterItems = static_cast<PDH_FMT_COUNTERVALUE_ITEM *>(malloc(bufferLength));
+
+    if (!counterItems)
+    {
+        free(counterItems);
+        return false;
+    }
+
+    // Fill the buffer
+    if (const PDH_STATUS status = PdhGetFormattedCounterArray(counter, PDH_FMT_LONG,
+                                    &bufferLength, &numItems, counterItems);
+                                    status != ERROR_SUCCESS)
+    {
+        std::cerr << "Failed to get formatted counter array." << std::endl;
+        free(counterItems);
+        counterItems = nullptr;
+        bufferLength = numItems = 0;
+        return false;
+    }
+
+    instanceNames->clear();
+    instanceValues->clear();
+
+    // Copy all data to a map
+    for (DWORD i = 0; i < numItems; ++i)
+    {
+        std::string nameAsStr = counterItems[i].szName;
+        // Convert to wide string
+        std::wstring name(nameAsStr.begin(), nameAsStr.end());
+
+        int value = counterItems[i].FmtValue.longValue;
+
+        // Add to vectors
+        instanceNames->emplace_back(name);
+        instanceValues->emplace_back(value);
+    }
+
+    // Clean up memory
+    free(counterItems);
+    counterItems = nullptr;
+    bufferLength = numItems = 0;
+
+    return true;
+}
+
+
 // size_t PdhQueryManager::getCounterArray(const PDH_HCOUNTER counter, double *values[]) const
 // {
 //     if (!m_initialized)

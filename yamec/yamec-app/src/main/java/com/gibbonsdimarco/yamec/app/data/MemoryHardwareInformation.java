@@ -76,6 +76,7 @@ public class MemoryHardwareInformation implements Serializable {
         this.speed = speed;
         this.slotsUsed = slotsUsed;
         this.slotsTotal = slotsTotal;
+
         this.capacityIsUnsigned = capacityIsUnsigned;
         this.speedIsUnsigned = speedIsUnsigned;
     }
@@ -92,12 +93,20 @@ public class MemoryHardwareInformation implements Serializable {
         return capacity;
     }
 
+    public String getCapacityAsUnsignedString() {
+        return Long.toString(capacity);
+    }
+
     public void setCapacity(long capacity) {
         this.capacity = capacity;
     }
 
     public long getSpeed() {
         return speed;
+    }
+
+    public String getSpeedAsUnsignedString() {
+        return Long.toString(speed);
     }
 
     public void setSpeed(long speed) {
@@ -116,23 +125,24 @@ public class MemoryHardwareInformation implements Serializable {
         return slotsTotal;
     }
 
+    public boolean isCapacityUnsigned() {
+        return capacityIsUnsigned;
+    }
+
     public void setSlotsTotal(long slotsTotal) {
         this.slotsTotal = slotsTotal;
     }
 
-    public boolean isCapacityIsUnsigned() {
-        return capacityIsUnsigned;
-    }
 
     public void setCapacityIsUnsigned(boolean capacityIsUnsigned) {
         this.capacityIsUnsigned = capacityIsUnsigned;
     }
 
-    public boolean isSpeedIsUnsigned() {
+    public boolean isSpeedUnsigned() {
         return speedIsUnsigned;
     }
 
-    public void setSpeedIsUnsigned(boolean speedIsUnsigned) {
+    public void setIsSpeedUnsigned(boolean speedIsUnsigned) {
         this.speedIsUnsigned = speedIsUnsigned;
     }
 }

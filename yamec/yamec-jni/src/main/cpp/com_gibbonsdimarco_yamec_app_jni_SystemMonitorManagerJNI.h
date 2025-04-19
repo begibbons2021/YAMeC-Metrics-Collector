@@ -42,6 +42,14 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 
 /*
 * Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+* Method:    getHardwareCpuInformation
+* Signature: (J)Lcom/gibbonsdimarco/yamec/app/data/CpuHardwareInformation;
+*/
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getHardwareCpuInformation
+                                    (JNIEnv *, jobject, const jlong);
+
+/*
+* Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
 * Method:    getGpuMetrics
 * Signature: (J)Lcom/gibbonsdimarco/yamec/app/data/SystemGpuMetric;
 */
@@ -93,6 +101,14 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 * Signature: (J)Ljava/util/ArrayList;
 */
 JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getNicMetrics
+                                    (JNIEnv *, jobject, const jlong);
+
+/*
+* Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+* Method:    getProcessMetrics
+* Signature: (J)Ljava/util/ArrayList;
+*/
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getProcessMetrics
                                     (JNIEnv *, jobject, const jlong);
 
 /*

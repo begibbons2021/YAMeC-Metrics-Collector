@@ -1,6 +1,8 @@
 // SystemMonitorManager.cpp
 #include "SystemMonitorManager.h"
 
+#include <sstream>
+
 SystemMonitorManager::SystemMonitorManager() : m_initialized(false) {}
 
 SystemMonitorManager::~SystemMonitorManager() = default;
@@ -51,6 +53,13 @@ int SystemMonitorManager::initialize()
     if (!m_nicInfo.initialize(&m_pdhManager, &m_wmiManager))
     {
         return -7;
+    }
+
+    // Initialize the Application info module
+    if (const int applicationInfoInitialized = m_applicationInfo.initialize(&m_pdhManager, &m_wmiManager);
+        applicationInfoInitialized != 0)
+    {
+        return -8*10 + applicationInfoInitialized;
     }
 
     m_initialized = true;
@@ -153,6 +162,43 @@ int SystemMonitorManager::getNicCounters(std::vector<unsigned long long> *nicIns
 
 }
 
+int SystemMonitorManager::getApplicationCounters(std::vector<std::wstring> *processNames,
+                                         std::vector<int> *processIds,
+                                         std::vector<double> *cpuUsages,
+                                         std::vector<long long> *physicalMemoryUsed,
+                                         std::vector<long long> *virtualMemoryUsed) const
+{
+    if (!m_initialized)
+    {
+        return -1;
+    }
+
+    const int status = m_applicationInfo.getProcessCounters(processNames,
+                                                            processIds,
+                                                            cpuUsages,
+                                                            physicalMemoryUsed,
+                                                            virtualMemoryUsed);
+
+    // System Monitor Manager will scale the CPU usages down to match the number of
+    // processors on the system
+    if (status == 0)
+    {
+        if (const unsigned int numLogicalProcessors = m_cpuInfo.getSystemInfo().numberOfProcessors;
+            numLogicalProcessors != 0)
+        {
+            // Oh right, we can address these as references!
+            for (double & cpuUsage : *cpuUsages)
+            {
+                // Divide storage
+                cpuUsage = cpuUsage / static_cast<double>(numLogicalProcessors);
+            }
+        }
+    }
+
+    return status;
+
+}
+
 int SystemMonitorManager::getPhysicalMemoryAvailable(unsigned long long *bytesAvailable) const
 {
     if (!m_initialized || !bytesAvailable)
@@ -181,6 +227,113 @@ int SystemMonitorManager::getVirtualMemoryCommittedPercentUsed(double *committed
     }
 
     return m_memoryInfo.getVirtualMemoryCommittedPercentUsed(committedPercentUsed);
+}
+
+int SystemMonitorManager::getHardwareCpuInformation(std::wstring *brandString,
+                                                    unsigned int *numCores,
+                                                    unsigned int *numLogicalProcessors,
+                                                    std::wstring *architecture,
+                                                    unsigned int *numNumaNodes,
+                                                    unsigned int *l1CacheSize,
+                                                    unsigned int *l2CacheSize,
+                                                    unsigned int *l3CacheSize,
+                                                    bool *supportsVirtualization) const
+{
+    // Check if the Monitor is initialized
+    if (!m_initialized)
+    {
+        return -1;
+    }
+
+    const std::string brandStringAsBSTR = m_cpuInfo.getBrandString();
+    std::wostringstream converter;
+
+    converter << brandStringAsBSTR.c_str();
+
+    if (brandString != nullptr)
+    {
+        brandString->clear();
+        brandString->append(converter.str());
+    }
+
+    converter.clear();
+
+    const auto [numberOfProcessorsTemp, architectureTemp] = m_cpuInfo.getSystemInfo();
+
+    const CacheInfo cacheInfo = m_cpuInfo.getCacheInfo();
+
+    const int architectureAsInt = architectureTemp;
+    if (architecture != nullptr)
+    {
+        architecture->clear();
+        switch (architectureAsInt)
+        {
+            case 0:
+                architecture->append(L"x86");
+                break;
+            case 5:
+                architecture->append(L"ARM");
+                break;
+            case 6:
+                architecture->append(L"Intel Itanium-based");
+                break;
+            case 9:
+                architecture->append(L"x64");
+                break;
+            case 12:
+                architecture->append(L"ARM64");
+                break;
+            default:
+                architecture->append(L"Unknown");
+                break;
+        }
+    }
+
+    if (numCores != nullptr)
+    {
+        // Set dereferenced core count
+        *numCores = cacheInfo.processorCoreCount;
+    }
+
+    if (numLogicalProcessors != nullptr)
+    {
+        // Set dereferenced core count
+        *numLogicalProcessors = cacheInfo.logicalProcessorCount;
+    }
+
+    if (numNumaNodes != nullptr)
+    {
+        // Set dereferenced core count
+        *numNumaNodes = cacheInfo.numaNodeCount;
+    }
+
+    if (l1CacheSize != nullptr)
+    {
+        // Set dereferenced core count
+        *l1CacheSize = cacheInfo.processorL1CacheSize;
+    }
+
+    if (l2CacheSize != nullptr)
+    {
+        // Set dereferenced core count
+        *l2CacheSize = cacheInfo.processorL2CacheSize;
+    }
+
+    if (l3CacheSize != nullptr)
+    {
+        // Set dereferenced core count
+        *l3CacheSize = cacheInfo.processorL3CacheSize;
+    }
+
+    if (supportsVirtualization != nullptr)
+    {
+        // Set dereferenced core count
+        *supportsVirtualization = m_cpuInfo.isVirtualizationAvailable();
+    }
+
+    return 0;
+
+
 }
 
 int SystemMonitorManager::getHardwareMemoryInformation(unsigned long long *speed,

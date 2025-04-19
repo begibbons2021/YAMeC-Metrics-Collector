@@ -80,7 +80,8 @@ JNIEXPORT jlong JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManag
         // If initialization fails, clear memory
         delete monitor;
 
-
+        Logger::log(Logger::Level::WARN, "System Monitor Manager could not be initialized.");
+        Logger::log(Logger::Level::WARN, "Error Code: " + std::to_string(status));
 
         return -1; // Failed
     }
@@ -116,6 +117,124 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                                                 systemMetricConstructor,
                                                 env->NewStringUTF(deviceName.c_str()),
                                                 usageBuffer);
+
+    return systemMetricObject;
+
+}
+
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getHardwareCpuInformation
+                            (JNIEnv *env, jobject obj, const jlong monitorPtr)
+{
+
+    const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
+
+    // Java Classes & Methods Used
+    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/CpuHardwareInformation");
+    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>",
+                                                            "(Ljava/lang/String;JJLjava/lang/String;JJJJZ)V");
+
+
+    // Create buffers to hold the other information temporarily
+    // Information data buffers
+    std::wstring brandString;
+    unsigned int numCores;
+    unsigned int numLogicalProcessors;
+    std::wstring architecture;
+    unsigned int numNumaNodes;
+    unsigned int l1CacheSize;
+    unsigned int l2CacheSize;
+    unsigned int l3CacheSize;
+    bool supportsVirtualization;
+
+    // Attempt to fill buffers
+    try
+    {
+        if (const int status = monitor->getHardwareCpuInformation(&brandString,
+                                                                &numCores,
+                                                                &numLogicalProcessors,
+                                                                &architecture,
+                                                                &numNumaNodes,
+                                                                &l1CacheSize,
+                                                                &l2CacheSize,
+                                                                &l3CacheSize,
+                                                                &supportsVirtualization);
+                                                                0 != status)
+        {
+            Logger::log(Logger::Level::WARN, "CPU Hardware information retrieval failed.");
+            Logger::log(Logger::Level::WARN, "Error Code: " + std::to_string(status));
+            // Retrieval of counters failed, so return null
+            return env->NewGlobalRef(nullptr);
+        }
+    }
+    catch (std::exception &e)
+    {
+        Logger::log(Logger::Level::WARN, "CPU Hardware information retrieval failed due to an exception:");
+        Logger::log(Logger::Level::WARN, e.what());
+        return env->NewGlobalRef(nullptr);
+    }
+    catch (std::runtime_error &e)
+    {
+        Logger::log(Logger::Level::WARN, "CPU Hardware information retrieval failed due to a runtime error:");
+        Logger::log(Logger::Level::WARN, e.what());
+        return env->NewGlobalRef(nullptr);
+    }
+
+    std::string brandStringAsBSTR;
+    if (const int success = convertFromWideStrToStr(brandStringAsBSTR, brandString);
+        0 != success)
+    {
+        const std::string message("CPU Hardware information retrieval failed because the ",
+            "brand string could not be converted to a standard width string.");
+
+        Logger::log(Logger::Level::WARN, message);
+        return env->NewGlobalRef(nullptr);
+    }
+
+    std::string architectureAsBSTR;
+    if (const int success = convertFromWideStrToStr(architectureAsBSTR, architecture);
+        0 != success)
+    {
+        const std::string message("CPU Hardware information retrieval failed because the ",
+            "CPU architecture string could not be converted to a standard width string.");
+
+        Logger::log(Logger::Level::WARN, message);
+        return env->NewGlobalRef(nullptr);
+    }
+
+    // Put data into Java objects
+    jobject systemMetricObject;
+
+    try
+    {
+
+        systemMetricObject = env->NewObject(systemMetricClass,
+                                            systemMetricConstructor,
+                                            env->NewStringUTF(brandStringAsBSTR.c_str()),
+                                            static_cast<jlong>(numCores),
+                                            static_cast<jlong>(numLogicalProcessors),
+                                            env->NewStringUTF(architectureAsBSTR.c_str()),
+                                            static_cast<jlong>(numNumaNodes),
+                                            static_cast<jlong>(l1CacheSize),
+                                            static_cast<jlong>(l2CacheSize),
+                                            static_cast<jlong>(l3CacheSize),
+                                            static_cast<jboolean>(supportsVirtualization));
+    }
+    catch (std::exception &e)
+    {
+        const std::string message("CPU Hardware Retrieval failed because the CpuHardwareInformation object ",
+            "containing the data could not be created due to an exception: ");
+        Logger::log(Logger::Level::WARN, message);
+        Logger::log(Logger::Level::WARN, e.what());
+        return env->NewGlobalRef(nullptr);
+    }
+    catch (std::runtime_error &e)
+    {
+        const std::string message("CPU Hardware Retrieval failed because the CpuHardwareInformation object ",
+            "containing the data could not be created due to a runtime error: ");
+        Logger::log(Logger::Level::WARN, message);
+        Logger::log(Logger::Level::WARN, e.what());
+        return env->NewGlobalRef(nullptr);
+    }
 
     return systemMetricObject;
 
@@ -448,6 +567,112 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 
 }
 
+
+JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getProcessMetrics
+                            (JNIEnv *env, jobject obj, const jlong monitorPtr)
+{
+    // I apologize if this seems like spaghetti code because of the way the data is being managed
+    // Please let me know if this could benefit from a major refactor. (std::map<wstring, any>?)
+
+    const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
+
+    // Java Classes & Methods Used
+    const jclass arrayListClass = env->FindClass("java/util/ArrayList");
+    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/ProcessMetric");
+    const jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
+    // Java does Generic type checks at compile time but not runtime, so we add objects of type Object
+    const jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
+    // String;int;double;long long;long long
+    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>",
+                                        "(Ljava/lang/String;IDJJ)V");
+
+    // Create buffers to hold the disk information temporarily
+    std::vector<std::wstring> processNames;
+    std::vector<int> processIds;
+    std::vector<double> cpuUsages;
+    // TODO: Update these values to be unsigned and have Java know they're unsigned
+    std::vector<long long> physicalMemoryUsedBytes;
+    std::vector<long long> virtualMemoryUsedBytes;
+
+    try
+    {
+        // Attempt to fill buffers
+        if (const int status = monitor->getApplicationCounters(&processNames,
+                                                                &processIds,
+                                                                &cpuUsages,
+                                                                &physicalMemoryUsedBytes,
+                                                                &virtualMemoryUsedBytes);
+                                                                0 != status)
+        {
+            std::wcerr << "Application metrics could not be retrieved. "
+                        << std::endl;
+            std::wcerr << "Error Code: " << std::hex << status << std::endl;
+            // Retrieval of counters failed, so return null
+            return env->NewGlobalRef(nullptr);
+        }
+    }
+    catch (std::exception &e)
+    {
+        std::cerr << "GetProcessMetrics failed: \n Error: "
+                        << e.what() << std::endl;
+        return env->NewGlobalRef(nullptr);
+    }
+    catch (std::runtime_error &e)
+    {
+        std::cerr << "GetProcessMetrics failed: \n Runtime Error: "
+                        << e.what() << std::endl;
+        return env->NewGlobalRef(nullptr);
+    }
+
+
+    // Put data into Java objects
+
+
+    // Create an ArrayList to return all object instances in
+    jobject processMetricArrayList = env->NewObject(arrayListClass, arrayListConstructor);
+
+    for (size_t i = 0; i < processNames.size(); ++i)
+    {
+        // Convert the friendlyName to UTF8
+        std::string processNameAsUTF8Str;
+
+        if (const int utf8Length = convertFromWideStrToStr(processNameAsUTF8Str, processNames.at(i));
+            utf8Length < 0)
+        {
+
+            return env->NewGlobalRef(nullptr);
+        }
+
+        const int processId = processIds.at(i);
+        const double cpuUsage = cpuUsages.at(i);
+        const long long physicalMemory = physicalMemoryUsedBytes.at(i);
+        const long long virtualMemory = virtualMemoryUsedBytes.at(i);
+
+        // Allocate Java ProcessMetric object
+        // String;int;double;long long; long long
+        const _jobject *processMetricObject = env->NewObject(systemMetricClass,
+                                                        systemMetricConstructor,
+                                                        env->NewStringUTF(processNameAsUTF8Str.c_str()),
+                                                        static_cast<jint>(processId),
+                                                        static_cast<jdouble>(cpuUsage),
+                                                        static_cast<jlong>(physicalMemory),
+                                                        static_cast<jlong>(virtualMemory));
+
+        // Try to add the object to the ArrayList
+        if (const jboolean success = env->CallBooleanMethod(processMetricArrayList,
+                                                            arrayListAddMethod,
+                                                            processMetricObject); !success)
+        {
+            return env->NewGlobalRef(nullptr);
+        }
+
+    }
+
+    // Return created ArrayList
+    return processMetricArrayList;
+
+}
+
 JNIEXPORT jboolean JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_release
                             (JNIEnv *env, jobject obj, const jlong monitorPtr)
 {
@@ -698,9 +923,6 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_getHardwareNicInformation
                             (JNIEnv *env, jobject obj, const jlong monitorPtr)
 {
-    // I apologize if this seems like spaghetti code because of the way the data is being managed
-    // Please let me know if this could benefit from a major refactor. (std::map<wstring, any>?)
-
     const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
@@ -819,6 +1041,8 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     return nicHardwareInformationArrayList;
 
 }
+
+
 
 /*
 *std::vector<std::wstring> *hardwareNames,
