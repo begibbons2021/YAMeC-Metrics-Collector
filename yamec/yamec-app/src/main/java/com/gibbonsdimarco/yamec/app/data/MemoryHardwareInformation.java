@@ -62,8 +62,16 @@ public class MemoryHardwareInformation {
         return capacity;
     }
 
+    public String getCapacityAsUnsignedString() {
+        return Long.toString(capacity);
+    }
+
     public long getSpeed() {
         return speed;
+    }
+
+    public String getSpeedAsUnsignedString() {
+        return Long.toString(speed);
     }
 
     public long getSlotsUsed() {
@@ -74,11 +82,11 @@ public class MemoryHardwareInformation {
         return slotsTotal;
     }
 
-    public boolean isCapacityIsUnsigned() {
+    public boolean isCapacityUnsigned() {
         return capacityIsUnsigned;
     }
 
-    public boolean isSpeedIsUnsigned() {
+    public boolean isSpeedUnsigned() {
         return speedIsUnsigned;
     }
 }

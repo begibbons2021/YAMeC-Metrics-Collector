@@ -52,6 +52,7 @@ public class ProcessMetric {
         this.cpuUsage = cpuUsage;
         this.physicalMemoryUsage = physicalMemoryUsage;
         this.virtualMemoryUsage = virtualMemoryUsage;
+        // TODO: Update with 64 bit unsigned value support
     }
 
     public long getVirtualMemoryUsage() {

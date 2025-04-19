@@ -9,7 +9,7 @@ import org.springframework.core.annotation.Order;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 @SpringBootTest
@@ -39,6 +39,103 @@ class YamecApplicationTests {
     @Test
     void systemMonitorDataTests() {
         assert(testSystemMonitorManager());
+    }
+
+    @Test
+    void testGetCpuMetricsLoads() {
+        assertDoesNotThrow(() -> {
+            SystemCpuMetric metric = monitor.getCpuMetrics();
+        }, "Calling getCpuMetrics() throws an exception.");
+    }
+
+    @Test
+    void testGetCpuMetricsReturnsValidData() {
+        SystemCpuMetric metric = monitor.getCpuMetrics();
+
+        // Returns not null
+        assertNotNull(metric,
+                "getCpuMetrics() should not return null.");
+
+        // Device Name returns not null
+        assertTrue("getCpuMetrics().getDeviceName() should not return null.",
+                        metric.getDeviceName() != null);
+
+        // Utilization returns between 0% and 100%
+        assertTrue("getCpuMetrics().getUsage() should be returning a value >= 0%"
+                        + " but it is " + metric.getUsage(),
+                        metric.getUsage() >= 0.0);
+        assertTrue("getCpuMetrics().getUsage() should be returning a value <= 100%"
+                        + " but it is " + metric.getUsage(),
+                        metric.getUsage() <= 100.0);
+    }
+
+    @Test
+    void testGetMemoryMetricsReturnsValidData() {
+        SystemMemoryMetric metric = monitor.getMemoryMetrics();
+        MemoryHardwareInformation memoryHardware = monitor.getMemoryHardwareInformation();
+
+        // Returns not null
+        assertNotNull(metric,
+                "getMemoryMetrics() should not return null.");
+
+        // Use the unsigned values for physical and virtual memory usage
+        boolean physicalMemoryIsUnsigned = metric.isPhysicalMemoryAvailableUnsigned();
+        boolean capacityIsUnsigned = memoryHardware.isCapacityUnsigned();
+
+        // Separate tests for returned signed and unsigned values
+        if (physicalMemoryIsUnsigned && capacityIsUnsigned) {
+            // Physical memory available is less than the total physical memory
+            // It also can't be equal total physical memory because otherwise, how is this program running?
+            assertTrue("Available Physical Memory must be less than Total Physical Memory, "
+                                + "but Available Physical Memory = "
+                                + metric.getPhysicalMemoryAvailableUnsigned() + " bytes "
+                                + "and Total Physical Memory = "
+                                + memoryHardware.getCapacityAsUnsignedString() + " bytes ",
+                    Long.compareUnsigned(metric.getPhysicalMemoryAvailable(),
+                            memoryHardware.getCapacity()) < 0);
+
+        } else if (!physicalMemoryIsUnsigned && !capacityIsUnsigned) {
+            // Physical memory available must not be a negative number
+            // It can technically be 0, but the OS would likely never allow memory to get that full
+            assertTrue("Available Physical Memory must be greater (or equal to) than 0, but it is "
+                                + metric.getPhysicalMemoryAvailable() + " instead ",
+                    metric.getPhysicalMemoryAvailable() >= 0);
+
+            // Physical memory available is less than the total physical memory
+            // It also can't be equal total physical memory because otherwise, how is this program running?
+            assertTrue("Available Physical Memory must be less than Total Physical Memory, "
+                            + "but Available Physical Memory = "
+                            + metric.getPhysicalMemoryAvailable() + " bytes "
+                            + "and Total Physical Memory = "
+                            + memoryHardware.getCapacity() + " bytes ",
+                    metric.getPhysicalMemoryAvailable() <
+                            memoryHardware.getCapacity());
+        } else {
+            // This is a bizarre condition. Just choose signed or unsigned, for the sake of everyone's sanity
+            fail("Signed-unsigned attributes of physical memory and capacity are not the same."
+                    + " Keeping them the same ensures they can be properly compared.");
+        }
+
+        boolean virtualMemoryIsUnsigned = metric.isVirtualMemoryCommittedUnsigned();
+
+        if (!virtualMemoryIsUnsigned) {
+            // Virtual memory must be greater than or equal to 0 bytes if stored as a signed value
+            assertTrue("Virtual Memory Committed must be greater than or equal to 0 bytes, "
+                            + "but Virtual Memory Committed = "
+                            + metric.getVirtualMemoryCommitted() + " bytes ",
+                    metric.getVirtualMemoryCommitted() > 0);
+        }
+
+        // A percentage of committed memory in use must be between 0% and 100%
+        // Likely, if it's close to 100%, the memory committed will be increased to prevent it,
+        // but if the commit limit is reached and the page size limit is reached, it may not.
+        assertTrue("getMemoryMetrics().getVirtualMemoryCommittedUsage() should be returning a value >= 0%"
+                        + " but it is " + metric.getCommittedVirtualMemoryUsage(),
+                metric.getCommittedVirtualMemoryUsage() >= 0.0);
+        assertTrue("getMemoryMetrics().getVirtualMemoryCommittedUsage() should be returning a value <= 100%"
+                        + " but it is " + metric.getCommittedVirtualMemoryUsage(),
+                metric.getCommittedVirtualMemoryUsage() <= 100.0);
+
     }
 
     @Test

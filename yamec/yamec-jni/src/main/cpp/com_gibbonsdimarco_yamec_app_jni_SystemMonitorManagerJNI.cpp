@@ -590,6 +590,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     std::vector<std::wstring> processNames;
     std::vector<int> processIds;
     std::vector<double> cpuUsages;
+    // TODO: Update these values to be unsigned and have Java know they're unsigned
     std::vector<long long> physicalMemoryUsedBytes;
     std::vector<long long> virtualMemoryUsedBytes;
 

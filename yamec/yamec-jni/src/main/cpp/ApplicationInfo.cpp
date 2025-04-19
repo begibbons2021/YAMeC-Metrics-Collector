@@ -60,6 +60,7 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
                                         std::vector<long long> *physicalMemoryUsed,
                                         std::vector<long long> *virtualMemoryUsed) const
 {
+// TODO: Update to handle these as unsigned values
     if (!m_pdhManager)
     {
         std::cerr << "PDH manager not initialized" << std::endl;
