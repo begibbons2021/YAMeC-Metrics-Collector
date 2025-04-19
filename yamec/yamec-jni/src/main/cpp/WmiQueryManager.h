@@ -5,6 +5,16 @@
 #ifndef WMIQUERYMANAGER_H
 #define WMIQUERYMANAGER_H
 
+#ifdef _WIN32
+    #ifdef BUILDING_DLL
+        #define YAMEC_API __declspec(dllexport)
+    #else
+        #define YAMEC_API __declspec(dllimport)
+    #endif
+#else
+    #define YAMEC_API
+#endif
+
 #include <Wbemidl.h>
 #include <comdef.h>
 #include <any>
@@ -15,7 +25,7 @@
 #pragma comment(lib, "wbemuuid.lib")
 
 
-class WmiQueryManager {
+class YAMEC_API WmiQueryManager {
 
     public:
 

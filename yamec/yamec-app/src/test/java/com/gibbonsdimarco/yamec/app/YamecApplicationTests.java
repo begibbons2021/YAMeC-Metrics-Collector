@@ -20,7 +20,6 @@ class YamecApplicationTests {
     private static SystemMonitorManagerJNI monitor;
 
     @Test
-    @Order(1)
     void contextLoads() {
     }
 
@@ -251,6 +250,115 @@ class YamecApplicationTests {
 
     }
 
+    @Test
+    void testGetProcessMetricsReturnsValidData() {
+
+
+        try {
+            ArrayList<ProcessMetric> processData = monitor.getProcessMetrics();
+
+            // Returns not null
+            assertNotNull(processData,
+                    "getProcessMetrics() should not return null.");
+
+            // We should be returning a lot of different processes!
+            // Trust me when I say YAMeC is not the only program running on my test machine
+            // when I run these tests
+            assertTrue("getProcessMetrics() should always return one or more processes.",
+                    !processData.isEmpty());
+
+            // Select 5 random processes
+            java.util.Random random = new java.util.Random();
+            int numProcessesToCheck = Math.min(processData.size(), 5);
+            // Store process indices to check in an array
+            int[] processIndicesToCheck = new int[numProcessesToCheck];
+            for (int i = 0; i < numProcessesToCheck; i++) {
+                processIndicesToCheck[i] = -1;
+
+                // Continue until an unused index is found
+                while (processIndicesToCheck[i] == -1) {
+                    // Pick a random index from the ArrayList
+                    int processIndex = random.nextInt(processData.size());
+
+                    // Check the list of selected indices for it
+                    boolean foundMatch = false;
+                    for (int k : processIndicesToCheck) {
+                        if (k == processIndex) {
+                            foundMatch = true;
+                            break;
+                        }
+                    }
+
+                    // If it's not in the list, add it
+                    if (!foundMatch) {
+                        processIndicesToCheck[i] = processIndex;
+                    }
+                }
+
+            }
+
+
+            for (int i = 0; i < 5; i++) {
+                ProcessMetric processMetric = processData.get(processIndicesToCheck[i]);
+
+                assertNotNull(processMetric,
+                        "No ProcessMetric in the returned metrics list should be null, "
+                                + "but index " + processIndicesToCheck[i] + "returned null");
+
+                assertNotNull(processMetric.getProcessName(),
+                        "processMetric.getProcessName() should not be null, "
+                                + "but index " + processIndicesToCheck[i] + "returned null");
+
+                assertTrue("processMetric.getProcessName() should not be empty, "
+                            + "but index " + processIndicesToCheck[i] + "returned an empty name",
+                            !processMetric.getProcessName().isEmpty());
+
+                assertTrue("processMetric.getProcessId() should be retuning a value > 0, "
+                                + "but index " + processIndicesToCheck[i]
+                                + " (" + processMetric.getProcessName() + ")" + " has the PID of "
+                                + processMetric.getProcessId(),
+                            processMetric.getProcessId() >= 0);
+
+                // A percentage of disk utilization must be between 0% and 100%
+                assertTrue("processMetric.getCpuUsage() should be returning a value >= 0%"
+                                + " but it is " + processMetric.getCpuUsage() + "% for Process "
+                                + processMetric.getProcessName() + " ( " + processMetric.getProcessId() + " )",
+                        processMetric.getCpuUsage() >= 0.0);
+                assertTrue("processMetric.getCpuUsage() should be returning a value <= 100%"
+                                + " but it is " + processMetric.getCpuUsage() + "% for Process "
+                                + processMetric.getProcessName() + " ( " + processMetric.getProcessId() + " )"
+                                + processMetric.getProcessName() + " ( " + processMetric.getProcessId() + " )",
+                        processMetric.getCpuUsage() <= 100.0);
+
+                // Physical memory must be greater than or equal to 0 bytes if stored as a signed value
+                assertTrue("Physical Memory Bytes Used must be greater than or equal to 0 bytes, "
+                                + "but Physical Memory Bytes Used = "
+                                + processMetric.getPhysicalMemoryUsage() + " bytes for Process "
+                                + processMetric.getProcessName() + " ( " + processMetric.getProcessId() + " )"
+                                + processMetric.getProcessName() + " ( " + processMetric.getProcessId() + " )",
+                        processMetric.getPhysicalMemoryUsage() > 0);
+
+                // Virtual memory must be greater than or equal to 0 bytes if stored as a signed value
+                assertTrue("Virtual Memory Bytes Used must be greater than or equal to 0 bytes, "
+                                + "but Virtual Memory Bytes Used = "
+                                + processMetric.getVirtualMemoryUsage() + " bytes for Process "
+                                + processMetric.getProcessName() + " ( " + processMetric.getProcessId() + " )"
+                                + processMetric.getProcessName() + " ( " + processMetric.getProcessId() + " )",
+                        processMetric.getVirtualMemoryUsage() > 0);
+
+
+            }
+
+        } catch (Exception e) {
+            fail("An exception was thrown while getting the process data.\n\n"
+                    + e.getMessage() + "\n"
+                    + Arrays.toString(e.getStackTrace()));
+        }
+
+
+
+    }
+
 
     @Test
     void systemMonitorManagerCpuHardwareInfoTests()
@@ -316,6 +424,22 @@ class YamecApplicationTests {
                 System.err.printf("\tVirtual Memory Usage: %d bytes\n",
                         processData.get(selectedProcessIndex).getVirtualMemoryUsage());
                 System.err.println();
+            }
+
+            for (ProcessMetric processMetric : processData)
+            {
+                String processName = processMetric.getProcessName();
+                if (processName != null && processName.compareTo("Taskmgr") == 0)
+                {
+                    System.err.printf("%s (pid: %d)\n", processMetric.getProcessName(),
+                            processMetric.getProcessId());
+                    System.err.printf("\tCPU Usage: %f\n", processMetric.getCpuUsage());
+                    System.err.printf("\tPhysical Memory Usage: %d bytes\n",
+                            processMetric.getPhysicalMemoryUsage());
+                    System.err.printf("\tVirtual Memory Usage: %d bytes\n",
+                            processMetric.getVirtualMemoryUsage());
+                    System.err.println();
+                }
             }
 
         } catch (Exception e) {

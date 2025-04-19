@@ -5,6 +5,15 @@
 #ifndef SYSTEMMONITORMANAGER_H
 #define SYSTEMMONITORMANAGER_H
 
+#ifdef _WIN32
+    #ifdef BUILDING_DLL
+        #define YAMEC_API __declspec(dllexport)
+    #else
+        #define YAMEC_API __declspec(dllimport)
+    #endif
+#else
+    #define YAMEC_API
+#endif
 
 // SystemMonitorManager.h
 #pragma once
@@ -19,7 +28,7 @@
 #include "WmiQueryManager.h"
 
 
-class SystemMonitorManager
+class YAMEC_API SystemMonitorManager
 {
 public:
     SystemMonitorManager();
@@ -59,6 +68,8 @@ public:
     [[nodiscard]] int getNicCounters(std::vector<unsigned long long> *nicInstancesBandwidth,
                                      std::vector<unsigned long long> *nicInstancesSendBytes,
                                      std::vector<unsigned long long> *nicInstancesRecvBytes) const;
+
+    [[nodiscard]] bool isInitialized() const { return m_initialized; }
 
     /**
     * Retrieves information pertaining to all currently executing processes/applications on

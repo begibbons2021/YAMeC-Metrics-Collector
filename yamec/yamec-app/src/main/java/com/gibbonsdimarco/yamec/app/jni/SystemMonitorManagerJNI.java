@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import jakarta.websocket.OnClose;
 
 /**
- *
+ * TODO:
  * This class should never be instantiated more than once! It will fail to run if it is
  * re-initiated due to a native dependency's behavior.
  */

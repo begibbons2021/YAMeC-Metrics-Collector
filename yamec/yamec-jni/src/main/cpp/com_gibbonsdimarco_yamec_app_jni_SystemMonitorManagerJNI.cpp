@@ -607,6 +607,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
             std::wcerr << "Application metrics could not be retrieved. "
                         << std::endl;
             std::wcerr << "Error Code: " << std::hex << status << std::endl;
+
             // Retrieval of counters failed, so return null
             return env->NewGlobalRef(nullptr);
         }
@@ -647,6 +648,11 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         const double cpuUsage = cpuUsages.at(i);
         const long long physicalMemory = physicalMemoryUsedBytes.at(i);
         const long long virtualMemory = virtualMemoryUsedBytes.at(i);
+
+        if (cpuUsage > 0)
+        {
+            Logger::log(Logger::Level::DEBUG, "Process " + std::to_string(processId) + " - " + processNameAsUTF8Str + ": CPU " + std::to_string(cpuUsage));
+        }
 
         // Allocate Java ProcessMetric object
         // String;int;double;long long; long long

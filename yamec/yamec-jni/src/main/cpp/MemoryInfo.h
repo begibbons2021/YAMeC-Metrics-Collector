@@ -5,13 +5,23 @@
 #ifndef MEMORYINFO_H
 #define MEMORYINFO_H
 
+#ifdef _WIN32
+    #ifdef BUILDING_DLL
+        #define YAMEC_API __declspec(dllexport)
+    #else
+        #define YAMEC_API __declspec(dllimport)
+    #endif
+#else
+    #define YAMEC_API
+#endif
+
 // MemoryInfo.h
 #include "PdhQueryManager.h"
 #include <windows.h>
 
 #include "WmiQueryManager.h"
 
-class MemoryInfo
+class YAMEC_API MemoryInfo
 {
 public:
     MemoryInfo();
