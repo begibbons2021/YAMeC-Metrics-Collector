@@ -63,7 +63,31 @@ int SystemMonitorManager::initialize()
     }
 
     m_initialized = true;
+
+    // Try to initially collect data
+    if (const int dataCollectionStatus = collectMetricsData();
+        dataCollectionStatus != 0)
+    {
+        return -9*10 + dataCollectionStatus;
+    }
+
     return 0;
+}
+
+int SystemMonitorManager::collectMetricsData() const
+{
+    if (!m_initialized)
+    {
+        return -1;
+    }
+
+    if (!m_pdhManager.collectData())
+    {
+        return -2;
+    }
+
+    return 0;
+
 }
 
 int SystemMonitorManager::getCpuUsage(double *usage) const

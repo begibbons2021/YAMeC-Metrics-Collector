@@ -49,6 +49,15 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
         this.monitorAddress = ptrAddress;
     }
 
+    public int collectCounterData() {
+        if (closed) {
+            logger.warn("Attempting to call SystemMonitorManagerJNI#collectCounterData() when closed");
+            return 0;
+        }
+
+        return collectCounterData(monitorAddress);
+    }
+
     /**
      * Returns a boolean variable containing whether this SystemMonitorManager is closed
      *
@@ -72,6 +81,7 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
     @OnClose
     public void close() throws RuntimeException {
         if (closed) {
+            logger.warn("Attempting to call SystemMonitorManagerJNI#close() when closed");
             return;
         }
 
@@ -92,6 +102,7 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
      */
     public SystemCpuMetric getCpuMetrics() {
         if (closed) {
+            logger.warn("Attempting to call SystemMonitorManagerJNI#getCpuMetrics() when closed");
             return null;
         }
 
@@ -106,6 +117,7 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
      */
     public SystemGpuMetric getGpuMetrics() {
         if (closed) {
+            logger.warn("Attempting to call SystemMonitorManagerJNI#getGpuMetrics() when closed");
             return null;
         }
 
@@ -120,6 +132,7 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
      */
     public SystemMemoryMetric getMemoryMetrics() {
         if (closed) {
+            logger.warn("Attempting to call SystemMonitorManagerJNI#getMemoryMetrics() when closed");
             return null;
         }
 
@@ -128,6 +141,7 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
 
     public java.util.ArrayList<SystemDiskMetric> getDiskMetrics() {
         if (closed) {
+            logger.warn("Attempting to call SystemMonitorManagerJNI#getDiskMetrics() when closed");
             return null;
         }
 
@@ -136,6 +150,7 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
 
     public java.util.ArrayList<SystemNicMetric> getNicMetrics() {
         if (closed) {
+            logger.warn("Attempting to call SystemMonitorManagerJNI#getNicMetrics() when closed");
             return null;
         }
 
@@ -144,6 +159,7 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
 
     public java.util.ArrayList<ProcessMetric> getProcessMetrics() {
         if (closed) {
+            logger.warn("Attempting to call SystemMonitorManagerJNI#getProcessMetrics() when closed");
             return null;
         }
 
@@ -152,6 +168,7 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
 
     public CpuHardwareInformation getCpuHardwareInformation() {
         if (closed) {
+            logger.warn("Attempting to call SystemMonitorManagerJNI#getCpuHardwareInformation() when closed");
             return null;
         }
 
@@ -160,6 +177,7 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
 
     public MemoryHardwareInformation getMemoryHardwareInformation() {
         if (closed) {
+            logger.warn("Attempting to call SystemMonitorManagerJNI#getMemoryHardwareInformation() when closed");
             return null;
         }
 
@@ -168,6 +186,7 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
 
     public java.util.ArrayList<DiskHardwareInformation> getDiskHardwareInformation() {
         if (closed) {
+            logger.warn("Attempting to call SystemMonitorManagerJNI#getDiskHardwareInformation() when closed");
             return null;
         }
 
@@ -176,6 +195,7 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
 
     public java.util.ArrayList<NicHardwareInformation> getNicHardwareInformation() {
         if (closed) {
+            logger.warn("Attempting to call SystemMonitorManagerJNI#geNicHardwareInformation() when closed");
             return null;
         }
 
@@ -204,6 +224,8 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
      * created, or -1 if creation fails
      */
     private native long initialize();
+
+    private native int collectCounterData(long ptr);
 
     private native SystemCpuMetric getCpuMetrics(long ptr);
 

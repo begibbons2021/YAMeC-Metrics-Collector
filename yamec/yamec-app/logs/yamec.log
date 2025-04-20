@@ -893,3 +893,54 @@
 2025-04-19 19:26:09 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 12236 - ui32: CPU 0.474057
 2025-04-19 19:26:09 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 3316 - ui32: CPU 0.284434
 2025-04-19 19:26:09 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 8076 - wallpaper32: CPU 0.094811
+2025-04-20 16:08:37 [main] INFO  c.g.yamec.app.YamecApplicationTests - Starting YamecApplicationTests using Java 23.0.2 with PID 37416 (started by Brendan in C:\Users\Brendan\Documents\Project\MetricsLogger\yamec\yamec-app)
+2025-04-20 16:08:37 [main] DEBUG c.g.yamec.app.YamecApplicationTests - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-04-20 16:08:37 [main] INFO  c.g.yamec.app.YamecApplicationTests - No active profile set, falling back to 1 default profile: "default"
+2025-04-20 16:08:39 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-04-20 16:08:40 [main] INFO  c.g.yamec.app.YamecApplicationTests - Started YamecApplicationTests in 4.307 seconds (process running for 9.615)
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 11616 - CefSharp.BrowserSubprocess: CPU 0.280886
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 19004 - CefSharp.BrowserSubprocess: CPU 0.280886
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 11864 - GHelper: CPU 0.093629
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 18408 - HuionTabletCore: CPU 0.280886
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 0 - Idle: CPU 92.036976
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 6184 - MsMpEng: CPU 0.093629
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 21568 - RadeonSoftware: CPU 0.187257
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 4 - System: CPU 1.029915
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 18292 - Taskmgr: CPU 1.123544
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 7256 - WmiPrvSE: CPU 0.187257
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 46032 - clion64: CPU 0.280886
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 1980 - dwm: CPU 0.468143
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 8940 - explorer: CPU 0.280886
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 17796 - idea64: CPU 1.123544
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 37416 - java: CPU 0.280886
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 2164 - svchost: CPU 0.093629
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 2296 - svchost: CPU 0.093629
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 4832 - svchost: CPU 0.093629
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 4940 - svchost: CPU 0.187257
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 12236 - ui32: CPU 0.749029
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 3316 - ui32: CPU 0.749029
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 11580 - zen: CPU 0.093629
+2025-04-20 16:08:42 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 11880 - zen: CPU 0.093629
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 11616 - CefSharp.BrowserSubprocess: CPU 0.280886
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 19004 - CefSharp.BrowserSubprocess: CPU 0.280886
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 11864 - GHelper: CPU 0.093629
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 18408 - HuionTabletCore: CPU 0.280886
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 0 - Idle: CPU 92.036976
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 6184 - MsMpEng: CPU 0.093629
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 21568 - RadeonSoftware: CPU 0.187257
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 4 - System: CPU 1.029915
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 18292 - Taskmgr: CPU 1.123544
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 7256 - WmiPrvSE: CPU 0.187257
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 46032 - clion64: CPU 0.280886
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 1980 - dwm: CPU 0.468143
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 8940 - explorer: CPU 0.280886
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 17796 - idea64: CPU 1.123544
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 37416 - java: CPU 0.280886
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 2164 - svchost: CPU 0.093629
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 2296 - svchost: CPU 0.093629
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 4832 - svchost: CPU 0.093629
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 4940 - svchost: CPU 0.187257
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 12236 - ui32: CPU 0.749029
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 3316 - ui32: CPU 0.749029
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 11580 - zen: CPU 0.093629
+2025-04-20 16:08:43 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 11880 - zen: CPU 0.093629

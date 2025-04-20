@@ -37,19 +37,6 @@ int CpuInfo::getUsage(double *usage) const
         return -1;
     }
 
-    // Collect data twice for accurate readings
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
-    }
-
-    Sleep(500); // Wait for 500ms
-
-    if (!m_pdhManager->collectData())
-    {
-        return -3;
-    }
-
     if (!m_pdhManager->getCounterValue(m_usageCounter, usage))
     {
         return -4;

@@ -37,6 +37,19 @@ public:
 
     [[nodiscard]] int initialize();
 
+    /**
+     * Commands the PdhQueryManager to collect the current performance counter data and returns a status
+     * code indicating its success or failure.<p>
+     *
+     * Status Codes:
+     * - 0: Counters were retrieved successfully
+     * - -1: The SystemMonitotManager was not initialized
+     * - -2: Counter retrieval failed
+     *
+     * @return A status code indicating the success or failure of the operation
+     */
+    [[nodiscard]] int collectMetricsData() const;
+
     [[nodiscard]] CpuInfo *getCpuInfo() { return &m_cpuInfo; }
     [[nodiscard]] MemoryInfo *getMemoryInfo() { return &m_memoryInfo; }
     [[nodiscard]] GpuInfo *getGpuInfo() { return &m_gpuInfo; }

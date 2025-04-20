@@ -67,19 +67,6 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
         return -1;
     }
 
-    // Collect data twice for accurate readings
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
-    }
-
-    Sleep(1000); // Wait for 500ms
-
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
-    }
-
     // Collect CPU usage data
     std::vector<std::wstring> processNamesAndIds;
     std::vector<double> cpuUsagesTemp;

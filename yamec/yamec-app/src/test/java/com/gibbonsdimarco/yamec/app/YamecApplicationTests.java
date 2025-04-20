@@ -4,6 +4,7 @@ import com.gibbonsdimarco.yamec.app.data.*;
 import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.*;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.annotation.Order;
 
@@ -34,6 +35,30 @@ class YamecApplicationTests {
                     + e.getMessage() + "\n"
                     + Arrays.toString(e.getStackTrace()));
         }
+
+        // Manually collect the needed counter data
+        try
+        {
+            Thread.sleep(1000);
+        }
+        catch (InterruptedException e) {
+            fail("The timer to wait to collect data from the SystemMonitorManager was interrupted.");
+        }
+
+        try
+        {
+            int dataCollectionSuccess = monitor.collectCounterData();
+            if (dataCollectionSuccess != 0)
+            {
+                fail("SystemMonitorManager#collectCounterData() returned status code " + dataCollectionSuccess);
+            }
+        }
+        catch (Exception e) {
+            fail("An exception was thrown while calling SystemMonitorManager#collectCounterData().\n\n"
+                    + e.getMessage() + "\n"
+                    + Arrays.toString(e.getStackTrace()));
+        }
+
     }
 
     @Test

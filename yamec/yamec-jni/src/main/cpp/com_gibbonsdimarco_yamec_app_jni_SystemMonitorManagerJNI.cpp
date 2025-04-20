@@ -71,19 +71,65 @@ JNIEXPORT jlong JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManag
 
     // Allocate memory for new SystemMonitorManager and initialize
     auto *monitor = new SystemMonitorManager;
-    if (const int status = monitor->initialize(); 0 == status)
+    if (const int status = monitor->initialize(); -92 == status)
     {
-        return reinterpret_cast<jlong>(monitor); // Return the memory address
+        // Special case: SystemMonitorManager is initialized, but initial counter retrieval fails
+        Logger::log(Logger::Level::WARN, std::string("SystemMonitorManager ",
+                                                            "- Initial counter data retrieval failed"));
     }
-    else
+    else if (0 != status)
     {
         // If initialization fails, clear memory
         delete monitor;
 
-        Logger::log(Logger::Level::WARN, "System Monitor Manager could not be initialized.");
+        Logger::log(Logger::Level::WARN, "System Monitor Manager - Could not be initialized.");
         Logger::log(Logger::Level::WARN, "Error Code: " + std::to_string(status));
 
         return -1; // Failed
+    }
+
+    // Successful initialization, return the pointer address
+    Logger::log(Logger::Level::INFO, "SystemMonitorManager - Initialized");
+    return reinterpret_cast<jlong>(monitor); // Return the memory address
+}
+
+JNIEXPORT jint JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_collectCounterData
+                                      (JNIEnv *env, jobject obj, const jlong monitorPtr)
+{
+    const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr);
+
+    try
+    {
+        if (const int status = monitor->collectMetricsData(); status != 0)
+        {
+            Logger::log(Logger::Level::WARN, "SystemMonitorManager - Counter data could not be collected. "
+                                                + std::string("(Error Code: ") + std::to_string(status)
+                                                + std::string(")"));
+            switch (status)
+            {
+                case -1:
+                    Logger::log(Logger::Level::WARN, "PdhQueryManager was not properly initialized.");
+                    break;
+                case -2:
+                    Logger::log(Logger::Level::WARN, "Counter data retrieval failed.");
+                    break;
+                default:
+                    Logger::log(Logger::Level::WARN, "An unknown error occurred with the counter data retrieval");
+                    break;
+            }
+
+            return status;
+        }
+
+        Logger::log(Logger::Level::INFO, "SystemMonitorManager - Collected new counter data");
+        return 0;
+    }
+    catch (const std::exception &e)
+    {
+        Logger::log(Logger::Level::WARN, std::string("SystemMonitorManager - An exception occurred while ",
+                                                "attempting to collect counter data: "));
+        Logger::log(Logger::Level::WARN, e.what());
+        return 1;
     }
 }
 

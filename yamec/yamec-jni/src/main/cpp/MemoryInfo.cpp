@@ -63,19 +63,6 @@ int MemoryInfo::getAllCounters(unsigned long long *physicalMemoryAvailable,
         return -1;
     }
 
-    // Collect data twice for accurate readings
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
-    }
-
-    Sleep(500); // Wait for 500ms
-
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
-    }
-
     if (!m_pdhManager->getCounterValue(m_physicalMemoryAvailableCounter, physicalMemoryAvailable))
     {
         return -3;
@@ -103,19 +90,6 @@ int MemoryInfo::getPhysicalMemoryAvailable(unsigned long long *physicalMemoryAva
         return -1;
     }
 
-    // Collect data twice for accurate readings
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
-    }
-
-    Sleep(500); // Wait for 500ms
-
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
-    }
-
     if (!m_pdhManager->getCounterValue(m_physicalMemoryAvailableCounter, physicalMemoryAvailable))
     {
         return -3;
@@ -132,19 +106,6 @@ int MemoryInfo::getVirtualMemoryCommitted(unsigned long long *virtualMemoryCommi
         return -1;
     }
 
-    // Collect data twice for accurate readings
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
-    }
-
-    Sleep(500); // Wait for 500ms
-
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
-    }
-
     if (!m_pdhManager->getCounterValue(m_virtualMemoryCommittedCounter, virtualMemoryCommitted))
     {
         return -3;
@@ -159,19 +120,6 @@ int MemoryInfo::getVirtualMemoryCommittedPercentUsed(double *virtualMemoryCommit
     {
         std::cerr << "PDH manager not initialized" << std::endl;
         return -1;
-    }
-
-    // Collect data twice for accurate readings
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
-    }
-
-    Sleep(500); // Wait for 500ms
-
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
     }
 
     if (!m_pdhManager->getCounterValue(m_virtualMemoryCommittedPercentUsedCounter, virtualMemoryCommittedPercentUsed))

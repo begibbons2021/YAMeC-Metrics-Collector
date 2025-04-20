@@ -12,6 +12,14 @@ protected:
         // Initialize the manager once for all tests
         int result = manager.initialize();
         ASSERT_LE(result, 0) << "SystemMonitorManager initialization failed with error: " << result;
+
+        // Wait 1 second and then collect new counter data
+        Sleep(1000);
+
+        const int collectCounterDataSuccess = manager.collectMetricsData();
+        ASSERT_EQ(collectCounterDataSuccess, 0) << "SystemMonitorManager.collectMetricsData() should return a "
+                                                << "success code of 0 (got " << collectCounterDataSuccess << ")" ;
+
     }
 };
 
