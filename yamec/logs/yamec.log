@@ -1,34 +1,45 @@
-2025-04-19 13:16:46 [main] INFO  c.g.yamec.app.YamecApplication - Starting YamecApplication using Java 23.0.2 with PID 31288 (C:\Users\Brendan\Documents\Project\MetricsLogger\yamec\yamec-app\target\yamec-app-0.0.1-SNAPSHOT.jar started by Brendan in C:\Users\Brendan\Documents\Project\MetricsLogger\yamec)
-2025-04-19 13:16:46 [main] DEBUG c.g.yamec.app.YamecApplication - Running with Spring Boot v3.4.3, Spring v6.2.3
-2025-04-19 13:16:46 [main] INFO  c.g.yamec.app.YamecApplication - No active profile set, falling back to 1 default profile: "default"
-2025-04-19 13:16:48 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2025-04-19 13:16:48 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2025-04-19 13:16:48 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
-2025-04-19 13:16:48 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2025-04-19 13:16:48 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1025 ms
-2025-04-19 13:16:48 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
-2025-04-19 13:16:48 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
-2025-04-19 13:16:48 [main] INFO  c.g.yamec.app.YamecApplication - Started YamecApplication in 2.176 seconds (process running for 6.004)
-2025-04-19 13:16:48 [main] INFO  c.g.yamec.app.YamecApplication - Yamec Application Started
-2025-04-19 13:17:01 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2025-04-19 13:17:01 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2025-04-19 13:17:01 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
-2025-04-19 13:18:38 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
-2025-04-19 13:18:38 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
-2025-04-19 18:31:34 [main] INFO  c.g.yamec.app.YamecApplication - Starting YamecApplication using Java 23.0.2 with PID 48784 (C:\Users\Brendan\Documents\Project\MetricsLogger\yamec\yamec-app\target\yamec-app-0.0.1-SNAPSHOT.jar started by Brendan in C:\Users\Brendan\Documents\Project\MetricsLogger\yamec)
-2025-04-19 18:31:34 [main] DEBUG c.g.yamec.app.YamecApplication - Running with Spring Boot v3.4.3, Spring v6.2.3
-2025-04-19 18:31:34 [main] INFO  c.g.yamec.app.YamecApplication - No active profile set, falling back to 1 default profile: "default"
-2025-04-19 18:31:35 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2025-04-19 18:31:35 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2025-04-19 18:31:35 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
-2025-04-19 18:31:35 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2025-04-19 18:31:35 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1344 ms
-2025-04-19 18:31:35 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
-2025-04-19 18:31:36 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
-2025-04-19 18:31:36 [main] INFO  c.g.yamec.app.YamecApplication - Started YamecApplication in 2.963 seconds (process running for 7.72)
-2025-04-19 18:31:36 [main] INFO  c.g.yamec.app.YamecApplication - Yamec Application Started
-2025-04-19 18:31:56 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2025-04-19 18:31:56 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2025-04-19 18:31:56 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
-2025-04-19 18:32:07 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
-2025-04-19 18:32:07 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-04-21 17:34:34 [main] INFO  c.g.yamec.app.YamecApplication - Starting YamecApplication using Java 23.0.2 with PID 62932 (C:\Users\Brendan\Documents\Project\MetricsLogger\yamec\yamec-app\target\yamec-app-0.0.1-SNAPSHOT.jar started by Brendan in C:\Users\Brendan\Documents\Project\MetricsLogger\yamec)
+2025-04-21 17:34:34 [main] DEBUG c.g.yamec.app.YamecApplication - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-04-21 17:34:34 [main] INFO  c.g.yamec.app.YamecApplication - No active profile set, falling back to 1 default profile: "default"
+2025-04-21 17:34:35 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-04-21 17:34:35 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-04-21 17:34:35 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-04-21 17:34:35 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-04-21 17:34:35 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1091 ms
+2025-04-21 17:34:35 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-04-21 17:34:35 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-04-21 17:34:35 [main] INFO  c.g.yamec.app.YamecApplication - Started YamecApplication in 2.287 seconds (process running for 4.607)
+2025-04-21 17:34:35 [main] INFO  c.g.yamec.app.YamecApplication - Yamec Application Started
+2025-04-21 17:34:48 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-04-21 17:34:48 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-04-21 17:34:48 [SpringApplicationShutdownHook] INFO  c.g.yamec.app.YamecApplication - CLEANUP - Closing the System Monitor... 
+2025-04-21 17:35:06 [main] INFO  c.g.yamec.app.YamecApplication - Starting YamecApplication using Java 23.0.2 with PID 38788 (C:\Users\Brendan\Documents\Project\MetricsLogger\yamec\yamec-app\target\yamec-app-0.0.1-SNAPSHOT.jar started by Brendan in C:\Users\Brendan\Documents\Project\MetricsLogger\yamec)
+2025-04-21 17:35:06 [main] DEBUG c.g.yamec.app.YamecApplication - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-04-21 17:35:06 [main] INFO  c.g.yamec.app.YamecApplication - No active profile set, falling back to 1 default profile: "default"
+2025-04-21 17:35:07 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-04-21 17:35:07 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-04-21 17:35:07 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-04-21 17:35:07 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-04-21 17:35:07 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1042 ms
+2025-04-21 17:35:07 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-04-21 17:35:08 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-04-21 17:35:08 [main] INFO  c.g.yamec.app.YamecApplication - Started YamecApplication in 2.071 seconds (process running for 4.31)
+2025-04-21 17:35:08 [main] INFO  c.g.yamec.app.YamecApplication - Yamec Application Started
+2025-04-21 17:35:16 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-04-21 17:35:16 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-04-21 17:35:16 [SpringApplicationShutdownHook] INFO  c.g.yamec.app.YamecApplication - CLEANUP - Closing the System Monitor... 
+2025-04-21 18:13:36 [main] INFO  c.g.yamec.app.YamecApplication - Starting YamecApplication using Java 23.0.2 with PID 57112 (C:\Users\Brendan\Documents\Project\MetricsLogger\yamec\yamec-app\target\yamec-app-0.0.1-SNAPSHOT.jar started by Brendan in C:\Users\Brendan\Documents\Project\MetricsLogger\yamec)
+2025-04-21 18:13:36 [main] DEBUG c.g.yamec.app.YamecApplication - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-04-21 18:13:36 [main] INFO  c.g.yamec.app.YamecApplication - No active profile set, falling back to 1 default profile: "default"
+2025-04-21 18:13:37 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-04-21 18:13:37 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-04-21 18:13:37 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-04-21 18:13:37 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-04-21 18:13:37 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1046 ms
+2025-04-21 18:13:37 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-04-21 18:13:38 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-04-21 18:13:38 [main] INFO  c.g.yamec.app.YamecApplication - Started YamecApplication in 2.319 seconds (process running for 4.733)
+2025-04-21 18:13:38 [main] INFO  c.g.yamec.app.YamecApplication - Yamec Application Started
+2025-04-21 18:14:23 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-04-21 18:14:23 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-04-21 18:14:23 [SpringApplicationShutdownHook] INFO  c.g.yamec.app.YamecApplication - CLEANUP - Closing the System Monitor... 
