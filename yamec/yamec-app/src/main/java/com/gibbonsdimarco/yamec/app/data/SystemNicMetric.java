@@ -72,6 +72,13 @@ public class SystemNicMetric extends SystemDeviceMetric {
     }
 
     /**
+     * No-Args constructor required by JPA to allow reflection
+     */
+    public SystemNicMetric() {
+        super();
+    }
+
+    /**
      * Returns the number of bits per second of bandwidth passed through
      * the device (at the time of metrics collection) when this SystemNicMetric
      * was collected. This value returns signed

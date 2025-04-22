@@ -1,9 +1,24 @@
 package com.gibbonsdimarco.yamec.app.data;
 
+import jakarta.persistence.*;
+
+import java.io.Serializable;
+
 /**
  * Contains hardware information for CPUs connected to the System
  */
-public class CpuHardwareInformation {
+@Entity
+@Table(name = "cpu", indexes = {
+        @Index(name = "idx_device_name", columnList = "device_name")
+})
+public class CpuHardwareInformation implements Serializable {
+
+    /**
+     * A unique identifier for use in the database to represent this Cpu on the system
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     /**
      * The name of the CPU this CpuHardwareInformation object pertains to as a human-readable
@@ -11,6 +26,7 @@ public class CpuHardwareInformation {
      * <br>
      * This is usually derived from the brand string of the CPU
      */
+    @Column(name = "device_name")
     private String friendlyName;
 
     /**
@@ -20,11 +36,11 @@ public class CpuHardwareInformation {
     private long coreCount;
 
     /**
-     * The number of logical processors which are supported on the CPU this
-     * CpuHardwareInformation object pertains to.
-     * <br>
-     * Logical processors are usually facilitated through a technology such as
-     *   AMD Simultaneous Multithreading, SMT, or Intel Hyperthreading
+     * <p>The number of logical processors which are supported on the CPU this
+     * CpuHardwareInformation object pertains to.</p>
+     *
+     * <p>Logical processors are usually facilitated through a technology such as
+     *   AMD Simultaneous Multithreading, SMT, or Intel Hyperthreading</p>
      */
     private long logicalProcessorCount;
 
@@ -98,6 +114,13 @@ public class CpuHardwareInformation {
         this.virtualizationEnabled = virtualizationEnabled;
     }
 
+    /**
+     * No-Args constructor required by JPA to allow reflection
+     */
+    public CpuHardwareInformation() {
+
+    }
+
     public String getFriendlyName() {
         return friendlyName;
     }
@@ -132,5 +155,45 @@ public class CpuHardwareInformation {
 
     public boolean isVirtualizationEnabled() {
         return virtualizationEnabled;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
+    }
+
+    public void setCoreCount(long coreCount) {
+        this.coreCount = coreCount;
+    }
+
+    public void setLogicalProcessorCount(long logicalProcessorCount) {
+        this.logicalProcessorCount = logicalProcessorCount;
+    }
+
+    public void setArchitecture(String architecture) {
+        this.architecture = architecture;
+    }
+
+    public void setNumaNodeCount(long numaNodeCount) {
+        this.numaNodeCount = numaNodeCount;
+    }
+
+    public void setL1CacheSize(long l1CacheSize) {
+        this.l1CacheSize = l1CacheSize;
+    }
+
+    public void setL2CacheSize(long l2CacheSize) {
+        this.l2CacheSize = l2CacheSize;
+    }
+
+    public void setL3CacheSize(long l3CacheSize) {
+        this.l3CacheSize = l3CacheSize;
+    }
+
+    public void setVirtualizationEnabled(boolean virtualizationEnabled) {
+        this.virtualizationEnabled = virtualizationEnabled;
     }
 }

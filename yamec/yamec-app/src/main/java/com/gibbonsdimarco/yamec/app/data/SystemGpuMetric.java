@@ -70,6 +70,13 @@ public class SystemGpuMetric extends SystemDeviceMetric {
     }
 
     /**
+     * No-Args constructor required by JPA to allow reflection
+     */
+    public SystemGpuMetric() {
+
+    }
+
+    /**
      * Returns a double precision float containing the percentage of GPU utilization
      * of this SystemGpuMetric's source hardware device
      *

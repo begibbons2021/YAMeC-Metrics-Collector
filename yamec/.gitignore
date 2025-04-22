@@ -4,6 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Code ###
+yamec-app/db.sqlite
+
 ### STS ###
 .apt_generated
 .classpath

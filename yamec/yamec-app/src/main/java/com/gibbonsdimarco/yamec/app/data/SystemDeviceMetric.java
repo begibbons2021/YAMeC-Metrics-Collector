@@ -32,6 +32,13 @@ public abstract class SystemDeviceMetric implements Serializable {
         this.duration = 0; // Default duration
     }
 
+    /**
+     * No-Args constructor required by JPA to allow reflection
+     */
+    public SystemDeviceMetric() {
+
+    }
+
     public Long getId() {
         return id;
     }

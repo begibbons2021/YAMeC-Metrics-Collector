@@ -73,6 +73,13 @@ public class SystemDiskMetric extends SystemDeviceMetric {
     }
 
     /**
+     * No-Args constructor required by JPA to allow reflection
+     */
+    public SystemDiskMetric() {
+
+    }
+
+    /**
      * Returns a double precision float containing the percentage of disk utilization
      * of this SystemDiskMetric's source hardware device
      *

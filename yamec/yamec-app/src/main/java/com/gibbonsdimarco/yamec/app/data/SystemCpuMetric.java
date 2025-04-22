@@ -53,6 +53,13 @@ public class SystemCpuMetric extends SystemDeviceMetric {
     }
 
     /**
+     * No-Args constructor required by JPA to allow reflection
+     */
+    public SystemCpuMetric() {
+
+    }
+
+    /**
      * Returns a double precision float containing the percentage of CPU utilization
      * of this SystemCpuMetric's source hardware device
      *

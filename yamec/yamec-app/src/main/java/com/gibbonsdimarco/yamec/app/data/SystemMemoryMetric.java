@@ -69,6 +69,13 @@ public class SystemMemoryMetric {
         this.duration = 0; // Default duration
     }
 
+    /**
+     * No-Args constructor required by JPA to allow reflection
+     */
+    public SystemMemoryMetric() {
+
+    }
+
     public Long getId() {
         return id;
     }
