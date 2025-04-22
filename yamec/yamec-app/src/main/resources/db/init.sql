@@ -41,6 +41,12 @@ CREATE TABLE IF NOT EXISTS nic_hardware_information (
                                                         nic_type INTEGER NOT NULL
 );
 
+-- Application information table
+CREATE TABLE IF NOT EXISTS application (
+                                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                            application_name NOT NULL UNIQUE
+);
+
 -- Metric Tables
 
 -- Base metrics indices
@@ -112,12 +118,28 @@ CREATE TABLE IF NOT EXISTS nic_metrics (
                                            bytes_received_is_unsigned INTEGER DEFAULT 0
 );
 
+CREATE TABLE IF NOT EXISTS application_metrics (
+                                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                            application INTEGER NOT NULL,
+                                            timestamp TIMESTAMP NOT NULL,
+                                            duration INTEGER NOT NULL,
+                                            cpu_usage REAL DEFAULT 0,
+                                            physical_memory_used INTEGER DEFAULT 0,
+                                            virtual_memory_used INTEGER DEFAULT 0,
+
+                                            FOREIGN KEY (application) REFERENCES
+                                               application(id)
+
+);
+
 -- Create indexes for performance
 CREATE INDEX IF NOT EXISTS idx_cpu_metrics_timestamp ON cpu_metrics(timestamp);
 CREATE INDEX IF NOT EXISTS idx_gpu_metrics_timestamp ON gpu_metrics(timestamp);
 CREATE INDEX IF NOT EXISTS idx_memory_metrics_timestamp ON memory_metrics(timestamp);
 CREATE INDEX IF NOT EXISTS idx_disk_metrics_timestamp ON disk_metrics(timestamp);
 CREATE INDEX IF NOT EXISTS idx_nic_metrics_timestamp ON nic_metrics(timestamp);
+CREATE INDEX IF NOT EXISTS idx_application_metrics_timestamp ON application_metrics(timestamp);
+CREATE INDEX IF NOT EXISTS idx_application_metrics_application ON application_metrics(application);
 
 -- Create indexes for hardware information lookups
 CREATE INDEX IF NOT EXISTS idx_disk_hardware_unique_id ON disk_hardware_information(unique_id);
