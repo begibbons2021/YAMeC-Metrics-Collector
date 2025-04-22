@@ -21,18 +21,19 @@ public class CpuHardwareInformation implements Serializable {
     private Long id;
 
     /**
-     * The name of the CPU this CpuHardwareInformation object pertains to as a human-readable
-     * string.
-     * <br>
-     * This is usually derived from the brand string of the CPU
+     * <p>The name of the CPU this CpuHardwareInformation object pertains to as a human-readable
+     * string.</p>
+     *
+     * <p>This is usually derived from the brand string of the CPU</p>
      */
-    @Column(name = "device_name")
+    @Column(name = "device_name", nullable = false)
     private String friendlyName;
 
     /**
      * The number of physical cores (separate processors) which are present on the CPU
      *  this CpuHardwareInformation object pertains to
      */
+    @Column(name = "num_cores", nullable = false)
     private long coreCount;
 
     /**
@@ -42,36 +43,43 @@ public class CpuHardwareInformation implements Serializable {
      * <p>Logical processors are usually facilitated through a technology such as
      *   AMD Simultaneous Multithreading, SMT, or Intel Hyperthreading</p>
      */
+    @Column(name = "num_logical_processors", nullable = false)
     private long logicalProcessorCount;
 
     /**
      * The architecture string of the CPU this CpuHardwareInformation object
      * pertains to (i.e., x86, ARM, x64, etc.)
      */
+    @Column(name = "architecture", nullable = false)
     private String architecture;
 
     /**
      * The number of NUMA node groupings of CPU and memory present in the system
      * and related to the CPU this CpuHardwareInformation object pertains to
      */
+    @Column(name = "num_numa_nodes", nullable = false)
     private long numaNodeCount;
 
     /**
      * The number of bytes of level 1 cache present in the CPU this
      * CpuHardwareInformation object pertains to
      */
+    @Column(name = "l1_cache_size", nullable = false)
     private long l1CacheSize;
 
     /**
      * The number of bytes of level 2 cache present in the CPU this
      * CpuHardwareInformation object pertains to
      */
+    @Column(name = "l2_cache_size", nullable = false)
     private long l2CacheSize;
+
 
     /**
      * The amount of bytes of level 3 cache present in the CPU this
      * CpuHardwareInformation object pertains to
      */
+    @Column(name = "l3_cache_size", nullable = false)
     private long l3CacheSize;
 
     /**
@@ -79,6 +87,7 @@ public class CpuHardwareInformation implements Serializable {
      * and has enabled virtualization technology (i.e., Windows Sandbox,
      * Windows HyperV, etc.)
      */
+    @Column(name = "virtualization_enabled", nullable = false)
     private boolean virtualizationEnabled;
 
     /**

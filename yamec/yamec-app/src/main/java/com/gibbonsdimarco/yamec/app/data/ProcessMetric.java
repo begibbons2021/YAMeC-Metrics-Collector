@@ -74,4 +74,24 @@ public class ProcessMetric {
     public String getProcessName() {
         return processName;
     }
+
+    public void setProcessName(String processName) {
+        this.processName = processName;
+    }
+
+    public void setProcessId(int processId) {
+        this.processId = processId;
+    }
+
+    public void setCpuUsage(double cpuUsage) {
+        this.cpuUsage = cpuUsage;
+    }
+
+    public void setPhysicalMemoryUsage(long physicalMemoryUsage) {
+        this.physicalMemoryUsage = physicalMemoryUsage;
+    }
+
+    public void setVirtualMemoryUsage(long virtualMemoryUsage) {
+        this.virtualMemoryUsage = virtualMemoryUsage;
+    }
 }
