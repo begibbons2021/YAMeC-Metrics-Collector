@@ -4,13 +4,24 @@
 
 #ifndef PDHQUERYMANAGER_H
 #define PDHQUERYMANAGER_H
+
+#ifdef _WIN32
+    #ifdef BUILDING_DLL
+        #define YAMEC_API __declspec(dllexport)
+    #else
+        #define YAMEC_API __declspec(dllimport)
+    #endif
+#else
+    #define YAMEC_API
+#endif
+
 #include <map>
 #include <vector>
 #include <pdh.h>
 #include <string>
 
 
-class PdhQueryManager
+class YAMEC_API PdhQueryManager
 {
 public:
     PdhQueryManager();

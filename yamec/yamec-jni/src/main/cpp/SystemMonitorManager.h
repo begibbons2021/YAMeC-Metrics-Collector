@@ -5,6 +5,15 @@
 #ifndef SYSTEMMONITORMANAGER_H
 #define SYSTEMMONITORMANAGER_H
 
+#ifdef _WIN32
+    #ifdef BUILDING_DLL
+        #define YAMEC_API __declspec(dllexport)
+    #else
+        #define YAMEC_API __declspec(dllimport)
+    #endif
+#else
+    #define YAMEC_API
+#endif
 
 // SystemMonitorManager.h
 #pragma once
@@ -19,7 +28,7 @@
 #include "WmiQueryManager.h"
 
 
-class SystemMonitorManager
+class YAMEC_API SystemMonitorManager
 {
 public:
     SystemMonitorManager();
@@ -27,6 +36,19 @@ public:
     ~SystemMonitorManager();
 
     [[nodiscard]] int initialize();
+
+    /**
+     * Commands the PdhQueryManager to collect the current performance counter data and returns a status
+     * code indicating its success or failure.<p>
+     *
+     * Status Codes:
+     * - 0: Counters were retrieved successfully
+     * - -1: The SystemMonitotManager was not initialized
+     * - -2: Counter retrieval failed
+     *
+     * @return A status code indicating the success or failure of the operation
+     */
+    [[nodiscard]] int collectMetricsData() const;
 
     [[nodiscard]] CpuInfo *getCpuInfo() { return &m_cpuInfo; }
     [[nodiscard]] MemoryInfo *getMemoryInfo() { return &m_memoryInfo; }
@@ -59,6 +81,8 @@ public:
     [[nodiscard]] int getNicCounters(std::vector<unsigned long long> *nicInstancesBandwidth,
                                      std::vector<unsigned long long> *nicInstancesSendBytes,
                                      std::vector<unsigned long long> *nicInstancesRecvBytes) const;
+
+    [[nodiscard]] bool isInitialized() const { return m_initialized; }
 
     /**
     * Retrieves information pertaining to all currently executing processes/applications on

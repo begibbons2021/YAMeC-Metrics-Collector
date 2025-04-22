@@ -1,10 +1,20 @@
 #pragma once
 
+#ifdef _WIN32
+    #ifdef BUILDING_DLL
+        #define YAMEC_API __declspec(dllexport)
+    #else
+        #define YAMEC_API __declspec(dllimport)
+    #endif
+#else
+    #define YAMEC_API
+#endif
+
 #include <jni.h>
 #include <string>
 #include <memory>
 
-class Logger {
+class YAMEC_API Logger {
 public:
     enum class Level {
         DEBUG,

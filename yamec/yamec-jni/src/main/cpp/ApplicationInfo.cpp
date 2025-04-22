@@ -44,7 +44,7 @@ int ApplicationInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wm
     }
 
     // Add % Committed (virtual) Bytes In Use Counter
-    if (!m_pdhManager->addCounter(TEXT("\\Process V2(*)\\Working Set"), &m_processWorkingSetSizeCounter))
+    if (!m_pdhManager->addCounter(TEXT("\\Process V2(*)\\Working Set - Private"), &m_processWorkingSetSizeCounter))
     {
         std::cerr << "Failed to add Process Working Set counter" << std::endl;
         return -5;
@@ -65,19 +65,6 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
     {
         std::cerr << "PDH manager not initialized" << std::endl;
         return -1;
-    }
-
-    // Collect data twice for accurate readings
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
-    }
-
-    Sleep(500); // Wait for 500ms
-
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
     }
 
     // Collect CPU usage data
@@ -136,6 +123,8 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
         {
             continue;
         }
+
+        std::cout << "CPU usage at " << i << ": " << cpuUsagesTemp.at(i) << std::endl;
 
         double cpuUsage = cpuUsagesTemp.at(i);
         long long physicalMemory = physicalMemoryUsageTemp.at(i);

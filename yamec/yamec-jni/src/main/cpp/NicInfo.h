@@ -5,6 +5,16 @@
 #ifndef NicInfo_H
 #define NicInfo_H
 
+#ifdef _WIN32
+    #ifdef BUILDING_DLL
+        #define YAMEC_API __declspec(dllexport)
+    #else
+        #define YAMEC_API __declspec(dllimport)
+    #endif
+#else
+    #define YAMEC_API
+#endif
+
 #include <vector>
 
 #include "PdhQueryManager.h"
@@ -12,7 +22,7 @@
 #include <windows.h>
 
 
-class NicInfo
+class YAMEC_API NicInfo
 {
     public:
     NicInfo();

@@ -5,6 +5,16 @@
 #ifndef GPUINFO_H
 #define GPUINFO_H
 
+#ifdef _WIN32
+    #ifdef BUILDING_DLL
+        #define YAMEC_API __declspec(dllexport)
+    #else
+        #define YAMEC_API __declspec(dllimport)
+    #endif
+#else
+    #define YAMEC_API
+#endif
+
 // GpuInfo.h
 #include "PdhQueryManager.h"
 #include <string>
@@ -18,7 +28,7 @@ struct GpuDevice
     size_t sharedMemory = 0;
 };
 
-class GpuInfo
+class YAMEC_API GpuInfo
 {
 public:
     GpuInfo();

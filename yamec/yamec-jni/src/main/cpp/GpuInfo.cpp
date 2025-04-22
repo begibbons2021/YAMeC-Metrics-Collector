@@ -44,20 +44,6 @@ int GpuInfo::getUsage(double *usage) const
         std::cerr << "PDH manager not initialized" << std::endl;
         return -1;
     }
-
-    // Collect data twice for accurate readings
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
-    }
-
-    Sleep(500); // Wait for 500ms
-
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
-    }
-
     if (!m_pdhManager->getCounterValue(m_usageCounter, usage))
     {
         return -3;

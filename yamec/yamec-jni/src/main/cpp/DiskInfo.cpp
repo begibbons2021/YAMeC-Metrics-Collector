@@ -155,19 +155,6 @@ int DiskInfo::getAllCounters(std::vector<double> *diskUsageValues,
         return -1;
     }
 
-    // Collect data twice for accurate readings
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
-    }
-
-    Sleep(500); // Wait for 500ms
-
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
-    }
-
     // Disk Utilization
     for (size_t i = 0; i < num_disks; i++)
     {

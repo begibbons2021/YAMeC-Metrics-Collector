@@ -33,6 +33,14 @@ JNIEXPORT jlong JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManag
                                   (JNIEnv *, jobject);
 
 /*
+ * Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
+ * Method:    collectCounterData
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI_collectCounterData
+                                      (JNIEnv *, jobject, const jlong);
+
+/*
 * Class:     com_gibbonsdimarco_yamec_app_jni_SystemMonitorManagerJNI
 * Method:    getCpuMetrics
 * Signature: (J)Lcom/gibbonsdimarco/yamec/app/data/SystemCpuMetric;

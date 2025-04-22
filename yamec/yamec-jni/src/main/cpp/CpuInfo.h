@@ -5,6 +5,16 @@
 #ifndef CPUINFO_H
 #define CPUINFO_H
 
+#ifdef _WIN32
+    #ifdef BUILDING_DLL
+        #define YAMEC_API __declspec(dllexport)
+    #else
+        #define YAMEC_API __declspec(dllimport)
+    #endif
+#else
+    #define YAMEC_API
+#endif
+
 
 // CpuInfo.h
 #include "PdhQueryManager.h"
@@ -29,7 +39,7 @@ struct CacheInfo
     DWORD processorPackageCount = 0;
 };
 
-class CpuInfo
+class YAMEC_API CpuInfo
 {
 public:
     CpuInfo();

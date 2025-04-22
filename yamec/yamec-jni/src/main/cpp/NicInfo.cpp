@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <iostream>
 
-NicInfo::NicInfo() : m_pdhManager(nullptr) {}
+NicInfo::NicInfo() : m_pdhManager(nullptr), m_wmiManager(nullptr) {}
 NicInfo::~NicInfo() = default;
 
 bool NicInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManager)
@@ -133,19 +133,6 @@ int NicInfo::getAllCounters(std::vector<unsigned long long> *nicBandwidthBpsValu
     {
         std::cerr << "PDH manager not initialized" << std::endl;
         return -1;
-    }
-
-    // Collect data twice for accurate readings
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
-    }
-
-    Sleep(500); // Wait for 500ms
-
-    if (!m_pdhManager->collectData())
-    {
-        return -2;
     }
 
     // NIC Current Bandwidth in Bps
