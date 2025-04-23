@@ -43,7 +43,21 @@ public interface MetricsService {
      * @return The saved metric with generated ID
      */
     SystemNicMetric saveNicMetric(SystemNicMetric metric);
-    
+
+    /**
+     * Save an application to the database
+     * @param appInfo The Application record to save
+     * @return The saved Application record with the generated ID
+     */
+    Application saveApplication(Application appInfo);
+
+    /**
+     * Save an application's resource use metrics to the database
+     * @param metric The ApplicationMetric record to save
+     * @return The saved ApplicationMetric record with the generated ID
+     */
+    ApplicationMetric saveApplicationMetric(ApplicationMetric metric);
+
     /**
      * Get the latest CPU metrics
      * @param limit The maximum number of metrics to return
@@ -78,4 +92,25 @@ public interface MetricsService {
      * @return A list of the latest NIC metrics
      */
     List<SystemNicMetric> getLatestNicMetrics(int limit);
-} 
+
+    List<Application> getAllApplications(int limit);
+
+    /**
+     * Retrieves the latest ApplicationMetric records
+     * @param limit The maximum number of metrics to return
+     * @return A List of the latest Application Metrics
+     */
+    List<ApplicationMetric> getApplicationMetrics(int limit);
+
+    /**
+     * Retrieves the latest ApplicationMetric records pertaining to the Application
+     * passed by parameter
+     * @param application The Application which pertains to the ApplicationMetric
+     *                    instances to return
+     * @param limit The maximum number of metrics to return
+     * @return A List of the latest Application Metrics which match the criteria
+     *          specified
+     */
+    List<ApplicationMetric> getApplicationMetrics(Application application, int limit);
+
+}

@@ -23,6 +23,8 @@ public class MetricsServiceImpl implements MetricsService {
     private final SystemDiskMetricRepository diskMetricRepository;
     private final SystemGpuMetricRepository gpuMetricRepository;
     private final SystemNicMetricRepository nicMetricRepository;
+    private final ApplicationRepository applicationRepository;
+    private final ApplicationMetricRepository applicationMetricRepository;
 
     @Autowired
     public MetricsServiceImpl(
@@ -30,12 +32,16 @@ public class MetricsServiceImpl implements MetricsService {
             SystemMemoryMetricRepository memoryMetricRepository,
             SystemDiskMetricRepository diskMetricRepository,
             SystemGpuMetricRepository gpuMetricRepository,
-            SystemNicMetricRepository nicMetricRepository) {
+            SystemNicMetricRepository nicMetricRepository,
+            ApplicationRepository applicationRepository,
+            ApplicationMetricRepository applicationMetricRepository) {
         this.cpuMetricRepository = cpuMetricRepository;
         this.memoryMetricRepository = memoryMetricRepository;
         this.diskMetricRepository = diskMetricRepository;
         this.gpuMetricRepository = gpuMetricRepository;
         this.nicMetricRepository = nicMetricRepository;
+        this.applicationRepository = applicationRepository;
+        this.applicationMetricRepository = applicationMetricRepository;
     }
 
     @Override
@@ -62,6 +68,17 @@ public class MetricsServiceImpl implements MetricsService {
     public SystemNicMetric saveNicMetric(SystemNicMetric metric) {
         return nicMetricRepository.save(metric);
     }
+
+    @Override
+    public Application saveApplication(Application appInfo) {
+        return applicationRepository.save(appInfo);
+    }
+
+    @Override
+    public ApplicationMetric saveApplicationMetric(ApplicationMetric metric) {
+        return applicationMetricRepository.save(metric);
+    }
+
 
     @Override
     public List<SystemCpuMetric> getLatestCpuMetrics(int limit) {
@@ -95,6 +112,27 @@ public class MetricsServiceImpl implements MetricsService {
     public List<SystemNicMetric> getLatestNicMetrics(int limit) {
         return nicMetricRepository.findAll(
                 PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "timestamp")))
+                .getContent();
+    }
+
+    @Override
+    public List<Application> getAllApplications(int limit) {
+        return applicationRepository.findAll(
+                        PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "timestamp")))
+                .getContent();
+    }
+
+    @Override
+    public List<ApplicationMetric> getApplicationMetrics(int limit) {
+        return applicationMetricRepository.findAll(
+                        PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "timestamp")))
+                .getContent();
+    }
+
+    @Override
+    public List<ApplicationMetric> getApplicationMetrics(Application application, int limit) {
+        return applicationMetricRepository.findAll(
+                        PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "timestamp")))
                 .getContent();
     }
 } 

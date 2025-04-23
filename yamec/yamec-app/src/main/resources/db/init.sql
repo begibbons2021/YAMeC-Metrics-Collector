@@ -142,6 +142,7 @@ CREATE INDEX IF NOT EXISTS idx_disk_metrics_timestamp ON disk_metrics(timestamp)
 CREATE INDEX IF NOT EXISTS idx_nic_metrics_timestamp ON nic_metrics(timestamp);
 CREATE INDEX IF NOT EXISTS idx_application_metrics_timestamp ON application_metrics(timestamp);
 CREATE INDEX IF NOT EXISTS idx_application_metrics_application ON application_metrics(application);
+CREATE INDEX IF NOT EXISTS idx_application_name ON application(application_name);
 
 -- Create indexes for hardware information lookups
 CREATE INDEX IF NOT EXISTS idx_disk_hardware_unique_id ON disk_hardware_information(unique_id);

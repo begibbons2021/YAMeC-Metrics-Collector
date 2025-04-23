@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "application", indexes = {
-        @Index(name = "idx_process_name", columnList = "application_name")
+        @Index(name = "idx_application_name", columnList = "application_name")
 })
 public class Application implements Serializable {
     /**
