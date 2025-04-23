@@ -1,0 +1,13 @@
+package com.gibbonsdimarco.yamec.app.repository;
+
+import com.gibbonsdimarco.yamec.app.data.Application;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+/**
+ * Repository interface for ApplicationMetric entities
+ */
+@Repository
+public interface ApplicationRepository extends JpaRepository<Application, Long> {
+    // Add custom query methods if needed
+} 

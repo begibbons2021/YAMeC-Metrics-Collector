@@ -8,9 +8,7 @@ import java.io.Serializable;
  * Contains hardware information for CPUs connected to the System
  */
 @Entity
-@Table(name = "cpu", indexes = {
-        @Index(name = "idx_device_name", columnList = "device_name")
-})
+@Table(name = "cpu_hardware_information")
 public class CpuHardwareInformation implements Serializable {
 
     /**

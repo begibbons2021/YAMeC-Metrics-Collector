@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS disk_partitions (
                                                disk_id INTEGER NOT NULL,
                                                partition TEXT,
                                                FOREIGN KEY (disk_id) REFERENCES disk_hardware_information(id)
-    );
+);
 
 -- Memory Hardware Information table
 CREATE TABLE IF NOT EXISTS memory_hardware_information (
@@ -40,6 +40,8 @@ CREATE TABLE IF NOT EXISTS nic_hardware_information (
                                                         unique_id TEXT NOT NULL,
                                                         nic_type INTEGER NOT NULL
 );
+
+
 
 -- Application information table
 CREATE TABLE IF NOT EXISTS application (
