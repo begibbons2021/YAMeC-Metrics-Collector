@@ -51,6 +51,9 @@ public class MetricsServiceImpl implements MetricsService {
 
     @Override
     public SystemMemoryMetric saveMemoryMetric(SystemMemoryMetric metric) {
+        System.out.println(metric.getCommittedVirtualMemoryUsage());
+        System.out.println(metric.getVirtualMemoryCommitted());
+        System.out.println(metric.getPhysicalMemoryAvailable());
         return memoryMetricRepository.save(metric);
     }
 

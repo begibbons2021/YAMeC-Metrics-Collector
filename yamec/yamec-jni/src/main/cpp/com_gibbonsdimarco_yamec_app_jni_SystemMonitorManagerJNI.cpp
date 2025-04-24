@@ -664,12 +664,6 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                         << e.what() << std::endl;
         return env->NewGlobalRef(nullptr);
     }
-    catch (std::runtime_error &e)
-    {
-        std::cerr << "GetProcessMetrics failed: \n Runtime Error: "
-                        << e.what() << std::endl;
-        return env->NewGlobalRef(nullptr);
-    }
 
 
     // Put data into Java objects
@@ -695,10 +689,10 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         const long long physicalMemory = physicalMemoryUsedBytes.at(i);
         const long long virtualMemory = virtualMemoryUsedBytes.at(i);
 
-        if (cpuUsage > 0)
-        {
-            Logger::log(Logger::Level::DEBUG, "Process " + std::to_string(processId) + " - " + processNameAsUTF8Str + ": CPU " + std::to_string(cpuUsage));
-        }
+//        if (cpuUsage > 0)
+//        {
+//            Logger::log(Logger::Level::DEBUG, "Process " + std::to_string(processId) + " - " + processNameAsUTF8Str + ": CPU " + std::to_string(cpuUsage));
+//        }
 
         // Allocate Java ProcessMetric object
         // String;int;double;long long; long long

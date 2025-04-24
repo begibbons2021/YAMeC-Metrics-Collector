@@ -27,8 +27,17 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
     // Fields/Variables
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    /**
+     * The memory address of this SystemMonitorManager's native instance
+     */
     private long monitorAddress = -1;
-    private boolean closed = false;
+
+    /**
+     * <p>Whether this SystemMonitorManager is not available (true) or it is available (false)</p>
+     * @implNote <p>This initializes as true. If it did not, parallel threads that tried to access this resource
+     * before it was properly initialized would crash the program with a memory access violation</p>
+     */
+    private boolean closed = true;
 
     /**
      * Instantiates the System Monitor Manager.
@@ -46,7 +55,9 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
             throw new RuntimeException("Unable to initialize system monitor manager");
         }
 
+        // Set the monitor address and open the monitor manager
         this.monitorAddress = ptrAddress;
+        this.closed = false;
     }
 
     public int collectCounterData() {

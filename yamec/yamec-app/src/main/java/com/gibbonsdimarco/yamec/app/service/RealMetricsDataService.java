@@ -1,7 +1,11 @@
 package com.gibbonsdimarco.yamec.app.service;
 
+import com.gibbonsdimarco.yamec.app.YamecApplication;
 import com.gibbonsdimarco.yamec.app.data.*;
+import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
 import com.gibbonsdimarco.yamec.app.model.MetricsData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -17,6 +21,8 @@ public class RealMetricsDataService {
 
     private final MetricsService metricsService;
     private MetricsData currentMetrics;
+
+    private final Logger logger = LoggerFactory.getLogger(RealMetricsDataService.class);
 
     @Autowired
     public RealMetricsDataService(MetricsService metricsService) {

@@ -1,4 +1,6 @@
 #include "Logger.h"
+
+#include <mutex>
 #include <stdexcept>
 
 // Initialize static members
@@ -9,6 +11,7 @@ jmethodID Logger::infoMethod = nullptr;
 jmethodID Logger::warnMethod = nullptr;
 jmethodID Logger::errorMethod = nullptr;
 jmethodID Logger::errorWithExceptionMethod = nullptr;
+std::mutex loggerLock;
 
 void Logger::init(JNIEnv* env, jobject logger) {
     // Remove the Logger:: qualifiers when inside a method
@@ -50,6 +53,8 @@ void Logger::log(Level level, const std::string& message) {
 }
 
 void Logger::log(Level level, const std::string& message, const std::exception& e) {
+    // Ensure logging from multiple concurrent threads doesn't conflict
+    std::unique_lock<std::mutex> lock(loggerLock);
     ensureInitialized();
 
     jstring jMessage = env->NewStringUTF(message.c_str());
@@ -66,6 +71,9 @@ void Logger::log(Level level, const std::string& message, const std::exception& 
     env->DeleteLocalRef(exceptionMessage);
     env->DeleteLocalRef(exception);
     env->DeleteLocalRef(exceptionClass);
+
+    // Release lock on resource
+    lock.release();
 }
 
 void Logger::ensureInitialized() {

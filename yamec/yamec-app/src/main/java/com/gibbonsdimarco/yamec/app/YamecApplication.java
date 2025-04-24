@@ -2,6 +2,7 @@ package com.gibbonsdimarco.yamec.app;
 
 import com.gibbonsdimarco.yamec.app.data.*;
 import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
+import com.gibbonsdimarco.yamec.app.service.RealMetricsDataService;
 import jakarta.annotation.PreDestroy;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnOpen;
@@ -9,12 +10,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 
 @SpringBootApplication
+@EnableScheduling
 public class YamecApplication {
     private static final Logger logger = LoggerFactory.getLogger(YamecApplication.class);
 
@@ -210,6 +214,169 @@ public class YamecApplication {
         }
     }
 
+//    @Scheduled(fixedRate = 1000, initialDelay = 1000) // Happens every second
+    public static void fetchMetrics() {
+        System.out.println(monitor);
+        // Short circuit in case the monitor is not yet set
+        if (monitor == null) {
+            return;
+        }
+
+        try {
+            int counterDataCollectionStatus = monitor.collectCounterData();
+
+            if (counterDataCollectionStatus == 0) {
+
+                // Storage buffers for data
+                final SystemCpuMetric[] cpuMetrics = new SystemCpuMetric[1];
+                final SystemMemoryMetric[] memoryMetrics = new SystemMemoryMetric[1];
+                java.util.List<SystemDiskMetric> diskMetricList = new java.util.ArrayList<SystemDiskMetric>();
+                java.util.List<SystemNicMetric> nicMetricList = new java.util.ArrayList<SystemNicMetric>();
+                java.util.List<ProcessMetric> processMetricList = new java.util.ArrayList<ProcessMetric>();
+
+
+                Thread[] metricsThreads = new Thread[5];
+                metricsThreads[0] = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        cpuMetrics[0] = monitor.getCpuMetrics();
+                    }
+                });
+
+                metricsThreads[1] = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        memoryMetrics[0] = monitor.getMemoryMetrics();
+                    }
+                });
+
+                metricsThreads[2] = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        diskMetricList.clear();
+                        diskMetricList.addAll(monitor.getDiskMetrics());
+                    }
+                });
+
+                metricsThreads[3] = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        nicMetricList.clear();
+                        nicMetricList.addAll(monitor.getNicMetrics());
+                    }
+                });
+
+
+                metricsThreads[4] = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        processMetricList.clear();
+                        processMetricList.addAll(monitor.getProcessMetrics());
+                    }
+                });
+
+                // Run threads
+                metricsThreads[0].start();
+                metricsThreads[1].start();
+                metricsThreads[2].start();
+                metricsThreads[3].start();
+                metricsThreads[4].start();
+
+                // Join threads together
+                metricsThreads[0].join();
+                metricsThreads[1].join();
+                metricsThreads[2].join();
+                metricsThreads[3].join();
+                metricsThreads[4].join();
+
+                if (cpuMetrics[0] != null) {
+                    System.err.printf("CPU Information: \n\t%s\n\t\tUsage: %.1f%%\n",
+                            cpuMetrics[0].getDeviceName(), cpuMetrics[0].getUsage());
+                } else {
+                    System.err.println("CPU Information: \n\tNo CPU Metrics Found");
+                }
+
+                if (memoryMetrics[0] != null) {
+                    // Calculate the actual virtual memory use from the amount of committed memory used.
+                    double bytesVirtualMemoryInUse = memoryMetrics[0].getCommittedVirtualMemoryBytes();
+                    System.err.println("Memory Information:");
+                    System.err.printf("\tAvailable Memory (Physical Memory): %s bytes\n",
+                            memoryMetrics[0].getPhysicalMemoryAvailableUnsigned());
+                    System.err.printf("\tVirtual Memory Committed: %s\n",
+                            memoryMetrics[0].getVirtualMemoryCommitted());
+                    System.err.printf("\tVirtual Memory In-Use: %f%% (~%.0f bytes)\n",
+                            memoryMetrics[0].getCommittedVirtualMemoryUsage(),
+                            bytesVirtualMemoryInUse);
+                } else {
+                    System.err.println("Memory Information: \n\tNo Memory Metrics Found");
+                }
+
+                if (!diskMetricList.isEmpty()) {
+                    System.err.println("Disk Information:");
+                    System.err.printf("\tDisk Instances Present (including _Total): %d\n", diskMetricList.size());
+                    for (SystemDiskMetric diskMetric : diskMetricList) {
+                        // Skip total system disk use
+                        if (diskMetric.getDeviceName().compareTo("_Total") == 0) {
+                            continue;
+                        }
+                        System.err.printf("\t%s\n", diskMetric.getDeviceName());
+                        System.err.printf("\t\tUsage: %f%%\n", diskMetric.getUsage());
+                        System.err.printf("\t\tRead Bandwidth: %s bytes/sec\n", diskMetric.getReadBandwidthUnsigned());
+                        System.err.printf("\t\tWrite Bandwidth: %s bytes/sec\n", diskMetric.getWriteBandwidthUnsigned());
+                        System.err.printf("\t\tAverage Transfer Rate: %f bytes/sec\n", diskMetric.getAverageTimeToTransfer());
+                    }
+                } else {
+                    System.err.println("Disk Information: \n\tNo Disk Metrics Found");
+                }
+
+
+                if (!nicMetricList.isEmpty()) {
+                    System.err.println("NIC Information:");
+                    System.err.printf("\tNIC Instances Present (including _Total): %d\n", nicMetricList.size());
+                    for (SystemNicMetric nicMetric : nicMetricList) {
+                        // Skip total system NIC use
+                        if (nicMetric.getDeviceName().compareTo("_Total") == 0) {
+                            continue;
+                        }
+                        System.err.printf("\t%s\n", nicMetric.getDeviceName());
+                        System.err.printf("\t\tCurrent Operation Bandwidth: %s bps\n", nicMetric.getNicBandwidthUnsigned());
+                        System.err.printf("\t\tBytes Sent: %s bytes/sec\n", nicMetric.getBytesSentUnsigned());
+                        System.err.printf("\t\tWrite Bandwidth: %s bytes/sec\n", nicMetric.getBytesReceivedUnsigned());
+                    }
+                } else {
+                    System.err.println("NIC Information: \n\tNo NIC Metrics Found");
+                }
+
+                if (!processMetricList.isEmpty()) {
+                    for (int i = 0; i < 5; i++) {
+                        java.util.Random random = new java.util.Random();
+                        int selectedProcessIndex = random.nextInt(processMetricList.size());
+
+                        System.err.printf("%s (pid: %d)\n", processMetricList.get(selectedProcessIndex).getProcessName(),
+                                processMetricList.get(selectedProcessIndex).getProcessId());
+                        System.err.printf("\tCPU Usage: %f\n", processMetricList.get(selectedProcessIndex).getCpuUsage());
+                        System.err.printf("\tPhysical Memory Usage: %d bytes\n",
+                                processMetricList.get(selectedProcessIndex).getPhysicalMemoryUsage());
+                        System.err.printf("\tVirtual Memory Usage: %d bytes\n",
+                                processMetricList.get(selectedProcessIndex).getVirtualMemoryUsage());
+                        System.err.println();
+                    }
+                }
+
+            }
+        }
+        catch (Exception e) {
+            logger.error("System Monitor - Cannot fetch data because of an exception: {} - {}",
+                    e.getCause(), e.getMessage());
+            // Log stack trace contents
+            StackTraceElement[] stackTraceElements = e.getStackTrace();
+            logger.error("System Monitor Fetch Stack Trace [0]: ");
+            for (int i = 0; i < stackTraceElements.length; i++) {
+                logger.error("System Monitor Fetch Stack Trace [{}]: {}", i+1, stackTraceElements[i]);
+            }
+        }
+    }
+
     /**
      * A function which
      */
@@ -347,7 +514,6 @@ public class YamecApplication {
     }
 
 
-
     public static void main(String[] args) {
         setupApplicationFileSystem();
         initializeSystemMonitorManager();
@@ -356,8 +522,9 @@ public class YamecApplication {
 //        testSystemMonitorManager();
 
         SpringApplication.run(YamecApplication.class, args);
-        logger.info("Yamec Application Started");
 
+        logger.info("Yamec Application Started");
+//        fetchMetrics();
     }
 
 }
