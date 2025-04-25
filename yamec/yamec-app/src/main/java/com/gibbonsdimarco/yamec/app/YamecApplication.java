@@ -142,7 +142,7 @@ public class YamecApplication {
         }
         catch (InterruptedException e) {
             logger.error("""
-                            SETUP - System Monitor - The timer to wait to collect data\
+                            SETUP - System Monitor - The timer to wait to collect data \
                             from the SystemMonitorManager was interrupted.""");
         }
 
@@ -216,7 +216,7 @@ public class YamecApplication {
 
 //    @Scheduled(fixedRate = 1000, initialDelay = 1000) // Happens every second
     public static void fetchMetrics() {
-        System.out.println(monitor);
+        System.out.println("Monitor: " + monitor);
         // Short circuit in case the monitor is not yet set
         if (monitor == null) {
             return;
@@ -524,7 +524,17 @@ public class YamecApplication {
         SpringApplication.run(YamecApplication.class, args);
 
         logger.info("Yamec Application Started");
-//        fetchMetrics();
+
+        for (int i = 0; i < 5; i++) {
+            fetchMetrics();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                logger.error("Interrupted while sleeping", e);
+            }
+        }
+
     }
 
 }
