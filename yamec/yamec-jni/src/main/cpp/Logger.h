@@ -20,7 +20,7 @@ public:
         DEBUG,
         INFO,
         WARN,
-        ERROR
+        ERR
     };
 
     static void init(JNIEnv* env, jobject logger);

@@ -361,7 +361,7 @@ class YamecApplicationTests {
                                 + processMetric.getPhysicalMemoryUsage() + " bytes for Process "
                                 + processMetric.getProcessName() + " ( " + processMetric.getProcessId() + " )"
                                 + processMetric.getProcessName() + " ( " + processMetric.getProcessId() + " )",
-                        processMetric.getPhysicalMemoryUsage() > 0);
+                        processMetric.getPhysicalMemoryUsage() >= 0);
 
                 // Virtual memory must be greater than or equal to 0 bytes if stored as a signed value
                 assertTrue("Virtual Memory Bytes Used must be greater than or equal to 0 bytes, "
@@ -369,7 +369,7 @@ class YamecApplicationTests {
                                 + processMetric.getVirtualMemoryUsage() + " bytes for Process "
                                 + processMetric.getProcessName() + " ( " + processMetric.getProcessId() + " )"
                                 + processMetric.getProcessName() + " ( " + processMetric.getProcessId() + " )",
-                        processMetric.getVirtualMemoryUsage() > 0);
+                        processMetric.getVirtualMemoryUsage() >= 0);
 
 
             }
