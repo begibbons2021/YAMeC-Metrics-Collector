@@ -16,39 +16,26 @@ JNIEXPORT void JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManage
 
 int convertFromWideStrToStr(std::string &dest, const std::wstring &src)
 {
-
     // Convert wchar instance name to char
-    // Suggested method: https://stackoverflow.com/a/870444
-    // Determining new length
-    int utf8Length = WideCharToMultiByte(CP_UTF8,
-                                            0,
-                                            src.c_str(),
-                                            -1,
-                                            nullptr,
-                                            0,
-                                            nullptr,
-                                            nullptr);
+    int utf8Length = WideCharToMultiByte(CP_UTF8, 0, src.c_str(), -1, nullptr, 0, nullptr, nullptr);
 
-    // Fill character buffer
-    const auto utf8String = new char[utf8Length + 1];
-    utf8Length = WideCharToMultiByte(CP_UTF8,
-                        0,
-                        src.c_str(),
-                        -1,
-                        utf8String,
-                        utf8Length,
-                        nullptr,
-                        nullptr);
-
-    // Conversion failure fail-safe: Return -1
-    if (utf8Length == 0)
-    {
+    if (utf8Length == 0) {
         std::wcerr << "Conversion of " << src << " to UTF-8 failed!" << std::endl;
-        // TODO: Add log message
         return -1;
     }
 
-    dest = utf8String;
+    // Create a buffer on the stack instead of heap
+    std::vector<char> utf8String(utf8Length + 1);
+
+    utf8Length = WideCharToMultiByte(CP_UTF8, 0, src.c_str(), -1, utf8String.data(), utf8Length, nullptr, nullptr);
+
+    if (utf8Length == 0) {
+        std::wcerr << "Conversion of " << src << " to UTF-8 failed!" << std::endl;
+        return -1;
+    }
+
+    // Copy the string to the destination
+    dest = utf8String.data();
 
     return 0;
 }
@@ -726,10 +713,14 @@ JNIEXPORT jboolean JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMa
     // In case an invalid pointer is passed by parameter, contain in a try-catch
     try
     {
-        delete reinterpret_cast<SystemMonitorManager*>(monitorPtr); // Free memory
+        const SystemMonitorManager *monitor = reinterpret_cast<SystemMonitorManager*>(monitorPtr);
+        delete monitor; // Free memory
     }
-    catch (...)
+    catch (std::exception &e)
     {
+        const std::string message("SystemMonitorManager - Release failed due to an exception: ");
+        Logger::log(Logger::Level::WARN, message);
+        Logger::log(Logger::Level::WARN, e.what());
         return false; // Memory wasn't freed
     }
 
@@ -1097,4 +1088,3 @@ std::vector<std::wstring> *uniqueIds, std::vector<unsigned int> *mediaTypes,
 std::vector<unsigned long long> *capacities,
 std::map<std::wstring, unsigned int> *partitionMappings
 */
-

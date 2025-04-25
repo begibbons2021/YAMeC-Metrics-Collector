@@ -44,7 +44,7 @@ void Logger::log(Level level, const std::string& message) {
         case Level::WARN:
             env->CallVoidMethod(javaLogger, warnMethod, jMessage);
             break;
-        case Level::ERROR:
+        case Level::ERR:
             env->CallVoidMethod(javaLogger, errorMethod, jMessage);
             break;
     }
@@ -88,7 +88,7 @@ const char* Logger::getLevelString(Level level) {
         case Level::DEBUG: return "DEBUG";
         case Level::INFO: return "INFO";
         case Level::WARN: return "WARN";
-        case Level::ERROR: return "ERROR";
+        case Level::ERR: return "ERROR";
         default: return "UNKNOWN";
     }
 }
