@@ -33,6 +33,8 @@
         <sqlite-jdbc.version>3.49.1.0</sqlite-jdbc.version>
         <hibernate.version>6.6.13.Final</hibernate.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+        <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
+        <maven-jpackage-plugin.version>0.1.5</maven-jpackage-plugin.version>
         <izpack.version>5.2.4</izpack.version>
         <izpack.staging>${project.build.directory}/staging</izpack.staging>
         <antrun.version>3.1.0</antrun.version>
@@ -114,6 +116,91 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
+            </plugin>
+
+<!--            <plugin>-->
+<!--                <groupId>com.akathist.maven.plugins.launch4j</groupId>-->
+<!--                <artifactId>launch4j-maven-plugin</artifactId>-->
+<!--                <version>2.6.0</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>l4j-clui</id>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals><goal>launch4j</goal></goals>-->
+<!--                        <configuration>-->
+<!--                            <headerType>console</headerType>-->
+<!--                            <outfile>target/encc.exe</outfile>-->
+<!--                            <jar>${project.name}-${project.version}.jar</jar>-->
+<!--                            <errTitle>Yet Another Metrics Collector</errTitle>-->
+<!--                            <classPath>-->
+<!--                                <mainClass>com.akathist.encc.Clui</mainClass>-->
+<!--                                <addDependencies>false</addDependencies>-->
+<!--                                <preCp>anything</preCp>-->
+<!--                            </classPath>-->
+<!--                            <jre>-->
+<!--                                <minVersion>1.5.0</minVersion>-->
+<!--                            </jre>-->
+<!--                            <versionInfo>-->
+<!--                                <fileVersion>1.2.3.4</fileVersion>-->
+<!--                                <txtFileVersion>txt file version?</txtFileVersion>-->
+<!--                                <fileDescription>a description</fileDescription>-->
+<!--                                <copyright>my copyright</copyright>-->
+<!--                                <productVersion>4.3.2.1</productVersion>-->
+<!--                                <txtProductVersion>txt product version</txtProductVersion>-->
+<!--                                <productName>E-N-C-C</productName>-->
+<!--                                <internalName>ccne</internalName>-->
+<!--                                <originalFilename>original.exe</originalFilename>-->
+<!--                            </versionInfo>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                    <execution>-->
+<!--                        <id>l4j-gui</id>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals><goal>launch4j</goal></goals>-->
+<!--                        <configuration>-->
+<!--                            <headerType>gui</headerType>-->
+<!--                            <outfile>target/enccg.exe</outfile>-->
+<!--                            <jar>target/encc-1.0.jar</jar>-->
+<!--                            <errTitle>enccg</errTitle>-->
+<!--                            <classPath>-->
+<!--                                <mainClass>com.akathist.encc.Gui</mainClass>-->
+<!--                            </classPath>-->
+<!--                            <jre>-->
+<!--                                <minVersion>1.5.0</minVersion>-->
+<!--                            </jre>-->
+<!--                            <versionInfo>-->
+<!--                                <fileVersion>1.2.3.4</fileVersion>-->
+<!--                                <txtFileVersion>txt file version?</txtFileVersion>-->
+<!--                                <fileDescription>a description</fileDescription>-->
+<!--                                <copyright>my copyright</copyright>-->
+<!--                                <productVersion>4.3.2.1</productVersion>-->
+<!--                                <txtProductVersion>txt product version</txtProductVersion>-->
+<!--                                <productName>E-N-C-C</productName>-->
+<!--                                <internalName>ccne</internalName>-->
+<!--                                <originalFilename>original.exe</originalFilename>-->
+<!--                            </versionInfo>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+
+
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${maven-assembly-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>assembly</id>
+                        <phase>package</phase>
+                        <goals><goal>single</goal></goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
