@@ -1,22 +1,32 @@
 package com.gibbonsdimarco.yamec.app.data;
 
+import jakarta.persistence.*;
+
 /**
  * Contains hardware information for CPUs connected to the System
  */
+@Entity
+@Table(name = "cpu")
 public class CpuHardwareInformation {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     /**
      * The name of the CPU this CpuHardwareInformation object pertains to as a human-readable
      * string.
-     * <br>
-     * This is usually derived from the brand string of the CPU
+     * <br><br>
+     * This is usually derived from the brand string of the CPU.
      */
+    @Column(name = "name", nullable = false)
     private String friendlyName;
 
     /**
      * The number of physical cores (separate processors) which are present on the CPU
      *  this CpuHardwareInformation object pertains to
      */
+    @Column(name = "cores")
     private long coreCount;
 
     /**
@@ -26,36 +36,42 @@ public class CpuHardwareInformation {
      * Logical processors are usually facilitated through a technology such as
      *   AMD Simultaneous Multithreading, SMT, or Intel Hyperthreading
      */
+    @Column(name = "logical_processors")
     private long logicalProcessorCount;
 
     /**
      * The architecture string of the CPU this CpuHardwareInformation object
      * pertains to (i.e., x86, ARM, x64, etc.)
      */
+    @Transient
     private String architecture;
 
     /**
      * The number of NUMA node groupings of CPU and memory present in the system
      * and related to the CPU this CpuHardwareInformation object pertains to
      */
+    @Transient
     private long numaNodeCount;
 
     /**
      * The number of bytes of level 1 cache present in the CPU this
      * CpuHardwareInformation object pertains to
      */
+    @Column(name = "l1_cache_size")
     private long l1CacheSize;
 
     /**
      * The number of bytes of level 2 cache present in the CPU this
      * CpuHardwareInformation object pertains to
      */
+    @Column(name = "l2_cache_size")
     private long l2CacheSize;
 
     /**
      * The amount of bytes of level 3 cache present in the CPU this
      * CpuHardwareInformation object pertains to
      */
+    @Column(name = "l3_cache_size")
     private long l3CacheSize;
 
     /**
@@ -63,7 +79,10 @@ public class CpuHardwareInformation {
      * and has enabled virtualization technology (i.e., Windows Sandbox,
      * Windows HyperV, etc.)
      */
+    @Column(name = "virtualization")
     private boolean virtualizationEnabled;
+
+    protected CpuHardwareInformation() {}
 
     /**
      * Creates a new CpuHardwareInformation object instance from the hardware
@@ -132,5 +151,12 @@ public class CpuHardwareInformation {
 
     public boolean isVirtualizationEnabled() {
         return virtualizationEnabled;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "Cpu[id=%d, friendlyName='%s', coreCount='%s', logicalProcessorCount='%s', l1CacheSize='%s', l2CacheSize='%s', l3CacheSize='%s', virtualizationEnabled='%s']",
+                id, friendlyName, coreCount, logicalProcessorCount, l1CacheSize, l2CacheSize, l3CacheSize, virtualizationEnabled);
     }
 }
