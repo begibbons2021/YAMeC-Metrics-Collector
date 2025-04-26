@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+## Database
+db.sqlite
+
+## Logs
+logs/*
+yamec-app/logs/*
