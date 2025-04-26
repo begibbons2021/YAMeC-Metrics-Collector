@@ -113,14 +113,14 @@ CREATE TABLE IF NOT EXISTS cpu_system_metrics
 (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     cpu_id              INTEGER  NOT NULL,
-    granularity_id      INTEGER  NOT NULL,
+    granularity_config_id      INTEGER  NOT NULL,
     timestamp           DATETIME NOT NULL,
     duration            INTEGER  NOT NULL,
     average_utilization REAL,
     min_utilization     REAL,
     max_utilization     REAL,
     FOREIGN KEY (cpu_id) REFERENCES cpu (id),
-    FOREIGN KEY (granularity_id) REFERENCES granularities (id)
+    FOREIGN KEY (granularity_config_id) REFERENCES granularity_configs (id)
 );
 --
 -- -- System GPU Metrics table
@@ -183,7 +183,7 @@ CREATE TABLE IF NOT EXISTS cpu_application_metrics
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     cpu_id              INTEGER   NOT NULL,
     application_id      INTEGER   NOT NULL,
-    granularity_id      INTEGER   NOT NULL,
+    granularity_config_id      INTEGER   NOT NULL,
     timestamp           TIMESTAMP NOT NULL,
     duration            INTEGER   NOT NULL,
     average_utilization REAL,
@@ -191,7 +191,7 @@ CREATE TABLE IF NOT EXISTS cpu_application_metrics
     max_utilization     REAL,
     FOREIGN KEY (cpu_id) REFERENCES cpu (id),
     FOREIGN KEY (application_id) REFERENCES applications (id),
-    FOREIGN KEY (granularity_id) REFERENCES granularities (id)
+    FOREIGN KEY (granularity_config_id) REFERENCES granularity_configs (id)
 );
 
 -- -- Create indexes for performance
