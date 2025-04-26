@@ -2,6 +2,7 @@
 PRAGMA foreign_keys = OFF;
 
 -- Wipe all before starting
+DROP TABLE IF EXISTS granularity_configs;
 DROP TABLE IF EXISTS granularities;
 DROP TABLE IF EXISTS applications;
 DROP TABLE IF EXISTS cpu;
