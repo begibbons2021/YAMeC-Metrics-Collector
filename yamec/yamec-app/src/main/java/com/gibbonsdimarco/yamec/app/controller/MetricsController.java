@@ -1,7 +1,8 @@
 package com.gibbonsdimarco.yamec.app.controller;
 
 import com.gibbonsdimarco.yamec.app.model.MetricsData;
-import com.gibbonsdimarco.yamec.app.service.RealMetricsDataService;
+import com.gibbonsdimarco.yamec.app.model.mock.MockMetricsDataService;
+//import com.gibbonsdimarco.yamec.app.service.RealMetricsDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,10 +11,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class MetricsController {
-    private final RealMetricsDataService metricsDataService;
+    private final MockMetricsDataService metricsDataService;
 
     @Autowired
-    public MetricsController(RealMetricsDataService metricsDataService) {
+    public MetricsController(MockMetricsDataService metricsDataService) {
         this.metricsDataService = metricsDataService;
     }
 

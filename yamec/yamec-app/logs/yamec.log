@@ -1,47 +1,118 @@
-2025-04-21 17:34:18 [main] INFO  c.g.yamec.app.YamecApplicationTests - Starting YamecApplicationTests using Java 23.0.2 with PID 33076 (started by Brendan in C:\Users\Brendan\Documents\Project\MetricsLogger\yamec\yamec-app)
-2025-04-21 17:34:18 [main] DEBUG c.g.yamec.app.YamecApplicationTests - Running with Spring Boot v3.4.3, Spring v6.2.3
-2025-04-21 17:34:18 [main] INFO  c.g.yamec.app.YamecApplicationTests - No active profile set, falling back to 1 default profile: "default"
-2025-04-21 17:34:19 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
-2025-04-21 17:34:19 [main] INFO  c.g.yamec.app.YamecApplicationTests - Started YamecApplicationTests in 1.819 seconds (process running for 4.878)
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 11616 - CefSharp.BrowserSubprocess: CPU 0.378011
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 19004 - CefSharp.BrowserSubprocess: CPU 0.378011
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 32816 - Discord: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 18408 - HuionTabletCore: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 0 - Idle: CPU 93.652343
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 6184 - MsMpEng: CPU 0.189006
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 4 - System: CPU 0.945029
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 18292 - Taskmgr: CPU 0.661520
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 7256 - WmiPrvSE: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 57416 - audiodg: CPU 0.756023
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 1980 - dwm: CPU 0.283509
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 50096 - idea64: CPU 0.189006
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 33076 - java: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 2164 - svchost: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 3632 - svchost: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 4436 - svchost: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 57636 - ui32: CPU 0.283509
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 59144 - ui32: CPU 0.378011
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 11580 - zen: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 59936 - zen: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 61152 - zen: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 11616 - CefSharp.BrowserSubprocess: CPU 0.378011
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 19004 - CefSharp.BrowserSubprocess: CPU 0.378011
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 32816 - Discord: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 18408 - HuionTabletCore: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 0 - Idle: CPU 93.652343
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 6184 - MsMpEng: CPU 0.189006
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 4 - System: CPU 0.945029
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 18292 - Taskmgr: CPU 0.661520
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 7256 - WmiPrvSE: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 57416 - audiodg: CPU 0.756023
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 1980 - dwm: CPU 0.283509
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 50096 - idea64: CPU 0.189006
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 33076 - java: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 2164 - svchost: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 3632 - svchost: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 4436 - svchost: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 57636 - ui32: CPU 0.283509
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 59144 - ui32: CPU 0.378011
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 11580 - zen: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 59936 - zen: CPU 0.094503
-2025-04-21 17:34:20 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 61152 - zen: CPU 0.094503
+2025-04-26 10:23:13 [main] INFO  c.g.yamec.app.YamecApplicationTests - Starting YamecApplicationTests using Java 23.0.2 with PID 24180 (started by cmarc in C:\Users\cmarc\IdeaProjects\yamec\yamec\yamec-app)
+2025-04-26 10:23:13 [main] DEBUG c.g.yamec.app.YamecApplicationTests - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-04-26 10:23:13 [main] INFO  c.g.yamec.app.YamecApplicationTests - No active profile set, falling back to 1 default profile: "default"
+2025-04-26 10:23:13 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-26 10:23:13 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 66 ms. Found 8 JPA repository interfaces.
+2025-04-26 10:23:14 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-26 10:23:14 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-04-26 10:23:14 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-04-26 10:23:14 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-04-26 10:23:14 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-04-26 10:23:15 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@7d28cdcd
+2025-04-26 10:23:15 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-04-26 10:23:15 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 3.49.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-04-26 10:23:15 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemNicMetric (class must be instantiated by Interceptor)
+2025-04-26 10:23:15 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemCpuMetric (class must be instantiated by Interceptor)
+2025-04-26 10:23:15 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemDiskMetric (class must be instantiated by Interceptor)
+2025-04-26 10:23:15 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemGpuMetric (class must be instantiated by Interceptor)
+2025-04-26 10:23:15 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemMemoryMetric (class must be instantiated by Interceptor)
+2025-04-26 10:23:15 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-04-26 10:23:16 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-26 10:23:16 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-04-26 10:23:16 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-04-26 10:23:17 [main] INFO  c.g.yamec.app.YamecApplicationTests - Started YamecApplicationTests in 4.337 seconds (process running for 6.747)
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 25000 - DCv2: CPU 0.048144
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 0 - Idle: CPU 96.336759
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 25016 - JagexLauncher: CPU 0.096289
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 25136 - JagexLauncher: CPU 0.048144
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 34140 - RuneLite: CPU 1.299896
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 27480 - Spotify: CPU 0.529587
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 28404 - Spotify: CPU 0.192577
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 4 - System: CPU 0.144433
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 5304 - WmiPrvSE: CPU 0.481443
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 2132 - dwm: CPU 0.048144
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 32236 - idea64: CPU 0.144433
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 24180 - java: CPU 0.048144
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 22144 - jetbrains-toolbox: CPU 0.048144
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 13784 - steamwebhelper: CPU 0.096289
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 3444 - svchost: CPU 0.192577
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 28996 - zen: CPU 0.048144
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 25000 - DCv2: CPU 0.048144
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 0 - Idle: CPU 96.336759
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 25016 - JagexLauncher: CPU 0.096289
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 25136 - JagexLauncher: CPU 0.048144
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 34140 - RuneLite: CPU 1.299896
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 27480 - Spotify: CPU 0.529587
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 28404 - Spotify: CPU 0.192577
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 4 - System: CPU 0.144433
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 5304 - WmiPrvSE: CPU 0.481443
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 2132 - dwm: CPU 0.048144
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 32236 - idea64: CPU 0.144433
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 24180 - java: CPU 0.048144
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 22144 - jetbrains-toolbox: CPU 0.048144
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 13784 - steamwebhelper: CPU 0.096289
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 3444 - svchost: CPU 0.192577
+2025-04-26 10:23:17 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 28996 - zen: CPU 0.048144
+2025-04-26 10:23:18 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-26 10:23:18 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-04-26 10:23:18 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-04-26 10:41:16 [main] INFO  c.g.yamec.app.YamecApplicationTests - Starting YamecApplicationTests using Java 23.0.2 with PID 5796 (started by cmarc in C:\Users\cmarc\IdeaProjects\yamec\yamec\yamec-app)
+2025-04-26 10:41:16 [main] DEBUG c.g.yamec.app.YamecApplicationTests - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-04-26 10:41:16 [main] INFO  c.g.yamec.app.YamecApplicationTests - No active profile set, falling back to 1 default profile: "default"
+2025-04-26 10:41:17 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-26 10:41:17 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 66 ms. Found 8 JPA repository interfaces.
+2025-04-26 10:41:18 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-26 10:41:18 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-04-26 10:41:18 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-04-26 10:41:18 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-04-26 10:41:18 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-04-26 10:41:18 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@6f986501
+2025-04-26 10:41:18 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-04-26 10:41:18 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 3.49.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-04-26 10:41:19 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemNicMetric (class must be instantiated by Interceptor)
+2025-04-26 10:41:19 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemCpuMetric (class must be instantiated by Interceptor)
+2025-04-26 10:41:19 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemDiskMetric (class must be instantiated by Interceptor)
+2025-04-26 10:41:19 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemGpuMetric (class must be instantiated by Interceptor)
+2025-04-26 10:41:19 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemMemoryMetric (class must be instantiated by Interceptor)
+2025-04-26 10:41:19 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-04-26 10:41:19 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-26 10:41:20 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-04-26 10:41:20 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-04-26 10:41:20 [main] INFO  c.g.yamec.app.YamecApplicationTests - Started YamecApplicationTests in 4.215 seconds (process running for 6.462)
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 14184 - Discord: CPU 0.288359
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 20316 - Discord: CPU 1.249554
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 0 - Idle: CPU 95.783139
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 34140 - RuneLite: CPU 1.153435
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 4 - System: CPU 0.192239
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 5304 - WmiPrvSE: CPU 0.240299
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 21468 - audiodg: CPU 0.048060
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 2132 - dwm: CPU 0.336418
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 32236 - idea64: CPU 0.048060
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 3444 - svchost: CPU 0.048060
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 14184 - Discord: CPU 0.288359
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 20316 - Discord: CPU 1.249554
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 0 - Idle: CPU 95.783139
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 34140 - RuneLite: CPU 1.153435
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 4 - System: CPU 0.192239
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 5304 - WmiPrvSE: CPU 0.240299
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 21468 - audiodg: CPU 0.048060
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 2132 - dwm: CPU 0.336418
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 32236 - idea64: CPU 0.048060
+2025-04-26 10:41:21 [main] DEBUG c.g.y.a.jni.SystemMonitorManagerJNI - Process 3444 - svchost: CPU 0.048060
+2025-04-26 10:41:22 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-26 10:41:22 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-04-26 10:41:22 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
