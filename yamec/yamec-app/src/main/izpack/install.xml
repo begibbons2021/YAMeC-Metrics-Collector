@@ -1,6 +1,48 @@
-<pack name="Database" required="yes">
-    <description>Database initialization files</description>
-    <file src="db/init.sql" targetdir="$INSTALL_PATH/db"/>
-    <executable targetfile="$INSTALL_PATH/bin/init-database.sh" os="unix"/>
-    <executable targetfile="$INSTALL_PATH/bin/init-database.bat" os="windows"/>
-</pack>
+<izpack:installation version="5.0"
+                     xmlns:izpack="http://izpack.org/schema/installation"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                     xsi:schemaLocation="http://izpack.org/schema/installation http://izpack.org/schema/5.0/izpack-installation-5.0.xsd">
+
+    <info>
+        <appname>Yet Another Metrics Collector (YAMeC)</appname>
+        <appversion>0.5.0</appversion>
+        <appsubpath>yamec</appsubpath>
+        <javaversion>23</javaversion>
+    </info>
+
+    <locale>
+        <langpack iso3="eng"/>
+    </locale>
+
+    <guiprefs width="800" height="600" resizable="no">
+        <laf name="substance">
+            <os family="windows"/>
+            <param name="variant" value="mist-silver"/>
+        </laf>
+        <modifier key="useHeadingPanel" value="yes"/>
+    </guiprefs>
+
+    <panels>
+        <panel classname="TargetPanel" />
+        <panel classname="PacksPanel" />
+        <panel classname="InstallPanel" />
+        <panel classname="FinishPanel" />
+    </panels>
+
+    <packs>
+        <pack name="YAMeC Files" required="yes">
+            <description>Core files for YAMeC</description>
+            <file src="../yamec-app-0.0.1-SNAPSHOT.jar" targetdir="${INSTALL_PATH}" override="true"/>
+            <parsable targetfile="${INSTALL_PATH}/test.properties"/>
+        </pack>
+
+<!--        <pack name="Database" required="yes">-->
+<!--            <description>Database initialization files</description>-->
+<!--            <file src="db/init.sql" targetdir="$INSTALL_PATH/db"/>-->
+<!--            <executable targetfile="$INSTALL_PATH/bin/init-database.sh" os="unix"/>-->
+<!--            <executable targetfile="$INSTALL_PATH/bin/init-database.bat" os="windows"/>-->
+<!--        </pack>-->
+    </packs>
+
+
+</izpack:installation>

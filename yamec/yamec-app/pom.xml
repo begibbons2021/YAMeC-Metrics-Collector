@@ -32,6 +32,10 @@
         <maven.compiler.target>23</maven.compiler.target>
         <sqlite-jdbc.version>3.49.1.0</sqlite-jdbc.version>
         <hibernate.version>6.6.13.Final</hibernate.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+        <izpack.version>5.2.4</izpack.version>
+        <izpack.staging>${project.build.directory}/staging</izpack.staging>
+        <antrun.version>3.1.0</antrun.version>
     </properties>
 
     <dependencies>
@@ -88,6 +92,11 @@
             <artifactId>jniloader</artifactId>
             <version>1.1</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.codehaus.izpack</groupId>-->
+<!--            <artifactId>izpack-maven-plugin</artifactId>-->
+<!--            <version>${izpack.version}</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
@@ -106,6 +115,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
             </plugin>
+
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -123,10 +133,31 @@
                             <overWriteIfNewer>true</overWriteIfNewer>
                         </configuration>
                     </execution>
+
+                    <execution>
+                        <id>copy-product-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <excludeTransitive>false</excludeTransitive>
+                            <stripVersion>true</stripVersion>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+
+                            <outputDirectory>${izpack.staging}/lib</outputDirectory>
+                            <excludeScope>system</excludeScope>
+                            <excludeGroupIds>org.codehaus.izpack</excludeGroupIds>
+                        </configuration>
+                    </execution>
+
                 </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>copy-native-libraries</id>
@@ -147,6 +178,57 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>${antrun.version}</version>
+                <executions>
+                    <execution>
+                        <id>create-staging-area</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <copy todir="${izpack.staging}">
+                                    <fileset dir="${basedir}/src/main/izpack/"/>
+                                </copy>
+                            </target>
+
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.izpack</groupId>
+                <artifactId>izpack-maven-plugin</artifactId>
+                <version>${izpack.version}</version>
+
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>izpack</goal>
+                        </goals>
+                        <configuration>
+                            <baseDir>${izpack.staging}</baseDir>
+                            <installFile>${basedir}/src/main/izpack/install.xml</installFile>
+                        </configuration>
+                    </execution>
+                </executions>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>${project.artifactId}</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+
             </plugin>
         </plugins>
     </build>
