@@ -26,19 +26,10 @@ public class ApplicationMetric implements Serializable {
     /**
      * The Application which this ApplicationMetric refers to
      */
-    @ManyToOne(targetEntity = Application.class, fetch = FetchType.LAZY)
-    @JoinColumn(name="application_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="application_id", nullable = false, foreignKey = @ForeignKey(name="fk_application"))
     private Application application;
 
-    /**
-     * <p>The ID of the Application this ApplicationMetric refers to.</p>
-     *
-     * <p>This is utilized to facilitate foreign key relations without
-     * needing to always have a reference to the corresponding Application
-     * entity present at each ApplicationMetric entity creation</p>
-     */
-    @Column(name="application_id", insertable=false, updatable=false)
-    private UUID applicationId;
 
     /**
      * The time at which this ApplicationMetric is collected/logged
@@ -84,21 +75,6 @@ public class ApplicationMetric implements Serializable {
                              long physicalMemoryUsed,
                              long virtualMemoryUsed) {
         this.application = application;
-        this.timestamp = timestamp;
-        this.duration = duration; // Default duration
-        this.cpuUsage = cpuUsage;
-        this.physicalMemoryUsed = physicalMemoryUsed;
-        this.virtualMemoryUsed = virtualMemoryUsed;
-    }
-
-
-    public ApplicationMetric(UUID applicationId,
-                             Timestamp timestamp,
-                             int duration,
-                             double cpuUsage,
-                             long physicalMemoryUsed,
-                             long virtualMemoryUsed) {
-        this.applicationId = applicationId;
         this.timestamp = timestamp;
         this.duration = duration; // Default duration
         this.cpuUsage = cpuUsage;
@@ -152,16 +128,8 @@ public class ApplicationMetric implements Serializable {
         return application;
     }
 
-    public UUID getApplicationId() {
-        return applicationId;
-    }
-
     public void setApplication(Application application) {
         this.application = application;
-    }
-
-    public void setApplicationId(UUID applicationId) {
-        this.applicationId = applicationId;
     }
 
     public Timestamp getTimestamp() {

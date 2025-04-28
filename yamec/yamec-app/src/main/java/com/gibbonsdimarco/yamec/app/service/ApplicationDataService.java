@@ -93,7 +93,7 @@ public class ApplicationDataService {
 //        newApplications = applicationRepository.saveAllAndFlush(newApplications);
 
         // Create ApplicationMetrics based on information from all processes for each application
-        for (UUID applicationName : applicationNameProcessMetrics.keySet()) {
+        for (UUID applicationId : applicationNameProcessMetrics.keySet()) {
 
             // Sum the number of processes and metrics per second
 //            long[] numProcessesPerSecond = new long[duration];
@@ -104,7 +104,7 @@ public class ApplicationDataService {
 
             // Go through all processes related to this application and get the total resource use
             // by the application per second
-            for (ProcessMetric activeProcess : applicationNameProcessMetrics.get(applicationName)) {
+            for (ProcessMetric activeProcess : applicationNameProcessMetrics.get(applicationId)) {
                 // Get all metrics for just this process
                 double processCpuUsage = activeProcess.getCpuUsage();
                 long processPhysicalMemoryUsed = activeProcess.getPhysicalMemoryUsage();
@@ -201,11 +201,11 @@ public class ApplicationDataService {
 
             if (LoggerFactory.getLogger(ApplicationDataService.class).isDebugEnabled()) {
                 LoggerFactory.getLogger(ApplicationDataService.class).debug("Process {} - Average CPU Usage: {}",
-                        applicationRepository.getById(applicationName).getApplicationName(), averageCpuUsage);
+                        applicationRepository.getReferenceById(applicationId).getApplicationName(), averageCpuUsage);
             }
 
             // Create Metric object
-            applicationMetrics.add(new ApplicationMetric(applicationRepository.getById(applicationName),
+            applicationMetrics.add(new ApplicationMetric(applicationRepository.getReferenceById(applicationId),
                                                             startTime, duration,
                                                             averageCpuUsage,
                                                             averagePhysicalMemoryUsed,
