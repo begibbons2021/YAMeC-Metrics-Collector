@@ -2,6 +2,7 @@ package com.gibbonsdimarco.yamec.app;
 
 import com.gibbonsdimarco.yamec.app.data.*;
 import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
+import com.gibbonsdimarco.yamec.app.service.ApplicationDataService;
 import com.gibbonsdimarco.yamec.app.service.CpuHardwareInformationService;
 import jakarta.annotation.PreDestroy;
 import jakarta.websocket.OnClose;
@@ -10,10 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -339,19 +342,40 @@ public class YamecApplication {
         logger.info("User home directory: {}", System.getProperty("user.home"));
 //        testSystemMonitorManager();
 
-        SpringApplication.run(YamecApplication.class, args);
+        context = SpringApplication.run(YamecApplication.class, args);
         logger.info("Yamec Application Started");
 
 
         try {
-            context = SpringApplication.run(YamecApplication.class, args);
+
             CpuHardwareInformation cpu = monitor.getCpuHardwareInformation();
             logger.info("CPU Hardware Information:{}", cpu.toString());
 
             CpuHardwareInformationService cpuHardwareService = context.getBean(CpuHardwareInformationService.class);
             cpuHardwareService.saveCpuInformation(cpu);
+
+
+
         } catch (Exception e) {
             logger.error("Failed to save CPU Hardware Information to database.", e);
+        }
+
+
+        try {
+
+            ArrayList<ProcessMetric> processMetricList = monitor.getProcessMetrics();
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            int duration = 1;
+
+            for (ProcessMetric processMetric : processMetricList) {
+                processMetric.setTimestamp(timestamp);
+            }
+
+            ApplicationDataService applicationDataService = context.getBean(ApplicationDataService.class);
+            applicationDataService.saveApplicationMetrics(processMetricList, timestamp, duration);
+
+        } catch (Exception e) {
+            logger.error("Failed to save Process/Application data to database.\n", e);
         }
     }
 
