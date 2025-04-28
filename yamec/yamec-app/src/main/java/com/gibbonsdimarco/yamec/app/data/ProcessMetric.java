@@ -1,5 +1,7 @@
 package com.gibbonsdimarco.yamec.app.data;
 
+import java.sql.Timestamp;
+
 /**
  *
  */
@@ -14,6 +16,11 @@ public class ProcessMetric {
      * The ID of the process this ProcessMetric pertains to
      */
     private int processId;
+
+    /**
+     * The time at which this ProcessMetric was collected
+     */
+    private Timestamp timestamp;
 
     /**
      * The percentage of CPU utilization of the process this ProcessMetric pertains to
@@ -52,7 +59,7 @@ public class ProcessMetric {
         this.cpuUsage = cpuUsage;
         this.physicalMemoryUsage = physicalMemoryUsage;
         this.virtualMemoryUsage = virtualMemoryUsage;
-        // TODO: Update with 64 bit unsigned value support
+        // TODO: Possibly update with 64 bit unsigned value support
     }
 
     public long getVirtualMemoryUsage() {
@@ -74,4 +81,13 @@ public class ProcessMetric {
     public String getProcessName() {
         return processName;
     }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
+
 }
