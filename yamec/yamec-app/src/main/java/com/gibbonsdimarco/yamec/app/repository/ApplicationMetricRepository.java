@@ -15,7 +15,7 @@ import java.util.UUID;
  * Repository interface for ApplicationMetric entities
  */
 @Repository
-public interface ApplicationMetricRepository extends JpaRepository<ApplicationMetric, Long> {
+public interface ApplicationMetricRepository extends JpaRepository<ApplicationMetric, UUID> {
     // Add custom query methods if needed
 
     List<ApplicationMetric> findByApplication(Application application);
