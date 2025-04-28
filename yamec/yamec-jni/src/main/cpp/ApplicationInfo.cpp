@@ -124,8 +124,6 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
             continue;
         }
 
-        std::cout << "CPU usage at " << i << ": " << cpuUsagesTemp.at(i) << std::endl;
-
         double cpuUsage = cpuUsagesTemp.at(i);
         long long physicalMemory = physicalMemoryUsageTemp.at(i);
         long long virtualMemory = virtualMemoryUsageTemp.at(i);
