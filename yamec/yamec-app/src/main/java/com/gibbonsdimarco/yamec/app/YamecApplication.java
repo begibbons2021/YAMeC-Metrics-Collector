@@ -364,15 +364,27 @@ public class YamecApplication {
         try {
 
             ArrayList<ProcessMetric> processMetricList = monitor.getProcessMetrics();
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            int duration = 1;
+            Timestamp startTimestamp = new Timestamp(System.currentTimeMillis());
 
             for (ProcessMetric processMetric : processMetricList) {
-                processMetric.setTimestamp(timestamp);
+                processMetric.setTimestamp(startTimestamp);
             }
 
+            Thread.sleep(1000);
+            monitor.collectCounterData();
+            ArrayList<ProcessMetric> processMetricList2 = monitor.getProcessMetrics();
+            Timestamp endTimestamp = new Timestamp(System.currentTimeMillis());
+
+            for (ProcessMetric processMetric : processMetricList2) {
+                processMetric.setTimestamp(endTimestamp);
+            }
+
+            processMetricList.addAll(processMetricList2);
+
+            int duration = 2;
+
             ApplicationDataService applicationDataService = context.getBean(ApplicationDataService.class);
-            applicationDataService.saveApplicationMetrics(processMetricList, timestamp, duration);
+            applicationDataService.saveApplicationMetrics(processMetricList, startTimestamp, duration);
 
         } catch (Exception e) {
             logger.error("Failed to save Process/Application data to database.\n", e);

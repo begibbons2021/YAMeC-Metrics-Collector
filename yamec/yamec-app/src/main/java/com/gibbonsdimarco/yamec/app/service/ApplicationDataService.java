@@ -209,7 +209,13 @@ public class ApplicationDataService {
                                                             startTime, duration,
                                                             averageCpuUsage,
                                                             averagePhysicalMemoryUsed,
-                                                            averageVirtualMemoryUsed));
+                                                            averageVirtualMemoryUsed,
+                                                            maxCpuUsage,
+                                                            maxPhysicalMemoryUsed,
+                                                            maxVirtualMemoryUsed,
+                                                            minCpuUsage,
+                                                            minPhysicalMemoryUsed,
+                                                            minVirtualMemoryUsed));
 
 
         }
