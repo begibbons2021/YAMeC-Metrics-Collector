@@ -8,10 +8,17 @@ import jakarta.persistence.*;
  *
  */
 @Entity
-@Table(name = "nic_metrics", indexes = {
-    @Index(name = "idx_nic_metrics_timestamp", columnList = "timestamp")
+@Table(name = "system_nic_metrics", indexes = {
+    @Index(name = "idx_system_nic_metrics_timestamp", columnList = "timestamp")
 })
 public class SystemNicMetric extends SystemDeviceMetric {
+
+    /**
+     * A locally used String which provides the human-readable name of the NIC device
+     * this SystemNicMetric pertains to
+     */
+    @Transient
+    private String deviceName;
 
     /**
      * The number of bits sent per second currently supported
@@ -62,13 +69,17 @@ public class SystemNicMetric extends SystemDeviceMetric {
                            boolean nicBandwidthIsUnsigned,
                            boolean bytesSentIsUnsigned,
                            boolean bytesReceivedIsUnsigned) {
-        super(deviceName);
+        this.deviceName = deviceName;
         this.nicBandwidth = nicBandwidth;
         this.bytesSent = bytesSent;
         this.bytesReceived = bytesReceived;
         this.nicBandwidthIsUnsigned = nicBandwidthIsUnsigned;
         this.bytesSentIsUnsigned = bytesSentIsUnsigned;
         this.bytesReceivedIsUnsigned = bytesReceivedIsUnsigned;
+    }
+
+    public SystemNicMetric() {
+
     }
 
     /**
@@ -222,5 +233,13 @@ public class SystemNicMetric extends SystemDeviceMetric {
      */
     public void setBytesReceivedUnsigned(boolean bytesReceivedIsUnsigned) {
         this.bytesReceivedIsUnsigned = bytesReceivedIsUnsigned;
+    }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
     }
 }

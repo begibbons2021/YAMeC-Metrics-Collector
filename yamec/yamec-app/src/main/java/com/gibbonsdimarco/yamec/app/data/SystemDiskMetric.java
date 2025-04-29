@@ -8,10 +8,17 @@ import jakarta.persistence.*;
  *
  */
 @Entity
-@Table(name = "disk_metrics", indexes = {
-    @Index(name = "idx_disk_metrics_timestamp", columnList = "timestamp")
+@Table(name = "system_disk_metrics", indexes = {
+    @Index(name = "idx_system_disk_metrics_timestamp", columnList = "timestamp")
 })
 public class SystemDiskMetric extends SystemDeviceMetric {
+
+    /**
+     * A locally used String which describes the Disk device and partition which
+     * this SystemDiskMetric pertains to
+     */
+    @Transient
+    private String deviceName;
 
     /**
      * The percentage of total disk utilization for the device,
@@ -63,13 +70,17 @@ public class SystemDiskMetric extends SystemDeviceMetric {
                             double averageTimeToTransfer,
                             boolean readBandwidthIsUnsigned,
                             boolean writeBandwidthIsUnsigned) {
-        super(deviceName);
+        this.deviceName = deviceName;
         this.usage = usage;
         this.readBandwidth = readBandwidth;
         this.writeBandwidth = writeBandwidth;
         this.averageTimeToTransfer = averageTimeToTransfer;
         this.readBandwidthIsUnsigned = readBandwidthIsUnsigned;
         this.writeBandwidthIsUnsigned = writeBandwidthIsUnsigned;
+    }
+
+    public SystemDiskMetric() {
+
     }
 
     /**
@@ -212,4 +223,11 @@ public class SystemDiskMetric extends SystemDeviceMetric {
         this.writeBandwidthIsUnsigned = writeBandwidthIsUnsigned;
     }
 
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
 }

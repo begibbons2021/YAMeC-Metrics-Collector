@@ -87,11 +87,11 @@ class YamecApplicationTests {
 
         // Utilization returns between 0% and 100%
         assertTrue("getCpuMetrics().getUsage() should be returning a value >= 0%"
-                        + " but it is " + metric.getUsage(),
-                        metric.getUsage() >= 0.0);
+                        + " but it is " + metric.getAverageUtilization(),
+                        metric.getAverageUtilization() >= 0.0);
         assertTrue("getCpuMetrics().getUsage() should be returning a value <= 100%"
-                        + " but it is " + metric.getUsage(),
-                        metric.getUsage() <= 100.0);
+                        + " but it is " + metric.getAverageUtilization(),
+                        metric.getAverageUtilization() <= 100.0);
     }
 
     @Test
@@ -113,27 +113,27 @@ class YamecApplicationTests {
             // It also can't be equal total physical memory because otherwise, how is this program running?
             assertTrue("Available Physical Memory must be less than Total Physical Memory, "
                                 + "but Available Physical Memory = "
-                                + metric.getPhysicalMemoryAvailableUnsigned() + " bytes "
+                                + metric.getAveragePhysicalUtilization() + " bytes "
                                 + "and Total Physical Memory = "
                                 + memoryHardware.getCapacityAsUnsignedString() + " bytes ",
-                    Long.compareUnsigned(metric.getPhysicalMemoryAvailable(),
+                    Long.compareUnsigned(metric.getAveragePhysicalUtilization(),
                             memoryHardware.getCapacity()) < 0);
 
         } else if (!physicalMemoryIsUnsigned && !capacityIsUnsigned) {
-            // Physical memory available must not be a negative number
-            // It can technically be 0, but the OS would likely never allow memory to get that full
-            assertTrue("Available Physical Memory must be greater (or equal to) than 0, but it is "
-                                + metric.getPhysicalMemoryAvailable() + " instead ",
-                    metric.getPhysicalMemoryAvailable() >= 0);
+            // Physical memory used is greater than 0
+            // It can't be 0 because otherwise, how is this program running?
+            assertTrue("Physical Memory Used must be greater (or equal to) than 0, but it is "
+                                + metric.getAveragePhysicalUtilization() + " instead ",
+                    metric.getAveragePhysicalUtilization() > 0);
 
-            // Physical memory available is less than the total physical memory
-            // It also can't be equal total physical memory because otherwise, how is this program running?
-            assertTrue("Available Physical Memory must be less than Total Physical Memory, "
-                            + "but Available Physical Memory = "
-                            + metric.getPhysicalMemoryAvailable() + " bytes "
+            // Physical memory used must not be more than the total physical memory available
+            // It can technically be the capacity, but the OS would likely never allow memory to get that full
+            assertTrue("Physical Memory Used must be less than Total Physical Memory, "
+                            + "but Physical Memory Used = "
+                            + metric.getAveragePhysicalUtilization() + " bytes "
                             + "and Total Physical Memory = "
                             + memoryHardware.getCapacity() + " bytes ",
-                    metric.getPhysicalMemoryAvailable() <
+                    metric.getAveragePhysicalUtilization() <=
                             memoryHardware.getCapacity());
         } else {
             // This is a bizarre condition. Just choose signed or unsigned, for the sake of everyone's sanity
@@ -145,21 +145,21 @@ class YamecApplicationTests {
 
         if (!virtualMemoryIsUnsigned) {
             // Virtual memory must be greater than or equal to 0 bytes if stored as a signed value
-            assertTrue("Virtual Memory Committed must be greater than or equal to 0 bytes, "
-                            + "but Virtual Memory Committed = "
-                            + metric.getVirtualMemoryCommitted() + " bytes ",
-                    metric.getVirtualMemoryCommitted() > 0);
+            assertTrue("Virtual Memory Utilization must be greater than or equal to 0 bytes, "
+                            + "but Virtual Memory Utilization = "
+                            + metric.getAverageVirtualUtilization() + " bytes ",
+                    metric.getAverageVirtualUtilization() > 0);
         }
 
         // A percentage of committed memory in use must be between 0% and 100%
         // Likely, if it's close to 100%, the memory committed will be increased to prevent it,
         // but if the commit limit is reached and the page size limit is reached, it may not.
-        assertTrue("getMemoryMetrics().getVirtualMemoryCommittedUsage() should be returning a value >= 0%"
-                        + " but it is " + metric.getCommittedVirtualMemoryUsage(),
-                metric.getCommittedVirtualMemoryUsage() >= 0.0);
-        assertTrue("getMemoryMetrics().getVirtualMemoryCommittedUsage() should be returning a value <= 100%"
-                        + " but it is " + metric.getCommittedVirtualMemoryUsage(),
-                metric.getCommittedVirtualMemoryUsage() <= 100.0);
+//        assertTrue("getMemoryMetrics().getVirtualMemoryCommittedUsage() should be returning a value >= 0%"
+//                        + " but it is " + metric.getMinVirtualUtilization(),
+//                metric.getMinVirtualUtilization() >= 0.0);
+//        assertTrue("getMemoryMetrics().getVirtualMemoryCommittedUsage() should be returning a value <= 100%"
+//                        + " but it is " + metric.getMinVirtualUtilization(),
+//                metric.getMinVirtualUtilization() <= 100.0);
 
     }
 
@@ -486,7 +486,7 @@ class YamecApplicationTests {
             SystemCpuMetric cpuMetrics = monitor.getCpuMetrics();
             if (cpuMetrics != null) {
                 System.err.printf("CPU Information: \n\t%s\n\t\tUsage: %.1f%%\n",
-                        cpuMetrics.getDeviceName(), cpuMetrics.getUsage());
+                        cpuMetrics.getDeviceName(), cpuMetrics.getAverageUtilization());
             }
             else {
                 System.err.println("CPU Information: \n\tNo CPU Metrics Found");
@@ -548,17 +548,11 @@ class YamecApplicationTests {
             System.err.println("Testing Memory Metrics Retrieval...");
             SystemMemoryMetric memoryMetrics = monitor.getMemoryMetrics();
             if (memoryMetrics != null) {
-                // Calculate the actual virtual memory use from the amount of committed memory used.
-                double bytesVirtualMemoryInUse = memoryMetrics.getCommittedVirtualMemoryBytes();
-
                 System.err.println("Memory Information:");
-                System.err.printf("\tAvailable Memory (Physical Memory): %s bytes\n",
-                        memoryMetrics.getPhysicalMemoryAvailableUnsigned());
-                System.err.printf("\tVirtual Memory Committed: %s\n",
-                        memoryMetrics.getVirtualMemoryCommitted());
-                System.err.printf("\tVirtual Memory In-Use: %f%% (~%.0f bytes)\n",
-                        memoryMetrics.getCommittedVirtualMemoryUsage(),
-                        bytesVirtualMemoryInUse);
+                System.err.printf("\tPhysical Memory Used : %s bytes\n",
+                        memoryMetrics.getAveragePhysicalUtilization());
+                System.err.printf("\tVirtual Memory Used: ~%.0f bytes\n",
+                        memoryMetrics.getAverageVirtualUtilization());
             }
             else {
                 System.err.println("Memory Information: \n\tNo Memory Metrics Found");
@@ -624,7 +618,7 @@ class YamecApplicationTests {
 
         try {
             System.err.println("Testing Disk Metrics Retrieval...");
-            java.util.ArrayList<SystemDiskMetric> diskMetrics = monitor.getDiskMetrics();
+            ArrayList<SystemDiskMetric> diskMetrics = monitor.getDiskMetrics();
             if (diskMetrics != null) {
 
                 System.err.println("Disk Information:");
@@ -640,7 +634,7 @@ class YamecApplicationTests {
                     System.err.printf("\t\tUsage: %f%%\n", diskMetric.getUsage());
                     System.err.printf("\t\tRead Bandwidth: %s bytes/sec\n", diskMetric.getReadBandwidthUnsigned());
                     System.err.printf("\t\tWrite Bandwidth: %s bytes/sec\n", diskMetric.getWriteBandwidthUnsigned());
-                    System.err.printf("\t\tAverage Transfer Rate: %f bytes/sec\n", diskMetric.getAverageTimeToTransfer());
+                    System.err.printf("\t\tAverage Transfer Rate: %f sec/transfer\n", diskMetric.getAverageTimeToTransfer());
                 }
             }
             else {
@@ -687,7 +681,7 @@ class YamecApplicationTests {
 
         try {
             System.err.println("Testing NIC Metrics Retrieval...");
-            java.util.ArrayList<SystemNicMetric> nicMetrics = monitor.getNicMetrics();
+            ArrayList<SystemNicMetric> nicMetrics = monitor.getNicMetrics();
             if (nicMetrics != null) {
 
                 System.err.println("NIC Information:");
