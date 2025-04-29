@@ -34,7 +34,8 @@ public abstract class SystemDeviceMetric implements Serializable {
     @Column(name = "granularity_id", nullable = false)
     private UUID granularityId;
 
-    protected SystemDeviceMetric() {
+    public SystemDeviceMetric() {
+
     }
 
     public SystemDeviceMetric(Integer duration, UUID granularityId) {
@@ -49,7 +50,7 @@ public abstract class SystemDeviceMetric implements Serializable {
         this.timestamp = timestamp;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 

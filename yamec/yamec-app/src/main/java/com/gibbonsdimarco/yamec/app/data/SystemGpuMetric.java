@@ -13,6 +13,13 @@ import jakarta.persistence.*;
 public class SystemGpuMetric extends SystemDeviceMetric {
 
     /**
+     * A locally used String which provides the brand string/friendly name of the GPU
+     * this SystemGpuMetric pertains to
+     */
+    @Transient
+    private String deviceName;
+
+    /**
      * The percentage of GPU utilization of this SystemGpuMetric's source GPU
      */
     @Column(name = "usage", nullable = false)
@@ -45,7 +52,7 @@ public class SystemGpuMetric extends SystemDeviceMetric {
      *              was collected
      */
     public SystemGpuMetric(String deviceName, double usage) {
-        super(deviceName);
+        this.deviceName = deviceName;
         this.usage = usage;
     }
 
@@ -62,11 +69,15 @@ public class SystemGpuMetric extends SystemDeviceMetric {
      */
     public SystemGpuMetric(String deviceName, double usage, double temperature, 
                           long dedicatedMemoryUse, long sharedMemoryUse) {
-        super(deviceName);
+        this.deviceName = deviceName;
         this.usage = usage;
         this.temperature = temperature;
         this.dedicatedMemoryUse = dedicatedMemoryUse;
         this.sharedMemoryUse = sharedMemoryUse;
+    }
+
+    public SystemGpuMetric() {
+
     }
 
     /**
@@ -140,5 +151,13 @@ public class SystemGpuMetric extends SystemDeviceMetric {
      */
     public void setSharedMemoryUse(Long sharedMemoryUse) {
         this.sharedMemoryUse = sharedMemoryUse;
+    }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
     }
 }

@@ -15,6 +15,13 @@ import java.util.UUID;
 })
 public class SystemCpuMetric extends SystemDeviceMetric implements Serializable {
     /**
+     * A locally used String which provides the brand string/friendly name of the CPU
+     * this SystemCpuMetric pertains to
+     */
+    @Transient
+    private String deviceName;
+
+    /**
      * The average percentage of utilization measured within this SystemDeviceMetric
      */
     @Column(name = "average_utilization")
@@ -32,7 +39,16 @@ public class SystemCpuMetric extends SystemDeviceMetric implements Serializable 
     @Column(name = "min_utilization")
     private Double minUtilization;
 
-    protected SystemCpuMetric() {}
+    public SystemCpuMetric() {}
+
+    public SystemCpuMetric(String deviceName, double utilization) {
+        super();
+        this.setDuration(1);
+        this.deviceName = deviceName;
+        this.averageUtilization = utilization;
+        this.maxUtilization = utilization;
+        this.minUtilization = utilization;
+    }
 
     public SystemCpuMetric(Integer duration, UUID granularityId, Double averageUtilization, Double maxUtilization, Double minUtilization) {
         super(duration, granularityId);
@@ -81,5 +97,13 @@ public class SystemCpuMetric extends SystemDeviceMetric implements Serializable 
                 ", maxUtilization=" + maxUtilization +
                 ", minUtilization=" + minUtilization +
                 '}';
+    }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
     }
 }
