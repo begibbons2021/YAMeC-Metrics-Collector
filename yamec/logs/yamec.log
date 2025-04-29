@@ -1771,3 +1771,411 @@ Caused by: java.sql.SQLTransientConnectionException: HikariPool-1 - Connection i
 2025-04-26 15:37:12 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled.
 2025-04-26 15:37:42 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Pool stats (total=2, active=0, idle=2, waiting=0)
 2025-04-26 15:37:42 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled.
+2025-04-26 15:38:12 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Pool stats (total=2, active=0, idle=2, waiting=0)
+2025-04-26 15:38:12 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled.
+2025-04-26 15:38:42 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Pool stats (total=2, active=0, idle=2, waiting=0)
+2025-04-26 15:38:42 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled.
+2025-04-26 15:39:12 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Pool stats (total=2, active=0, idle=2, waiting=0)
+2025-04-26 15:39:12 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled.
+2025-04-26 15:39:39 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-04-26 15:39:39 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-04-26 15:39:39 [SpringApplicationShutdownHook] INFO  c.g.yamec.app.YamecApplication - CLEANUP - Closing the System Monitor... 
+2025-04-26 15:39:39 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-26 15:39:39 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-04-26 15:39:39 [SpringApplicationShutdownHook] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Before shutdown stats (total=2, active=0, idle=2, waiting=0)
+2025-04-26 15:39:39 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@5d1a859c: (connection evicted)
+2025-04-26 15:39:39 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@15baba94: (connection evicted)
+2025-04-26 15:39:39 [SpringApplicationShutdownHook] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+2025-04-26 15:39:39 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-04-26 15:41:33 [main] INFO  c.g.yamec.app.YamecApplication - Starting YamecApplication using Java 23.0.2 with PID 23344 (C:\Users\cmarc\IdeaProjects\yamec\yamec\yamec-app\target\yamec-app-0.0.1-SNAPSHOT.jar started by cmarc in C:\Users\cmarc\IdeaProjects\yamec\yamec)
+2025-04-26 15:41:33 [main] DEBUG c.g.yamec.app.YamecApplication - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-04-26 15:41:33 [main] INFO  c.g.yamec.app.YamecApplication - No active profile set, falling back to 1 default profile: "default"
+2025-04-26 15:41:34 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-26 15:41:34 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 62 ms. Found 9 JPA repository interfaces.
+2025-04-26 15:41:34 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8084 (http)
+2025-04-26 15:41:34 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-04-26 15:41:34 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-04-26 15:41:34 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-04-26 15:41:34 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1378 ms
+2025-04-26 15:41:34 [main] DEBUG com.zaxxer.hikari.HikariConfig - Driver class org.sqlite.JDBC found in Thread context class loader org.springframework.boot.loader.launch.LaunchedClassLoader@4d405ef7
+2025-04-26 15:41:34 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-26 15:41:35 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-04-26 15:41:35 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-04-26 15:41:35 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - HikariPool-1 - configuration:
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - allowPoolSuspension.............false
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - autoCommit......................true
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - catalog.........................none
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionInitSql...............none
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTestQuery............."SELECT 1"
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTimeout...............30000
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSource......................none
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceClassName.............none
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceJNDI..................none
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceProperties............{password=<masked>}
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - driverClassName................."org.sqlite.JDBC"
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - exceptionOverrideClassName......none
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckProperties...........{}
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckRegistry.............none
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - idleTimeout.....................600000
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - initializationFailTimeout.......1
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - isolateInternalQueries..........false
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - jdbcUrl.........................jdbc:sqlite:db.sqlite
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - keepaliveTime...................0
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - leakDetectionThreshold..........30000
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - maxLifetime.....................1800000
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - maximumPoolSize.................1
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricRegistry..................none
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricsTrackerFactory...........none
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - minimumIdle.....................1
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - password........................<masked>
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - poolName........................"HikariPool-1"
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - readOnly........................false
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - registerMbeans..................false
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - scheduledExecutor...............none
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - schema..........................none
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - threadFactory...................internal
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - transactionIsolation............default
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - username........................none
+2025-04-26 15:41:35 [main] DEBUG com.zaxxer.hikari.HikariConfig - validationTimeout...............5000
+2025-04-26 15:41:35 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-04-26 15:41:35 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@795f6681
+2025-04-26 15:41:35 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-04-26 15:41:35 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 3.49.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-04-26 15:41:35 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Pool stats (total=1, active=0, idle=1, waiting=0)
+2025-04-26 15:41:35 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled.
+2025-04-26 15:41:36 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemNicMetric (class must be instantiated by Interceptor)
+2025-04-26 15:41:36 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemDiskMetric (class must be instantiated by Interceptor)
+2025-04-26 15:41:36 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemGpuMetric (class must be instantiated by Interceptor)
+2025-04-26 15:41:36 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemMemoryMetric (class must be instantiated by Interceptor)
+2025-04-26 15:41:36 [main] DEBUG org.hibernate.SQL - create table HTE_cpu(rn_ integer not null, virtualization boolean, cores bigint, id bigint, l1_cache_size bigint, l2_cache_size bigint, l3_cache_size bigint, logical_processors bigint, hib_sess_id char(36) not null, name varchar(255), primary key (rn_, hib_sess_id))
+2025-04-26 15:41:36 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-04-26 15:41:36 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-26 15:41:36 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-04-26 15:41:37 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8084 (http) with context path '/'
+2025-04-26 15:41:37 [main] INFO  c.g.yamec.app.YamecApplication - Started YamecApplication in 4.819 seconds (process running for 6.898)
+2025-04-26 15:41:37 [main] INFO  c.g.yamec.app.YamecApplication - CPU Hardware Information:Cpu[id=null, friendlyName='AMD Ryzen 9 5950X 16-Core Processor            ', coreCount='16', logicalProcessorCount='32', l1CacheSize='1048576', l2CacheSize='8388608', l3CacheSize='67108864', virtualizationEnabled='true']
+2025-04-26 15:41:37 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Connection not added, stats (total=1, active=1, idle=0, waiting=1)
+2025-04-26 15:41:51 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-04-26 15:41:51 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-04-26 15:41:51 [SpringApplicationShutdownHook] INFO  c.g.yamec.app.YamecApplication - CLEANUP - Closing the System Monitor... 
+2025-04-26 15:41:51 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-26 15:41:51 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-04-26 15:41:51 [SpringApplicationShutdownHook] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Before shutdown stats (total=1, active=1, idle=0, waiting=1)
+2025-04-26 15:41:51 [SpringApplicationShutdownHook] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=1)
+2025-04-26 15:41:51 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-04-26 15:43:50 [main] INFO  c.g.yamec.app.YamecApplication - Starting YamecApplication using Java 23.0.2 with PID 38868 (C:\Users\cmarc\IdeaProjects\yamec\yamec\yamec-app\target\yamec-app-0.0.1-SNAPSHOT.jar started by cmarc in C:\Users\cmarc\IdeaProjects\yamec\yamec)
+2025-04-26 15:43:50 [main] DEBUG c.g.yamec.app.YamecApplication - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-04-26 15:43:50 [main] INFO  c.g.yamec.app.YamecApplication - No active profile set, falling back to 1 default profile: "default"
+2025-04-26 15:43:51 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-26 15:43:51 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 58 ms. Found 9 JPA repository interfaces.
+2025-04-26 15:43:51 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8084 (http)
+2025-04-26 15:43:51 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-04-26 15:43:51 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-04-26 15:43:51 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-04-26 15:43:51 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1374 ms
+2025-04-26 15:43:51 [main] DEBUG com.zaxxer.hikari.HikariConfig - Driver class org.sqlite.JDBC found in Thread context class loader org.springframework.boot.loader.launch.LaunchedClassLoader@1f17ae12
+2025-04-26 15:43:51 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-26 15:43:52 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-04-26 15:43:52 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-04-26 15:43:52 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - HikariPool-1 - configuration:
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - allowPoolSuspension.............false
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - autoCommit......................true
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - catalog.........................none
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionInitSql...............none
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTestQuery............."SELECT 1"
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTimeout...............30000
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSource......................none
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceClassName.............none
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceJNDI..................none
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceProperties............{password=<masked>}
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - driverClassName................."org.sqlite.JDBC"
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - exceptionOverrideClassName......none
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckProperties...........{}
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckRegistry.............none
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - idleTimeout.....................600000
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - initializationFailTimeout.......1
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - isolateInternalQueries..........false
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - jdbcUrl.........................jdbc:sqlite:db.sqlite
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - keepaliveTime...................0
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - leakDetectionThreshold..........30000
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - maxLifetime.....................1800000
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - maximumPoolSize.................2
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricRegistry..................none
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricsTrackerFactory...........none
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - minimumIdle.....................2
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - password........................<masked>
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - poolName........................"HikariPool-1"
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - readOnly........................false
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - registerMbeans..................false
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - scheduledExecutor...............none
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - schema..........................none
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - threadFactory...................internal
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - transactionIsolation............default
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - username........................none
+2025-04-26 15:43:52 [main] DEBUG com.zaxxer.hikari.HikariConfig - validationTimeout...............5000
+2025-04-26 15:43:52 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-04-26 15:43:52 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@61911947
+2025-04-26 15:43:52 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-04-26 15:43:52 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 3.49.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-04-26 15:43:52 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Pool stats (total=1, active=0, idle=1, waiting=0)
+2025-04-26 15:43:52 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@580f8512
+2025-04-26 15:43:52 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=2, active=0, idle=2, waiting=0)
+2025-04-26 15:43:53 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemNicMetric (class must be instantiated by Interceptor)
+2025-04-26 15:43:53 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemDiskMetric (class must be instantiated by Interceptor)
+2025-04-26 15:43:53 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemGpuMetric (class must be instantiated by Interceptor)
+2025-04-26 15:43:53 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemMemoryMetric (class must be instantiated by Interceptor)
+2025-04-26 15:43:53 [main] DEBUG org.hibernate.SQL - create table HTE_cpu(rn_ integer not null, virtualization boolean, cores bigint, id bigint, l1_cache_size bigint, l2_cache_size bigint, l3_cache_size bigint, logical_processors bigint, hib_sess_id char(36) not null, name varchar(255), primary key (rn_, hib_sess_id))
+2025-04-26 15:43:53 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-04-26 15:43:53 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-26 15:43:53 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-04-26 15:43:54 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8084 (http) with context path '/'
+2025-04-26 15:43:54 [main] INFO  c.g.yamec.app.YamecApplication - Started YamecApplication in 4.955 seconds (process running for 7.021)
+2025-04-26 15:43:54 [main] INFO  c.g.yamec.app.YamecApplication - CPU Hardware Information:Cpu[id=null, friendlyName='AMD Ryzen 9 5950X 16-Core Processor            ', coreCount='16', logicalProcessorCount='32', l1CacheSize='1048576', l2CacheSize='8388608', l3CacheSize='67108864', virtualizationEnabled='true']
+2025-04-26 15:43:54 [main] DEBUG org.hibernate.SQL - select next_val as id_val from cpu_seq
+2025-04-26 15:43:54 [main] DEBUG org.hibernate.SQL - update cpu_seq set next_val= ? where next_val=?
+2025-04-26 15:43:54 [main] DEBUG org.hibernate.SQL - insert into cpu (cores,name,l1_cache_size,l2_cache_size,l3_cache_size,logical_processors,virtualization,id) values (?,?,?,?,?,?,?,?)
+2025-04-26 15:44:08 [http-nio-8084-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-04-26 15:44:08 [http-nio-8084-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-04-26 15:44:08 [http-nio-8084-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-04-26 15:44:22 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Pool stats (total=2, active=0, idle=2, waiting=0)
+2025-04-26 15:44:22 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled.
+2025-04-26 15:44:52 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Pool stats (total=2, active=0, idle=2, waiting=0)
+2025-04-26 15:44:52 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled.
+2025-04-26 15:45:22 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Pool stats (total=2, active=0, idle=2, waiting=0)
+2025-04-26 15:45:22 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled.
+2025-04-26 15:45:31 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-04-26 15:45:31 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-04-26 15:45:31 [SpringApplicationShutdownHook] INFO  c.g.yamec.app.YamecApplication - CLEANUP - Closing the System Monitor... 
+2025-04-26 15:45:31 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-26 15:45:31 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-04-26 15:45:31 [SpringApplicationShutdownHook] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Before shutdown stats (total=2, active=0, idle=2, waiting=0)
+2025-04-26 15:45:31 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@61911947: (connection evicted)
+2025-04-26 15:45:31 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@580f8512: (connection evicted)
+2025-04-26 15:45:31 [SpringApplicationShutdownHook] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+2025-04-26 15:45:31 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-04-26 15:49:08 [main] INFO  c.g.yamec.app.YamecApplication - Starting YamecApplication using Java 23.0.2 with PID 36944 (C:\Users\cmarc\IdeaProjects\yamec\yamec\yamec-app\target\yamec-app-0.0.1-SNAPSHOT.jar started by cmarc in C:\Users\cmarc\IdeaProjects\yamec\yamec)
+2025-04-26 15:49:08 [main] DEBUG c.g.yamec.app.YamecApplication - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-04-26 15:49:08 [main] INFO  c.g.yamec.app.YamecApplication - No active profile set, falling back to 1 default profile: "default"
+2025-04-26 15:49:09 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-26 15:49:09 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 62 ms. Found 9 JPA repository interfaces.
+2025-04-26 15:49:10 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8084 (http)
+2025-04-26 15:49:10 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-04-26 15:49:10 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-04-26 15:49:10 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-04-26 15:49:10 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1519 ms
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - Driver class org.sqlite.JDBC found in Thread context class loader org.springframework.boot.loader.launch.LaunchedClassLoader@4d405ef7
+2025-04-26 15:49:10 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-26 15:49:10 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-04-26 15:49:10 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-04-26 15:49:10 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - HikariPool-1 - configuration:
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - allowPoolSuspension.............false
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - autoCommit......................true
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - catalog.........................none
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionInitSql...............none
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTestQuery............."SELECT 1"
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTimeout...............30000
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSource......................none
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceClassName.............none
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceJNDI..................none
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceProperties............{password=<masked>}
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - driverClassName................."org.sqlite.JDBC"
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - exceptionOverrideClassName......none
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckProperties...........{}
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckRegistry.............none
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - idleTimeout.....................600000
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - initializationFailTimeout.......1
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - isolateInternalQueries..........false
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - jdbcUrl.........................jdbc:sqlite:db.sqlite
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - keepaliveTime...................0
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - leakDetectionThreshold..........30000
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - maxLifetime.....................1800000
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - maximumPoolSize.................2
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricRegistry..................none
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricsTrackerFactory...........none
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - minimumIdle.....................2
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - password........................<masked>
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - poolName........................"HikariPool-1"
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - readOnly........................false
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - registerMbeans..................false
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - scheduledExecutor...............none
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - schema..........................none
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - threadFactory...................internal
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - transactionIsolation............default
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - username........................none
+2025-04-26 15:49:10 [main] DEBUG com.zaxxer.hikari.HikariConfig - validationTimeout...............5000
+2025-04-26 15:49:10 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-04-26 15:49:11 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@6060146b
+2025-04-26 15:49:11 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-04-26 15:49:11 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 3.49.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-04-26 15:49:11 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Pool stats (total=1, active=0, idle=1, waiting=0)
+2025-04-26 15:49:11 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@f07298b
+2025-04-26 15:49:11 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=2, active=0, idle=2, waiting=0)
+2025-04-26 15:49:11 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemNicMetric (class must be instantiated by Interceptor)
+2025-04-26 15:49:11 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemDiskMetric (class must be instantiated by Interceptor)
+2025-04-26 15:49:11 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemGpuMetric (class must be instantiated by Interceptor)
+2025-04-26 15:49:11 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemMemoryMetric (class must be instantiated by Interceptor)
+2025-04-26 15:49:11 [main] DEBUG org.hibernate.SQL - create table HTE_cpu(rn_ integer not null, virtualization boolean, cores bigint, id bigint, l1_cache_size bigint, l2_cache_size bigint, l3_cache_size bigint, logical_processors bigint, hib_sess_id char(36) not null, name varchar(255), primary key (rn_, hib_sess_id))
+2025-04-26 15:49:12 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-04-26 15:49:12 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-26 15:49:12 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-04-26 15:49:13 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8084 (http) with context path '/'
+2025-04-26 15:49:13 [main] INFO  c.g.yamec.app.YamecApplication - Started YamecApplication in 4.857 seconds (process running for 6.944)
+2025-04-26 15:49:13 [main] INFO  c.g.yamec.app.YamecApplication - CPU Hardware Information:Cpu[id=null, friendlyName='AMD Ryzen 9 5950X 16-Core Processor            ', coreCount='16', logicalProcessorCount='32', l1CacheSize='1048576', l2CacheSize='8388608', l3CacheSize='67108864', virtualizationEnabled='true']
+2025-04-26 15:49:13 [main] DEBUG org.hibernate.SQL - select next_val as id_val from cpu_seq
+2025-04-26 15:49:13 [main] DEBUG org.hibernate.SQL - update cpu_seq set next_val= ? where next_val=?
+2025-04-26 15:49:13 [main] DEBUG org.hibernate.SQL - insert into cpu (cores,name,l1_cache_size,l2_cache_size,l3_cache_size,logical_processors,virtualization,id) values (?,?,?,?,?,?,?,?)
+2025-04-26 15:49:13 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:49:13 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:49:13 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:49:13 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:49:13 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:49:13 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:49:13 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:49:13 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:49:13 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:49:13 [http-nio-8084-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-04-26 15:49:13 [http-nio-8084-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-04-26 15:49:13 [http-nio-8084-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-04-26 15:49:41 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Pool stats (total=2, active=0, idle=2, waiting=0)
+2025-04-26 15:49:41 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled.
+2025-04-26 15:50:11 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Pool stats (total=2, active=0, idle=2, waiting=0)
+2025-04-26 15:50:11 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled.
+2025-04-26 15:50:41 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Pool stats (total=2, active=0, idle=2, waiting=0)
+2025-04-26 15:50:41 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled.
+2025-04-26 15:51:11 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Pool stats (total=2, active=0, idle=2, waiting=0)
+2025-04-26 15:51:11 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled.
+2025-04-26 15:51:20 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-04-26 15:51:20 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-04-26 15:51:20 [SpringApplicationShutdownHook] INFO  c.g.yamec.app.YamecApplication - CLEANUP - Closing the System Monitor... 
+2025-04-26 15:51:20 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-26 15:51:20 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-04-26 15:51:20 [SpringApplicationShutdownHook] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Before shutdown stats (total=2, active=0, idle=2, waiting=0)
+2025-04-26 15:51:20 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@6060146b: (connection evicted)
+2025-04-26 15:51:20 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@f07298b: (connection evicted)
+2025-04-26 15:51:20 [SpringApplicationShutdownHook] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+2025-04-26 15:51:20 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-04-26 15:54:30 [main] INFO  c.g.yamec.app.YamecApplication - Starting YamecApplication using Java 23.0.2 with PID 37044 (C:\Users\cmarc\IdeaProjects\yamec\yamec\yamec-app\target\yamec-app-0.0.1-SNAPSHOT.jar started by cmarc in C:\Users\cmarc\IdeaProjects\yamec\yamec)
+2025-04-26 15:54:30 [main] DEBUG c.g.yamec.app.YamecApplication - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-04-26 15:54:30 [main] INFO  c.g.yamec.app.YamecApplication - No active profile set, falling back to 1 default profile: "default"
+2025-04-26 15:54:31 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-26 15:54:31 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 58 ms. Found 9 JPA repository interfaces.
+2025-04-26 15:54:32 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8084 (http)
+2025-04-26 15:54:32 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-04-26 15:54:32 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-04-26 15:54:32 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-04-26 15:54:32 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1255 ms
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - Driver class org.sqlite.JDBC found in Thread context class loader org.springframework.boot.loader.launch.LaunchedClassLoader@4d405ef7
+2025-04-26 15:54:32 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-26 15:54:32 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-04-26 15:54:32 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-04-26 15:54:32 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - HikariPool-1 - configuration:
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - allowPoolSuspension.............false
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - autoCommit......................true
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - catalog.........................none
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionInitSql...............none
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTestQuery............."SELECT 1"
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTimeout...............30000
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSource......................none
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceClassName.............none
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceJNDI..................none
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceProperties............{password=<masked>}
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - driverClassName................."org.sqlite.JDBC"
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - exceptionOverrideClassName......none
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckProperties...........{}
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckRegistry.............none
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - idleTimeout.....................600000
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - initializationFailTimeout.......1
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - isolateInternalQueries..........false
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - jdbcUrl.........................jdbc:sqlite:db.sqlite
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - keepaliveTime...................0
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - leakDetectionThreshold..........30000
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - maxLifetime.....................1800000
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - maximumPoolSize.................2
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricRegistry..................none
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricsTrackerFactory...........none
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - minimumIdle.....................2
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - password........................<masked>
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - poolName........................"HikariPool-1"
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - readOnly........................false
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - registerMbeans..................false
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - scheduledExecutor...............none
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - schema..........................none
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - threadFactory...................internal
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - transactionIsolation............default
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - username........................none
+2025-04-26 15:54:32 [main] DEBUG com.zaxxer.hikari.HikariConfig - validationTimeout...............5000
+2025-04-26 15:54:32 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-04-26 15:54:32 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@1883871b
+2025-04-26 15:54:32 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-04-26 15:54:32 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 3.49.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-04-26 15:54:33 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Pool stats (total=1, active=0, idle=1, waiting=0)
+2025-04-26 15:54:33 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@6fe7fe50
+2025-04-26 15:54:33 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=2, active=0, idle=2, waiting=0)
+2025-04-26 15:54:33 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemNicMetric (class must be instantiated by Interceptor)
+2025-04-26 15:54:33 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemDiskMetric (class must be instantiated by Interceptor)
+2025-04-26 15:54:33 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemGpuMetric (class must be instantiated by Interceptor)
+2025-04-26 15:54:33 [main] INFO  o.h.m.i.EntityInstantiatorPojoStandard - HHH000182: No default (no-argument) constructor for class: com.gibbonsdimarco.yamec.app.data.SystemMemoryMetric (class must be instantiated by Interceptor)
+2025-04-26 15:54:33 [main] DEBUG org.hibernate.SQL - create table HTE_cpu(rn_ integer not null, virtualization boolean, cores bigint, id bigint, l1_cache_size bigint, l2_cache_size bigint, l3_cache_size bigint, logical_processors bigint, hib_sess_id char(36) not null, name varchar(255), primary key (rn_, hib_sess_id))
+2025-04-26 15:54:33 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-04-26 15:54:33 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-26 15:54:34 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-04-26 15:54:34 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8084 (http) with context path '/'
+2025-04-26 15:54:34 [main] INFO  c.g.yamec.app.YamecApplication - Started YamecApplication in 4.502 seconds (process running for 6.533)
+2025-04-26 15:54:34 [main] INFO  c.g.yamec.app.YamecApplication - CPU Hardware Information:Cpu[id=null, friendlyName='AMD Ryzen 9 5950X 16-Core Processor            ', coreCount='16', logicalProcessorCount='32', l1CacheSize='1048576', l2CacheSize='8388608', l3CacheSize='67108864', virtualizationEnabled='true']
+2025-04-26 15:54:34 [main] DEBUG org.hibernate.SQL - select next_val as id_val from cpu_seq
+2025-04-26 15:54:34 [main] DEBUG org.hibernate.SQL - update cpu_seq set next_val= ? where next_val=?
+2025-04-26 15:54:35 [http-nio-8084-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-04-26 15:54:35 [http-nio-8084-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-04-26 15:54:35 [http-nio-8084-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-04-26 15:54:35 [main] DEBUG org.hibernate.SQL - insert into cpu (cores,name,l1_cache_size,l2_cache_size,l3_cache_size,logical_processors,virtualization,id) values (?,?,?,?,?,?,?,?)
+2025-04-26 15:54:35 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:54:35 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:54:35 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:54:35 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:54:35 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:54:35 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:54:35 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:54:35 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:54:35 [main] DEBUG org.hibernate.SQL - select chi1_0.id,chi1_0.cores,chi1_0.name,chi1_0.l1_cache_size,chi1_0.l2_cache_size,chi1_0.l3_cache_size,chi1_0.logical_processors,chi1_0.virtualization from cpu chi1_0 where chi1_0.id=?
+2025-04-26 15:54:48 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-04-26 15:54:48 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-04-26 15:54:48 [SpringApplicationShutdownHook] INFO  c.g.yamec.app.YamecApplication - CLEANUP - Closing the System Monitor... 
+2025-04-26 15:54:48 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-26 15:54:48 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-04-26 15:54:48 [SpringApplicationShutdownHook] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Before shutdown stats (total=2, active=0, idle=2, waiting=0)
+2025-04-26 15:54:48 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@1883871b: (connection evicted)
+2025-04-26 15:54:48 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@6fe7fe50: (connection evicted)
+2025-04-26 15:54:48 [SpringApplicationShutdownHook] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+2025-04-26 15:54:48 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

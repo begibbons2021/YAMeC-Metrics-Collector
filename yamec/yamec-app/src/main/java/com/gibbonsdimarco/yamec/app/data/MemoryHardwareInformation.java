@@ -2,6 +2,7 @@ package com.gibbonsdimarco.yamec.app.data;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * Contains information about the system's memory hardware
@@ -11,8 +12,8 @@ import java.io.Serializable;
 public class MemoryHardwareInformation implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     /**
      * The number of bytes of memory present on the system
@@ -81,11 +82,11 @@ public class MemoryHardwareInformation implements Serializable {
         this.speedIsUnsigned = speedIsUnsigned;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -144,5 +145,18 @@ public class MemoryHardwareInformation implements Serializable {
 
     public void setIsSpeedUnsigned(boolean speedIsUnsigned) {
         this.speedIsUnsigned = speedIsUnsigned;
+    }
+
+    @Override
+    public String toString() {
+        return "MemoryHardwareInformation{" +
+                "id=" + id +
+                ", capacity=" + capacity +
+                ", speed=" + speed +
+                ", slotsUsed=" + slotsUsed +
+                ", slotsTotal=" + slotsTotal +
+                ", capacityIsUnsigned=" + capacityIsUnsigned +
+                ", speedIsUnsigned=" + speedIsUnsigned +
+                '}';
     }
 }

@@ -33,7 +33,7 @@ public class RealMetricsDataService {
         // For now, we'll just save the current metrics
         
         // Save CPU metrics
-        SystemCpuMetric cpuMetric = new SystemCpuMetric("CPU", currentMetrics.getCpuUsage());
+//        SystemCpuMetric cpuMetric = new SystemCpuMetric("CPU", currentMetrics.getCpuUsage());
         metricsService.saveCpuMetric(cpuMetric);
         
         // Save memory metrics

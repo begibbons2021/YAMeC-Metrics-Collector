@@ -3,6 +3,7 @@ package com.gibbonsdimarco.yamec.app.data;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Contains hardware information for Disk Devices connected to the System
@@ -13,8 +14,8 @@ import java.util.ArrayList;
 public class DiskHardwareInformation implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     /**
      * The name of the Disk Device this DiskHardwareInformation object pertains to as a human-readable

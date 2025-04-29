@@ -1,91 +1,85 @@
 package com.gibbonsdimarco.yamec.app.data;
 
 import jakarta.persistence.*;
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.UUID;
 
 /**
  * Contains collected CPU metrics passed from the SystemMonitorManager
  *
  */
 @Entity
-@Table(name = "cpu_metrics", indexes = {
-    @Index(name = "idx_cpu_metrics_timestamp", columnList = "timestamp")
+@Table(name = "system_cpu_metrics", indexes = {
+    @Index(name = "idx_system_cpu_metrics_timestamp", columnList = "timestamp")
 })
-public class SystemCpuMetric extends SystemDeviceMetric {
+public class SystemCpuMetric extends SystemDeviceMetric implements Serializable {
+    /**
+     * The average percentage of utilization measured within this SystemDeviceMetric
+     */
+    @Column(name = "average_utilization")
+    private Double averageUtilization;
 
     /**
-     * The percentage of CPU utilization of this SystemCpuMetric's source CPU
+     * The maximum percentage of utilization measured within this SystemDeviceMetric
      */
-    @Column(name = "usage", nullable = false)
-    private double usage;
+    @Column(name = "max_utilization")
+    private Double maxUtilization;
 
     /**
-     * The temperature of the CPU in Celsius
+     * The minimum percentage of utilization measured within this SystemDeviceMetric
      */
-    @Column(name = "temperature")
-    private Double temperature;
+    @Column(name = "min_utilization")
+    private Double minUtilization;
 
-    /**
-     * Creates a SystemCpuMetric object instance defined with the deviceName
-     * and usage percentage passed by parameter
-     *
-     * @param deviceName The name of the hardware device which generated this SystemCpuMetric
-     * @param usage The percent of the hardware device's CPU used when this metric
-     *              was collected
-     */
-    public SystemCpuMetric(String deviceName, double usage) {
-        super(deviceName);
-        this.usage = usage;
+    protected SystemCpuMetric() {}
+
+    public SystemCpuMetric(Integer duration, UUID granularityId, Double averageUtilization, Double maxUtilization, Double minUtilization) {
+        super(duration, granularityId);
+        this.averageUtilization = averageUtilization;
+        this.maxUtilization = maxUtilization;
+        this.minUtilization = minUtilization;
+    }
+    public SystemCpuMetric(Integer duration, UUID granularityId, Double averageUtilization, Double maxUtilization, Double minUtilization, Timestamp timestamp) {
+        super(duration, granularityId, timestamp);
+        this.averageUtilization = averageUtilization;
+        this.maxUtilization = maxUtilization;
+        this.minUtilization = minUtilization;
     }
 
-    /**
-     * Creates a SystemCpuMetric object instance defined with the deviceName,
-     * usage percentage, and temperature passed by parameter
-     *
-     * @param deviceName The name of the hardware device which generated this SystemCpuMetric
-     * @param usage The percent of the hardware device's CPU used when this metric
-     *              was collected
-     * @param temperature The temperature of the CPU in Celsius
-     */
-    public SystemCpuMetric(String deviceName, double usage, double temperature) {
-        super(deviceName);
-        this.usage = usage;
-        this.temperature = temperature;
+    public Double getAverageUtilization() {
+        return averageUtilization;
     }
 
-    /**
-     * Returns a double precision float containing the percentage of CPU utilization
-     * of this SystemCpuMetric's source hardware device
-     *
-     * @return A double containing CPU utilization as a percent
-     */
-    public double getUsage() {
-        return usage;
+    public void setAverageUtilization(Double averageUtilization) {
+        this.averageUtilization = averageUtilization;
     }
 
-    /**
-     * Sets the CPU utilization percentage
-     *
-     * @param usage The CPU utilization percentage
-     */
-    public void setUsage(double usage) {
-        this.usage = usage;
+    public Double getMaxUtilization() {
+        return maxUtilization;
     }
 
-    /**
-     * Returns the temperature of the CPU in Celsius
-     *
-     * @return A Double containing the CPU temperature in Celsius
-     */
-    public Double getTemperature() {
-        return temperature;
+    public void setMaxUtilization(Double maxUtilization) {
+        this.maxUtilization = maxUtilization;
     }
 
-    /**
-     * Sets the CPU temperature
-     *
-     * @param temperature The CPU temperature in Celsius
-     */
-    public void setTemperature(Double temperature) {
-        this.temperature = temperature;
+    public Double getMinUtilization() {
+        return minUtilization;
+    }
+
+    public void setMinUtilization(Double minUtilization) {
+        this.minUtilization = minUtilization;
+    }
+
+    @Override
+    public String toString() {
+        return "SystemCpuMetric{" +
+                "id=" + getId() +
+                ", timestamp=" + getTimestamp() +
+                ", duration=" + getDuration() +
+                "averageUtilization=" + averageUtilization +
+                ", maxUtilization=" + maxUtilization +
+                ", minUtilization=" + minUtilization +
+                '}';
     }
 }

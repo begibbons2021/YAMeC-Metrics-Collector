@@ -2,16 +2,18 @@ package com.gibbonsdimarco.yamec.app.data;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+import java.util.UUID;
 /**
  * Contains hardware information for CPUs connected to the System
  */
 @Entity
-@Table(name = "cpu")
-public class CpuHardwareInformation {
+@Table(name = "cpu_hardware_information")
+public class CpuHardwareInformation implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     /**
      * The name of the CPU this CpuHardwareInformation object pertains to as a human-readable
@@ -68,7 +70,7 @@ public class CpuHardwareInformation {
     private long l2CacheSize;
 
     /**
-     * The amount of bytes of level 3 cache present in the CPU this
+     * The number of bytes of level 3 cache present in the CPU this
      * CpuHardwareInformation object pertains to
      */
     @Column(name = "l3_cache_size")
@@ -117,6 +119,22 @@ public class CpuHardwareInformation {
         this.virtualizationEnabled = virtualizationEnabled;
     }
 
+    /**
+     * Retrieves the assigned ID of this Application
+     * @return The UUID of this Application
+     */
+    public UUID getId() {
+        return id;
+    }
+
+    /**
+     * Sets the ID of this Application to the ID passed by parameter
+     * @param id A UUID for this Application
+     */
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     public String getFriendlyName() {
         return friendlyName;
     }
@@ -156,7 +174,7 @@ public class CpuHardwareInformation {
     @Override
     public String toString() {
         return String.format(
-                "Cpu[id=%d, friendlyName='%s', coreCount='%s', logicalProcessorCount='%s', l1CacheSize='%s', l2CacheSize='%s', l3CacheSize='%s', virtualizationEnabled='%s']",
+                "Cpu[id=%s, friendlyName='%s', coreCount='%s', logicalProcessorCount='%s', l1CacheSize='%s', l2CacheSize='%s', l3CacheSize='%s', virtualizationEnabled='%s']",
                 id, friendlyName, coreCount, logicalProcessorCount, l1CacheSize, l2CacheSize, l3CacheSize, virtualizationEnabled);
     }
 }

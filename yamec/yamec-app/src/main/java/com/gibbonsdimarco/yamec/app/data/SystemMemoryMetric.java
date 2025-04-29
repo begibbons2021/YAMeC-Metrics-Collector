@@ -1,6 +1,9 @@
 package com.gibbonsdimarco.yamec.app.data;
 
 import jakarta.persistence.*;
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.UUID;
 
 /**
  * Contains collected primary memory metrics passed from the
@@ -8,32 +11,45 @@ import jakarta.persistence.*;
  *
  */
 @Entity
-@Table(name = "memory_metrics", indexes = {
+@Table(name = "system_memory_metrics", indexes = {
     @Index(name = "idx_memory_metrics_timestamp", columnList = "timestamp")
 })
-public class SystemMemoryMetric {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class SystemMemoryMetric extends SystemDeviceMetric implements Serializable {
+    /**
+     * The average amount of physical memory in bytes used by the entire system within the measured timespan
+     */
+    @Column(name = "average_physical_utilization", nullable = false)
+    private long averagePhysicalUtilization;
 
     /**
-     * The number of bytes of physical memory available on the device
+     * The maximum amount of physical memory in bytes used by the entire system within the measured timespan
      */
-    @Column(name = "physical_memory_available", nullable = false)
-    private long physicalMemoryAvailable;
+    @Column(name = "max_physical_utilization", nullable = false)
+    private long maxPhysicalUtilization;
 
     /**
-     * The number of bytes of virtual memory committed for use on the device
+     * The minimum amount of physical memory in bytes used by the entire system within the measured timespan
      */
-    @Column(name = "virtual_memory_committed", nullable = false)
-    private long virtualMemoryCommitted;
+    @Column(name = "min_physical_utilization", nullable = false)
+    private long minPhysicalUtilization;
 
     /**
-     * The percentage of virtual memory committed and in use on the device
+     * The average amount of virtual memory in bytes used by the entire system within the measured timespan
      */
-    @Column(name = "committed_virtual_memory_usage", nullable = false)
-    private double committedVirtualMemoryUsage;
+    @Column(name = "average_virtual_utilization")
+    private double averageVirtualUtilization;
+
+    /**
+     * The maximum amount of virtual memory in bytes used by the entire system within the measured timespan
+     */
+    @Column(name = "max_virtual_utilization")
+    private double maxVirtualUtilization;
+
+    /**
+     * The minimum amount of virtual memory in bytes used by the entire system within the measured timespan
+     */
+    @Column(name = "min_virtual_utilization")
+    private double minVirtualUtilization;
 
     /**
      * Whether the physical memory available should be represented using an
@@ -49,33 +65,51 @@ public class SystemMemoryMetric {
     @Column(name = "virtual_memory_committed_is_unsigned")
     private boolean virtualMemoryCommittedIsUnsigned;
 
-    @Column(nullable = false)
-    private java.sql.Timestamp timestamp;
+    protected SystemMemoryMetric() {}
 
-    @Column(nullable = false)
-    private Integer duration;
-
-    public SystemMemoryMetric(long physicalMemoryAvailable,
-                              long virtualMemoryCommitted,
-                              double committedVirtualMemoryUsage,
-                              boolean physicalMemoryAvailableIsUnsigned,
-                              boolean virtualMemoryCommittedIsUnsigned) {
-        this.physicalMemoryAvailable = physicalMemoryAvailable;
-        this.virtualMemoryCommitted = virtualMemoryCommitted;
-        this.committedVirtualMemoryUsage = committedVirtualMemoryUsage;
-        this.physicalMemoryAvailableIsUnsigned = physicalMemoryAvailableIsUnsigned;
-        this.virtualMemoryCommittedIsUnsigned = virtualMemoryCommittedIsUnsigned;
-        this.timestamp = new java.sql.Timestamp(System.currentTimeMillis());
-        this.duration = 0; // Default duration
+    public SystemMemoryMetric(Integer duration, UUID granularityId, Long averagePhysicalUtilization, Long maxPhysicalUtilization, Long minPhysicalUtilization) {
+        super(duration, granularityId);
+        this.averagePhysicalUtilization = averagePhysicalUtilization;
+        this.maxPhysicalUtilization = maxPhysicalUtilization;
+        this.minPhysicalUtilization = minPhysicalUtilization;
+        this.physicalMemoryAvailableIsUnsigned = true;
+        this.virtualMemoryCommittedIsUnsigned = true;
     }
 
-    public Long getId() {
-        return id;
+    public SystemMemoryMetric(Integer duration, UUID granularityId, Long averagePhysicalUtilization, Long maxPhysicalUtilization, Long minPhysicalUtilization, Timestamp timestamp) {
+        super(duration, granularityId, timestamp);
+        this.averagePhysicalUtilization = averagePhysicalUtilization;
+        this.maxPhysicalUtilization = maxPhysicalUtilization;
+        this.minPhysicalUtilization = minPhysicalUtilization;
+        this.physicalMemoryAvailableIsUnsigned = true;
+        this.virtualMemoryCommittedIsUnsigned = true;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public SystemMemoryMetric(Integer duration, UUID granularityId, Long averagePhysicalUtilization, Long maxPhysicalUtilization, Long minPhysicalUtilization, Double averageVirtualUtilization, Double maxVirtualUtilization, Double minVirtualUtilization) {
+        super(duration, granularityId);
+        this.averagePhysicalUtilization = averagePhysicalUtilization;
+        this.maxPhysicalUtilization = maxPhysicalUtilization;
+        this.minPhysicalUtilization = minPhysicalUtilization;
+        this.averageVirtualUtilization = averageVirtualUtilization;
+        this.maxVirtualUtilization = maxVirtualUtilization;
+        this.minVirtualUtilization = minVirtualUtilization;
+        this.physicalMemoryAvailableIsUnsigned = true;
+        this.virtualMemoryCommittedIsUnsigned = true;
     }
+
+    public SystemMemoryMetric(Integer duration, UUID granularityId, Long averagePhysicalUtilization, Long maxPhysicalUtilization, Long minPhysicalUtilization, Double averageVirtualUtilization, Double maxVirtualUtilization, Double minVirtualUtilization, Timestamp timestamp) {
+        super(duration, granularityId, timestamp);
+        this.averagePhysicalUtilization = averagePhysicalUtilization;
+        this.maxPhysicalUtilization = maxPhysicalUtilization;
+        this.minPhysicalUtilization = minPhysicalUtilization;
+        this.averageVirtualUtilization = averageVirtualUtilization;
+        this.maxVirtualUtilization = maxVirtualUtilization;
+        this.minVirtualUtilization = minVirtualUtilization;
+        this.physicalMemoryAvailableIsUnsigned = true;
+        this.virtualMemoryCommittedIsUnsigned = true;
+    }
+
+    /* TODO: Add setters/getters and refactor below */
 
     /**
      * Returns the number of bytes of physical memory available on the device
@@ -208,21 +242,5 @@ public class SystemMemoryMetric {
      */
     public void setVirtualMemoryCommittedIsUnsigned(boolean virtualMemoryCommittedIsUnsigned) {
         this.virtualMemoryCommittedIsUnsigned = virtualMemoryCommittedIsUnsigned;
-    }
-
-    public java.sql.Timestamp getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(java.sql.Timestamp timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public Integer getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Integer duration) {
-        this.duration = duration;
     }
 }

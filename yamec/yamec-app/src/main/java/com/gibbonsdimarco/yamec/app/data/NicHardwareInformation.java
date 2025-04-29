@@ -2,6 +2,7 @@ package com.gibbonsdimarco.yamec.app.data;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * Contains hardware information for Network Interface Cards (NICs) connected to the System
@@ -11,8 +12,8 @@ import java.io.Serializable;
 public class NicHardwareInformation implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     /**
      * The friendly name of the NIC device associated with this NicHardwareInformation object as

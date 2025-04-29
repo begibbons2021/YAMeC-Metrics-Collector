@@ -1,8 +1,10 @@
 package com.gibbonsdimarco.yamec.app.data;
 
 import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 /**
  * Base class for all system device metrics
@@ -11,41 +13,48 @@ import java.sql.Timestamp;
 public abstract class SystemDeviceMetric implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     /**
-     * The name of this SystemDeviceMetric's source hardware device
+     * The starting time at which this SystemDeviceMetric was collected
      */
-    @Column(name = "device_name", length = 255, nullable = false)
-    private String deviceName;
-
     @Column(nullable = false)
     private Timestamp timestamp;
 
+    /**
+     * The amount of time in seconds which this SystemDeviceMetric represents data from
+     */
     @Column(nullable = false)
     private Integer duration;
 
-    public SystemDeviceMetric(String deviceName) {
-        this.deviceName = deviceName;
+    /**
+     * The granularity of the data collected by this SystemDeviceMetric.
+     */
+    @Column(name = "granularity_id", nullable = false)
+    private UUID granularityId;
+
+    protected SystemDeviceMetric() {
+    }
+
+    public SystemDeviceMetric(Integer duration, UUID granularityId) {
         this.timestamp = new Timestamp(System.currentTimeMillis());
-        this.duration = 0; // Default duration
+        this.duration = duration;
+        this.granularityId = granularityId;
+    }
+
+    public SystemDeviceMetric(Integer duration, UUID granularityId, Timestamp timestamp) {
+        this.duration = duration;
+        this.granularityId = granularityId;
+        this.timestamp = timestamp;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
-    }
-
-    public String getDeviceName() {
-        return deviceName;
-    }
-
-    public void setDeviceName(String deviceName) {
-        this.deviceName = deviceName;
     }
 
     public Timestamp getTimestamp() {
@@ -62,5 +71,22 @@ public abstract class SystemDeviceMetric implements Serializable {
 
     public void setDuration(Integer duration) {
         this.duration = duration;
+    }
+
+    public UUID getGranularityId() {
+        return granularityId;
+    }
+
+    public void setGranularityId(UUID granularityId) {
+        this.granularityId = granularityId;
+    }
+
+    @Override
+    public String toString() {
+        return "SystemDeviceMetric{" +
+                "id=" + id +
+                ", timestamp=" + timestamp +
+                ", duration=" + duration +
+                '}';
     }
 }
