@@ -260,14 +260,6 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         Logger::log(Logger::Level::WARN, e.what());
         return env->NewGlobalRef(nullptr);
     }
-    catch (std::runtime_error &e)
-    {
-        const std::string message("CPU Hardware Retrieval failed because the CpuHardwareInformation object ",
-            "containing the data could not be created due to a runtime error: ");
-        Logger::log(Logger::Level::WARN, message);
-        Logger::log(Logger::Level::WARN, e.what());
-        return env->NewGlobalRef(nullptr);
-    }
 
     return systemMetricObject;
 
@@ -314,8 +306,24 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 
     // Java Classes & Methods Used
     const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemMemoryMetric");
+
+    if (systemMetricClass == nullptr)
+    {
+        const std::string message("System Monitor Native - Memory Metric Retrieval failed because the ",
+                                    "metric class could not be found. ");
+        Logger::log(Logger::Level::ERR, message);
+        return env->NewGlobalRef(nullptr);
+    }
     // long long, long long, double, bool, bool
     const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(JJDZZ)V");
+
+    if (systemMetricConstructor == nullptr)
+    {
+        const std::string message("System Monitor Native - Memory Metric Retrieval failed because the ",
+                                    "metric constructor could not be found. ");
+        Logger::log(Logger::Level::ERR, message);
+        return env->NewGlobalRef(nullptr);
+    }
 
 
     // Create buffers to hold the other information temporarily
@@ -326,23 +334,75 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     constexpr bool isPhysicalMemoryAvailableUnsigned    = true;
     constexpr bool isVirtualMemoryCommittedUnsigned = true;
 
-    // Attempt to fill buffers
-    if (const int status = monitor->getMemoryCounters(&physicalMemoryAvailable,
-                            &virtualMemoryCommitted,
-                            &committedVirtualMemoryUsage); 0 != status)
+    try
     {
-        // Retrieval of counters failed, so return null
+        // Attempt to fill buffers
+        if (const int status = monitor->getMemoryCounters(&physicalMemoryAvailable,
+                                &virtualMemoryCommitted,
+                                &committedVirtualMemoryUsage); 0 != status)
+        {
+            // Retrieval of counters failed, so return null
+            const std::string message("System Monitor Native - Memory Metric Retrieval failed with error code: ",
+                status);
+            Logger::log(Logger::Level::ERR, message);
+            return env->NewGlobalRef(nullptr);
+        }
+    }
+    catch (std::exception &e)
+    {
+        const std::string message("System Monitor Native - Memory Metric Retrieval failed because the metrics ",
+                                    "could not be retrieved due to an exception: ");
+        Logger::log(Logger::Level::ERR, message);
+        Logger::log(Logger::Level::ERR, e.what());
         return env->NewGlobalRef(nullptr);
     }
+
+
+    // Get the memory utilization in bytes from total memory (in KiB * 1024 to become bytes)
+    // minus the amount of physical memory actually in use
+
+    unsigned long long physicalMemoryTotalKiB;
+    try
+    {
+        physicalMemoryTotalKiB = monitor->getPhysicalMemory();
+    }
+    catch (std::exception &e)
+    {
+        const std::string message("System Monitor Native - Memory Metric Retrieval failed because the ",
+                                        "total physical memory could not be retrieved due to an exception: ");
+        Logger::log(Logger::Level::ERR, message);
+        Logger::log(Logger::Level::ERR, e.what());
+        return env->NewGlobalRef(nullptr);
+    }
+
+    const unsigned long long physicalMemoryUsedBytes = (physicalMemoryTotalKiB*1024) - physicalMemoryAvailable;
 
     // Put data into Java objects
     const jobject systemMetricObject = env->NewObject(systemMetricClass,
                                                 systemMetricConstructor,
-                                                static_cast<jlong>(physicalMemoryAvailable),
+                                                static_cast<jlong>(physicalMemoryUsedBytes),
                                                 static_cast<jlong>(virtualMemoryCommitted),
                                                 committedVirtualMemoryUsage,
                                                 static_cast<jboolean>(isPhysicalMemoryAvailableUnsigned),
                                                 static_cast<jboolean>(isVirtualMemoryCommittedUnsigned));
+
+    if (const jthrowable exception = env->ExceptionOccurred(); exception != nullptr)
+    {
+        env->ExceptionClear();
+
+        const jclass exceptionClass = env->FindClass("java/lang/Exception");
+        const jmethodID exceptionMessageMethod = env->GetMethodID(exceptionClass, "getMessage",
+            "()Ljava/lang/String;");
+
+        const auto exceptionMsg(reinterpret_cast<jstring>(env->CallObjectMethod(exception, exceptionMessageMethod)));
+        const std::string exceptionMessage = env->GetStringUTFChars(exceptionMsg, nullptr);
+
+        const std::string message("System Monitor Native - Memory Metric Retrieval failed due to a ",
+                                            "Java Exception: ");
+        Logger::log(Logger::Level::ERR, exceptionMessage);
+
+        return env->NewGlobalRef(nullptr);
+    }
 
     return systemMetricObject;
 

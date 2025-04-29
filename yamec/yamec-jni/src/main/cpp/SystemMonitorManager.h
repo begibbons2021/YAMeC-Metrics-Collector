@@ -127,7 +127,7 @@ public:
                                             std::vector<std::wstring> *uniqueIds,
                                             std::vector<unsigned int> *nicTypes) const;
 
-    [[nodiscard]] unsigned long long getPhysicalMemory();
+    [[nodiscard]] unsigned long long getPhysicalMemory() const;
 
 private:
     PdhQueryManager m_pdhManager;

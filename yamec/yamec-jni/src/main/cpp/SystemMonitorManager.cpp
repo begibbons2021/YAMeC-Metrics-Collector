@@ -414,7 +414,7 @@ int SystemMonitorManager::getHardwareNicInformation(std::vector<std::wstring> *h
                                             uniqueIds, nicTypes);
 }
 
-unsigned long long SystemMonitorManager::getPhysicalMemory()
+unsigned long long SystemMonitorManager::getPhysicalMemory() const
 {
     return m_memoryInfo.getPhysicalMemory();
 }
