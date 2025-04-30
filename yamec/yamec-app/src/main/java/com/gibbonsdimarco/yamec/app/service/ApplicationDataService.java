@@ -128,9 +128,9 @@ public class ApplicationDataService {
                 int secondsSinceStartTime = (int)((timestampAsLong - startTimeAsLong)/1000);
 
                 // TODO: Remove debug messages for release
-                LoggerFactory.getLogger(ApplicationDataService.class)
-                            .debug("Start Time: {} - Duration: {} vs Timestamp: {}",
-                            startTimeAsLong/1000, duration, secondsSinceStartTime);
+//                LoggerFactory.getLogger(ApplicationDataService.class)
+//                            .debug("Start Time: {} - Duration: {} vs Timestamp: {}",
+//                            startTimeAsLong/1000, duration, secondsSinceStartTime);
 
                 // Fail-safe if a record outside the duration is included
                 if (secondsSinceStartTime > duration - 1) {
