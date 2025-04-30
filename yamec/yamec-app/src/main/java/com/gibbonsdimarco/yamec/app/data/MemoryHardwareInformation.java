@@ -126,14 +126,13 @@ public class MemoryHardwareInformation implements Serializable {
         return slotsTotal;
     }
 
-    public boolean isCapacityUnsigned() {
-        return capacityIsUnsigned;
-    }
-
     public void setSlotsTotal(long slotsTotal) {
         this.slotsTotal = slotsTotal;
     }
 
+    public boolean isCapacityUnsigned() {
+        return capacityIsUnsigned;
+    }
 
     public void setCapacityIsUnsigned(boolean capacityIsUnsigned) {
         this.capacityIsUnsigned = capacityIsUnsigned;
