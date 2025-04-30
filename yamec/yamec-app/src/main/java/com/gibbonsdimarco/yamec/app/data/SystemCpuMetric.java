@@ -50,13 +50,21 @@ public class SystemCpuMetric extends SystemDeviceMetric implements Serializable 
         this.minUtilization = utilization;
     }
 
-    public SystemCpuMetric(Integer duration, UUID granularityId, Double averageUtilization, Double maxUtilization, Double minUtilization) {
+    public SystemCpuMetric(Integer duration, UUID granularityId,
+                           Double averageUtilization,
+                           Double maxUtilization,
+                           Double minUtilization) {
         super(duration, granularityId);
         this.averageUtilization = averageUtilization;
         this.maxUtilization = maxUtilization;
         this.minUtilization = minUtilization;
     }
-    public SystemCpuMetric(Integer duration, UUID granularityId, Double averageUtilization, Double maxUtilization, Double minUtilization, Timestamp timestamp) {
+
+    public SystemCpuMetric(Integer duration, UUID granularityId,
+                           Double averageUtilization,
+                           Double maxUtilization,
+                           Double minUtilization,
+                           Timestamp timestamp) {
         super(duration, granularityId, timestamp);
         this.averageUtilization = averageUtilization;
         this.maxUtilization = maxUtilization;
