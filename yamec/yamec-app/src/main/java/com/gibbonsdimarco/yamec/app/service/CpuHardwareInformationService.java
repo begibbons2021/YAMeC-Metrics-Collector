@@ -29,5 +29,13 @@ public class CpuHardwareInformationService {
                 .getContent();
     }
 
+    public java.util.List<CpuHardwareInformation> getStoredCpuInformation(int pageNumber) {
+        return cpuRepository.findAll(
+                        org.springframework.data.domain.PageRequest.of(pageNumber, 255,
+                                org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC,
+                                        "id")))
+                .getContent();
+    }
+
     // Other service methods as needed
 }
