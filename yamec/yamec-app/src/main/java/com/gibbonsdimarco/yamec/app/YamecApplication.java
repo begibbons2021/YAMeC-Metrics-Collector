@@ -360,6 +360,20 @@ public class YamecApplication {
             logger.error("Failed to save CPU Hardware Information to database.", e);
         }
 
+//        try {
+//
+//            MemoryHardwareInformation memory = monitor.getMemoryHardwareInformation();
+//            logger.info("Memory Hardware Information:{}", memory.toString());
+//
+//            CpuHardwareInformationService cpuHardwareService = context.getBean(CpuHardwareInformationService.class);
+//            cpuHardwareService.saveCpuInformation(cpu);
+//
+//
+//
+//        } catch (Exception e) {
+//            logger.error("Failed to save CPU Hardware Information to database.", e);
+//        }
+
 
         try {
 

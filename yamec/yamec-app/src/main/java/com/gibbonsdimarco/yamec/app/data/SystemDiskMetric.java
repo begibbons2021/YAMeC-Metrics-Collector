@@ -2,6 +2,8 @@ package com.gibbonsdimarco.yamec.app.data;
 
 import jakarta.persistence.*;
 
+import java.util.UUID;
+
 /**
  * Contains collected secondary storage device metrics passed from the
  * SystemMonitorManager
@@ -22,32 +24,120 @@ public class SystemDiskMetric extends SystemDeviceMetric {
 
     /**
      * The percentage of total disk utilization for the device,
-     * or the percentage of time the disk spends active
+     * or the percentage of time the disk spends active, on average
      */
-    @Column(name = "usage", nullable = false)
-    private double usage;
+    @Column(name = "avg_utilization", nullable = false)
+    private double avgUtilization;
 
     /**
      * The number of bytes read per second on the device
-     * (at the time of metrics collection)
+     * (at the time of metrics collection), on average
      */
-    @Column(name = "read_bandwidth", nullable = false)
-    private long readBandwidth;
+    @Column(name = "avg_read_bandwidth", nullable = false)
+    private long avgReadBandwidth;
 
     /**
      * The number of bytes written per second on the device
-     * (at the time of metrics collection)
+     * (at the time of metrics collection), on average
      */
-    @Column(name = "write_bandwidth", nullable = false)
-    private long writeBandwidth;
+    @Column(name = "avg_write_bandwidth", nullable = false)
+    private long avgWriteBandwidth;
 
     /**
-     * The amount of time in seconds the typical data transfer operation
+     * <p>The amount of time in seconds the typical data transfer operation
      * between the system and the Disk which this SystemDiskMetric relates
-     * to, on average (at the time of metrics collection)
+     * to, on average at the time of metrics collection, and on average
+     * throughout the duration of time this SystemDiskMetric relates to.</p>
+     *
+     * <p>Note that this current implementation relies on an average of an
+     * average, meaning that it will not reflect spikes of transfer time
+     * accurately, as of now. In a future release, this calculation and
+     * column may benefit from a change. But, due to time constraints,
+     * this is a known shortcoming with the data collection.</p>
+     *
      */
-    @Column(name = "average_time_to_transfer", nullable = false)
-    private double averageTimeToTransfer;
+    @Column(name = "avg_time_to_transfer", nullable = false)
+    private double avgTimeToTransfer;
+
+    /**
+     * The maximum percentage of total disk utilization for the device,
+     * or the percentage of time the disk spends active, throughout the
+     * duration of this SystemDiskMetric
+     */
+    @Column(name = "max_utilization", nullable = false)
+    private double maxUtilization;
+
+    /**
+     * The maximum number of bytes read per second on the device
+     * (at the time of metrics collection), throughout the
+     * duration of this SystemDiskMetric
+     */
+    @Column(name = "max_read_bandwidth", nullable = false)
+    private long maxReadBandwidth;
+
+    /**
+     * The maximum number of bytes written per second on the device
+     * (at the time of metrics collection), throughout the
+     * duration of this SystemDiskMetric
+     */
+    @Column(name = "max_write_bandwidth", nullable = false)
+    private long maxWriteBandwidth;
+
+    /**
+     * <p>The maximum average amount of time in seconds the typical data
+     * transfer operation between the system and the Disk which this
+     * SystemDiskMetric relates to throughout the duration of time
+     * data was aggregated from.</p>
+     *
+     * <p>Note that this current implementation relies on a maximum of an
+     * average, meaning that it will not reflect spikes of transfer time
+     * accurately, as of now. In a future release, this calculation and
+     * column may benefit from a change. But, due to time constraints,
+     * this is a known shortcoming with the data collection.</p>
+     *
+     */
+    @Column(name = "max_time_to_transfer", nullable = false)
+    private double maxTimeToTransfer;
+
+    /**
+     * The minimum percentage of total disk utilization for the device,
+     * or the percentage of time the disk spends active, throughout the
+     * duration of this SystemDiskMetric
+     */
+    @Column(name = "min_utilization", nullable = false)
+    private double minUtilization;
+
+    /**
+     * The minimum number of bytes read per second on the device
+     * (at the time of metrics collection), throughout the
+     * duration of this SystemDiskMetric
+     */
+    @Column(name = "min_read_bandwidth", nullable = false)
+    private long minReadBandwidth;
+
+    /**
+     * The minimum number of bytes written per second on the device
+     * (at the time of metrics collection), throughout the
+     * duration of this SystemDiskMetric
+     */
+    @Column(name = "min_write_bandwidth", nullable = false)
+    private long minWriteBandwidth;
+
+    /**
+     * <p>The minimum average amount of time in seconds the typical data
+     * transfer operation between the system and the Disk which this
+     * SystemDiskMetric relates to throughout the duration of time
+     * data was aggregated from.</p>
+     *
+     * <p>Note that this current implementation relies on a minimum of an
+     * average, meaning that it will not reflect spikes of transfer time
+     * accurately, as of now. In a future release, this calculation and
+     * column may benefit from a change. But, due to time constraints,
+     * this is a known shortcoming with the data collection.</p>
+     *
+     */
+    @Column(name = "min_time_to_transfer", nullable = false)
+    private double minTimeToTransfer;
 
     /**
      * Whether the read bandwidth should be represented using an
@@ -64,19 +154,66 @@ public class SystemDiskMetric extends SystemDeviceMetric {
     private boolean writeBandwidthIsUnsigned;
 
     public SystemDiskMetric(String deviceName,
-                            double usage,
+                            double utilization,
                             long readBandwidth,
                             long writeBandwidth,
-                            double averageTimeToTransfer,
+                            double avgTimeToTransfer,
                             boolean readBandwidthIsUnsigned,
                             boolean writeBandwidthIsUnsigned) {
         this.deviceName = deviceName;
-        this.usage = usage;
-        this.readBandwidth = readBandwidth;
-        this.writeBandwidth = writeBandwidth;
-        this.averageTimeToTransfer = averageTimeToTransfer;
+        this.setDuration(1);
+        this.avgUtilization = utilization;
+        this.maxUtilization = utilization;
+        this.minUtilization = utilization;
+
+        this.avgReadBandwidth = readBandwidth;
+        this.maxReadBandwidth = readBandwidth;
+        this.minReadBandwidth = readBandwidth;
+
+        this.avgWriteBandwidth = writeBandwidth;
+        this.maxWriteBandwidth = writeBandwidth;
+        this.minWriteBandwidth = writeBandwidth;
+
+        this.avgTimeToTransfer = avgTimeToTransfer;
+        this.maxTimeToTransfer = avgTimeToTransfer;
+        this.minTimeToTransfer = avgTimeToTransfer;
+
         this.readBandwidthIsUnsigned = readBandwidthIsUnsigned;
         this.writeBandwidthIsUnsigned = writeBandwidthIsUnsigned;
+    }
+
+    public SystemDiskMetric(Integer duration, UUID granularityId,
+                            String deviceName,
+                            double avgUtilization,
+                            double maxUtilization,
+                            double minUtilization,
+                            long avgReadBandwidth,
+                            long maxReadBandwidth,
+                            long minReadBandwidth,
+                            long avgWriteBandwidth,
+                            long maxWriteBandwidth,
+                            long minWriteBandwidth,
+                            long avgTimeToTransfer,
+                            long maxTimeToTransfer,
+                            long minTimeToTransfer) {
+        super(duration, granularityId);
+        this.deviceName = deviceName;
+
+        this.avgUtilization = avgUtilization;
+        this.maxUtilization = maxUtilization;
+        this.minUtilization = minUtilization;
+
+        this.avgReadBandwidth = avgReadBandwidth;
+        this.maxReadBandwidth = maxReadBandwidth;
+        this.minReadBandwidth = minReadBandwidth;
+
+        this.avgWriteBandwidth = avgWriteBandwidth;
+        this.maxWriteBandwidth = maxWriteBandwidth;
+        this.minWriteBandwidth = minWriteBandwidth;
+
+        this.avgTimeToTransfer = avgTimeToTransfer;
+        this.maxTimeToTransfer = maxTimeToTransfer;
+        this.minTimeToTransfer = minTimeToTransfer;
     }
 
     public SystemDiskMetric() {
@@ -89,17 +226,17 @@ public class SystemDiskMetric extends SystemDeviceMetric {
      *
      * @return A double containing disk utilization as a percent
      */
-    public double getUsage() {
-        return usage;
+    public double getAvgUtilization() {
+        return avgUtilization;
     }
 
     /**
      * Sets the disk utilization percentage
      *
-     * @param usage The disk utilization percentage
+     * @param utilization The disk utilization percentage
      */
-    public void setUsage(double usage) {
-        this.usage = usage;
+    public void setAvgUtilization(double utilization) {
+        this.avgUtilization = utilization;
     }
 
     /**
@@ -109,17 +246,17 @@ public class SystemDiskMetric extends SystemDeviceMetric {
      *
      * @return A long integer containing the read bandwidth in bytes per second
      */
-    public long getReadBandwidth() {
-        return readBandwidth;
+    public long getAvgReadBandwidth() {
+        return avgReadBandwidth;
     }
 
     /**
      * Sets the read bandwidth in bytes per second
      *
-     * @param readBandwidth The read bandwidth in bytes per second
+     * @param avgReadBandwidth The read bandwidth in bytes per second
      */
-    public void setReadBandwidth(long readBandwidth) {
-        this.readBandwidth = readBandwidth;
+    public void setAvgReadBandwidth(long avgReadBandwidth) {
+        this.avgReadBandwidth = avgReadBandwidth;
     }
 
     /**
@@ -130,7 +267,7 @@ public class SystemDiskMetric extends SystemDeviceMetric {
      * @return A String containing the read bandwidth in bytes per second, unsigned
      */
     public String getReadBandwidthUnsigned() {
-        return Long.toUnsignedString(readBandwidth);
+        return Long.toUnsignedString(avgReadBandwidth);
     }
 
     /**
@@ -140,17 +277,17 @@ public class SystemDiskMetric extends SystemDeviceMetric {
      *
      * @return A long integer containing the write bandwidth in bytes per second
      */
-    public long getWriteBandwidth() {
-        return writeBandwidth;
+    public long getAvgWriteBandwidth() {
+        return avgWriteBandwidth;
     }
 
     /**
      * Sets the write bandwidth in bytes per second
      *
-     * @param writeBandwidth The write bandwidth in bytes per second
+     * @param avgWriteBandwidth The write bandwidth in bytes per second
      */
-    public void setWriteBandwidth(long writeBandwidth) {
-        this.writeBandwidth = writeBandwidth;
+    public void setAvgWriteBandwidth(long avgWriteBandwidth) {
+        this.avgWriteBandwidth = avgWriteBandwidth;
     }
 
     /**
@@ -160,8 +297,8 @@ public class SystemDiskMetric extends SystemDeviceMetric {
      *
      * @return A String containing the write bandwidth in bytes per second, unsigned
      */
-    public String getWriteBandwidthUnsigned() {
-        return Long.toUnsignedString(writeBandwidth);
+    public String getAvgWriteBandwidthUnsigned() {
+        return Long.toUnsignedString(avgWriteBandwidth);
     }
 
     /**
@@ -170,17 +307,17 @@ public class SystemDiskMetric extends SystemDeviceMetric {
      *
      * @return A double containing disk average time to transfer in bytes per second
      */
-    public double getAverageTimeToTransfer() {
-        return averageTimeToTransfer;
+    public double getAvgTimeToTransfer() {
+        return avgTimeToTransfer;
     }
 
     /**
      * Sets the average time to transfer data in seconds
      *
-     * @param averageTimeToTransfer The average time to transfer in seconds
+     * @param avgTimeToTransfer The average time to transfer in seconds
      */
-    public void setAverageTimeToTransfer(double averageTimeToTransfer) {
-        this.averageTimeToTransfer = averageTimeToTransfer;
+    public void setAvgTimeToTransfer(double avgTimeToTransfer) {
+        this.avgTimeToTransfer = avgTimeToTransfer;
     }
 
     /**
@@ -229,5 +366,69 @@ public class SystemDiskMetric extends SystemDeviceMetric {
 
     public void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
+    }
+
+    public double getMaxUtilization() {
+        return maxUtilization;
+    }
+
+    public void setMaxUtilization(double maxUtilization) {
+        this.maxUtilization = maxUtilization;
+    }
+
+    public long getMaxReadBandwidth() {
+        return maxReadBandwidth;
+    }
+
+    public void setMaxReadBandwidth(long maxReadBandwidth) {
+        this.maxReadBandwidth = maxReadBandwidth;
+    }
+
+    public long getMaxWriteBandwidth() {
+        return maxWriteBandwidth;
+    }
+
+    public void setMaxWriteBandwidth(long maxWriteBandwidth) {
+        this.maxWriteBandwidth = maxWriteBandwidth;
+    }
+
+    public double getMaxTimeToTransfer() {
+        return maxTimeToTransfer;
+    }
+
+    public void setMaxTimeToTransfer(double maxTimeToTransfer) {
+        this.maxTimeToTransfer = maxTimeToTransfer;
+    }
+
+    public double getMinUtilization() {
+        return minUtilization;
+    }
+
+    public void setMinUtilization(double minUtilization) {
+        this.minUtilization = minUtilization;
+    }
+
+    public long getMinReadBandwidth() {
+        return minReadBandwidth;
+    }
+
+    public void setMinReadBandwidth(long minReadBandwidth) {
+        this.minReadBandwidth = minReadBandwidth;
+    }
+
+    public long getMinWriteBandwidth() {
+        return minWriteBandwidth;
+    }
+
+    public void setMinWriteBandwidth(long minWriteBandwidth) {
+        this.minWriteBandwidth = minWriteBandwidth;
+    }
+
+    public double getMinTimeToTransfer() {
+        return minTimeToTransfer;
+    }
+
+    public void setMinTimeToTransfer(double minTimeToTransfer) {
+        this.minTimeToTransfer = minTimeToTransfer;
     }
 }

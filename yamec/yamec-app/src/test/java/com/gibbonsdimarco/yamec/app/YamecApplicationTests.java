@@ -198,31 +198,31 @@ class YamecApplicationTests {
             {
                 // Read bandwidth must not be a negative number
                 assertTrue("Disk Read Bandwidth must be greater than or equal to 0, but it is "
-                                + diskMetric.getReadBandwidth() + "B/s for Disk " + diskMetric.getDeviceName(),
-                        diskMetric.getReadBandwidth() >= 0);
+                                + diskMetric.getAvgReadBandwidth() + "B/s for Disk " + diskMetric.getDeviceName(),
+                        diskMetric.getAvgReadBandwidth() >= 0);
             }
 
             if (!diskMetric.isWriteBandwidthUnsigned())
             {
                 // Write bandwidth must not be a negative number
                 assertTrue("Disk write bandwidth must be greater than or equal to 0, but it is "
-                                + diskMetric.getWriteBandwidth() + "B/s for Disk " + diskMetric.getDeviceName(),
-                        diskMetric.getWriteBandwidth() >= 0);
+                                + diskMetric.getAvgWriteBandwidth() + "B/s for Disk " + diskMetric.getDeviceName(),
+                        diskMetric.getAvgWriteBandwidth() >= 0);
             }
 
             // Average time to transfer must not be a negative number
             assertTrue("Disk write bandwidth must be greater than or equal to 0, but it is "
-                            + diskMetric.getAverageTimeToTransfer() + "sec/Transfer for Disk "
+                            + diskMetric.getAvgTimeToTransfer() + "sec/Transfer for Disk "
                             + diskMetric.getDeviceName(),
-                    diskMetric.getAverageTimeToTransfer() >= 0);
+                    diskMetric.getAvgTimeToTransfer() >= 0);
 
             // A percentage of disk utilization must be between 0% and 100%
             assertTrue("diskMetric.getUsage() should be returning a value >= 0%"
-                            + " but it is " + diskMetric.getUsage() + "% for Disk " + diskMetric.getDeviceName(),
-                    diskMetric.getUsage() >= 0.0);
+                            + " but it is " + diskMetric.getAvgUtilization() + "% for Disk " + diskMetric.getDeviceName(),
+                    diskMetric.getAvgUtilization() >= 0.0);
             assertTrue("diskMetric.getUsage() should be returning a value <= 100%"
-                            + " but it is " + diskMetric.getUsage() + "% for Disk " + diskMetric.getDeviceName(),
-                    diskMetric.getUsage() <= 100.0);
+                            + " but it is " + diskMetric.getAvgUtilization() + "% for Disk " + diskMetric.getDeviceName(),
+                    diskMetric.getAvgUtilization() <= 100.0);
 
         }
 
@@ -631,10 +631,10 @@ class YamecApplicationTests {
                     }
 
                     System.err.printf("\t%s\n", diskMetric.getDeviceName());
-                    System.err.printf("\t\tUsage: %f%%\n", diskMetric.getUsage());
-                    System.err.printf("\t\tRead Bandwidth: %s bytes/sec\n", diskMetric.getReadBandwidthUnsigned());
-                    System.err.printf("\t\tWrite Bandwidth: %s bytes/sec\n", diskMetric.getWriteBandwidthUnsigned());
-                    System.err.printf("\t\tAverage Transfer Rate: %f sec/transfer\n", diskMetric.getAverageTimeToTransfer());
+                    System.err.printf("\t\tUsage: %f%%\n", diskMetric.getAvgUtilization());
+                    System.err.printf("\t\tRead Bandwidth: %s bytes/sec\n", diskMetric.getAvgReadBandwidth());
+                    System.err.printf("\t\tWrite Bandwidth: %s bytes/sec\n", diskMetric.getAvgWriteBandwidth());
+                    System.err.printf("\t\tAverage Transfer Rate: %f sec/transfer\n", diskMetric.getAvgTimeToTransfer());
                 }
             }
             else {
