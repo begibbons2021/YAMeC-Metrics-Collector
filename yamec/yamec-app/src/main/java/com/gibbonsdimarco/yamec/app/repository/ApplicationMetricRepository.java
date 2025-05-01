@@ -23,4 +23,8 @@ public interface ApplicationMetricRepository extends JpaRepository<ApplicationMe
     List<ApplicationMetric> findByApplicationId(UUID applicationId);
 
     List<ApplicationMetric> findAllByApplicationApplicationName(String name);
+
+    List<ApplicationMetric> getByApplicationApplicationName(String name, Sort sort);
+
+//    List<ApplicationMetric> getByGranularityLabel(String granularityLabel);
 }

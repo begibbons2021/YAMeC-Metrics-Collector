@@ -15,4 +15,6 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
 
     Application findByApplicationName(String name);
 
+    Application getByApplicationName(String name);
+
 } 
