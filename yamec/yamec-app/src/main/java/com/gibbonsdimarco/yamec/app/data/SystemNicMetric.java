@@ -24,58 +24,105 @@ public class SystemNicMetric extends SystemDeviceMetric {
      * The number of bits sent per second currently supported
      * on the device (at the time of metrics collection)
      */
-    @Column(name = "nic_bandwidth", nullable = false)
-    private long nicBandwidth;
+//    @Column(name = "nic_bandwidth", nullable = false)
+    @Transient
+    private long operatingBandwidth;
 
     /**
-     * The number of bytes sent per second on the device
-     * (at the time of metrics collection)
+     * The number of bits sent per second by the NIC device this
+     * SystemNicMetric pertains to, on average, during its timespan
      */
-    @Column(name = "bytes_sent", nullable = false)
-    private long bytesSent;
+    @Column(name = "avg_send_bandwidth", nullable = false)
+    private long avgSendBandwidth;
 
     /**
-     * The number of bytes received per second on the device
-     * (at the time of metrics collection)
+     * The number of bits received per second by the NIC device this
+     * SystemNicMetric pertains to, on average, during its timespan
      */
-    @Column(name = "bytes_received", nullable = false)
-    private long bytesReceived;
+    @Column(name = "avg_receive_bandwidth", nullable = false)
+    private long avgReceiveBandwidth;
+
+    /**
+     * The maximum number of bits sent per second by the NIC device this
+     * SystemNicMetric pertains to during its timespan
+     */
+    @Column(name = "max_send_bandwidth", nullable = false)
+    private long maxSendBandwidth;
+
+    /**
+     * The maximum number of bits received per second by the NIC device this
+     * SystemNicMetric pertains to during its timespan
+     */
+    @Column(name = "max_receive_bandwidth", nullable = false)
+    private long maxReceiveBandwidth;
+
+    /**
+     * The minimum number of bits sent per second by the NIC device this
+     * SystemNicMetric pertains to during its timespan
+     */
+    @Column(name = "min_send_bandwidth", nullable = false)
+    private long minSendBandwidth;
+
+    /**
+     * The minimum number of bits received per second by the NIC device this
+     * SystemNicMetric pertains to during its timespan
+     */
+    @Column(name = "min_receive_bandwidth", nullable = false)
+    private long minReceiveBandwidth;
 
     /**
      * Whether the NIC bandwidth should be represented using an
      * unsigned value
      */
-    @Column(name = "nic_bandwidth_is_unsigned")
-    private boolean nicBandwidthIsUnsigned;
+    @Transient
+    private boolean operatingBandwidthIsUnsigned;
 
     /**
      * Whether the bytes sent should be represented using an
      * unsigned value
      */
-    @Column(name = "bytes_sent_is_unsigned")
-    private boolean bytesSentIsUnsigned;
+    @Column(name = "send_bandwidth_is_unsigned")
+    private boolean sendBandwidthIsUnsigned;
 
     /**
      * Whether the bytes received should be represented using an
      * unsigned value
      */
-    @Column(name = "bytes_received_is_unsigned")
-    private boolean bytesReceivedIsUnsigned;
+    @Column(name = "receive_bandwidth_is_unsigned")
+    private boolean receiveBandwidthIsUnsigned;
 
+    /**
+     * Constructs a SystemNicMetric object instance with the default duration of 1 second and
+     * average, maximum, and minimum fields being set to the same value for all fields reported
+     * to the database
+     *
+     * @param deviceName The friendly name of the NIC device this metric pertains to
+     * @param operatingBandwidth The current operating bandwidth (in bits per second) of the NIC device this metric
+     *                     pertains to. The device may not be using the full bandwidth which this device is
+     *                     operating at this moment of time
+     * @param sendBandwidth The number of bits per second sent from the NIC device this metric pertains to
+     *                      at the time of collection
+     * @param receiveBandwidth The number of bits per second sent from the NIC device this metric pertains to
+     *                      at the time of collection
+     * @param operatingBandwidthIsUnsigned Whether operatingBandwidth is unsigned (true) or not (false)
+     * @param sendBandwidthIsUnsigned Whether sendBandwidth is unsigned (true) or not (false)
+     * @param receiveBandwidthIsUnsigned Whether receiveBandwidth is unsigned (true) or not (false)
+     */
     public SystemNicMetric(String deviceName,
-                           long nicBandwidth,
-                           long bytesSent,
-                           long bytesReceived,
-                           boolean nicBandwidthIsUnsigned,
-                           boolean bytesSentIsUnsigned,
-                           boolean bytesReceivedIsUnsigned) {
+                           long operatingBandwidth,
+                           long sendBandwidth,
+                           long  receiveBandwidth,
+                           boolean operatingBandwidthIsUnsigned,
+                           boolean sendBandwidthIsUnsigned,
+                           boolean receiveBandwidthIsUnsigned) {
+        this.setDuration(1);
         this.deviceName = deviceName;
-        this.nicBandwidth = nicBandwidth;
-        this.bytesSent = bytesSent;
-        this.bytesReceived = bytesReceived;
-        this.nicBandwidthIsUnsigned = nicBandwidthIsUnsigned;
-        this.bytesSentIsUnsigned = bytesSentIsUnsigned;
-        this.bytesReceivedIsUnsigned = bytesReceivedIsUnsigned;
+        this.operatingBandwidth = operatingBandwidth;
+        this.avgSendBandwidth = sendBandwidth;
+        this.avgReceiveBandwidth = receiveBandwidth;
+        this.operatingBandwidthIsUnsigned = operatingBandwidthIsUnsigned;
+        this.sendBandwidthIsUnsigned = sendBandwidthIsUnsigned;
+        this.receiveBandwidthIsUnsigned = receiveBandwidthIsUnsigned;
     }
 
     public SystemNicMetric() {
@@ -89,17 +136,17 @@ public class SystemNicMetric extends SystemDeviceMetric {
      *
      * @return A long integer containing the NIC bandwidth bytes per second
      */
-    public long getNicBandwidth() {
-        return nicBandwidth;
+    public long getOperatingBandwidth() {
+        return operatingBandwidth;
     }
 
     /**
      * Sets the NIC bandwidth in bits per second
      *
-     * @param nicBandwidth The NIC bandwidth in bits per second
+     * @param operatingBandwidth The NIC bandwidth in bits per second
      */
-    public void setNicBandwidth(long nicBandwidth) {
-        this.nicBandwidth = nicBandwidth;
+    public void setOperatingBandwidth(long operatingBandwidth) {
+        this.operatingBandwidth = operatingBandwidth;
     }
 
     /**
@@ -109,8 +156,8 @@ public class SystemNicMetric extends SystemDeviceMetric {
      *
      * @return A String containing the amount of bandwidth in bytes per second, unsigned
      */
-    public String getNicBandwidthUnsigned() {
-        return Long.toUnsignedString(nicBandwidth);
+    public String getOperatingBandwidthUnsigned() {
+        return Long.toUnsignedString(operatingBandwidth);
     }
 
     /**
@@ -118,121 +165,161 @@ public class SystemNicMetric extends SystemDeviceMetric {
      * of metrics collection) when this SystemNicMetric was collected.
      * This value returns signed
      *
-     * @return A long integer containing the amount of data sent in bytes per second
+     * @return A long integer containing the amount of data sent in bits per second
      */
-    public long getBytesSent() {
-        return bytesSent;
+    public long getAvgSendBandwidth() {
+        return avgSendBandwidth;
     }
 
     /**
-     * Sets the number of bytes sent per second
+     * Sets the number of bits sent per second
      *
-     * @param bytesSent The number of bytes sent per second
+     * @param avgSendBandwidth The number of bits sent per second
      */
-    public void setBytesSent(long bytesSent) {
-        this.bytesSent = bytesSent;
+    public void setAvgSendBandwidth(long avgSendBandwidth) {
+        this.avgSendBandwidth = avgSendBandwidth;
     }
 
     /**
-     * Returns the number of bytes sent per second on the device (at the time
-     * of metrics collection) when this SystemNicMetric was collected as an
-     * unsigned String
-     *
-     * @return A String containing the amount of data sent in bytes per second, unsigned
-     */
-    public String getBytesSentUnsigned() {
-        return Long.toUnsignedString(bytesSent);
-    }
-
-    /**
-     * Returns the number of bytes received per second on the device (at the time
-     * of metrics collection) when this SystemNicMetric was collected.
+     * Returns the number of bits received per second on the device, on average,
+     * when this SystemNicMetric was collected.
      * This value returns signed
      *
-     * @return A long integer containing the amount of data received in bytes per second
+     * @return A long integer containing the amount of data received in bits per second
      */
-    public long getBytesReceived() {
-        return bytesReceived;
+    public long getAvgReceiveBandwidth() {
+        return avgReceiveBandwidth;
     }
 
     /**
-     * Sets the number of bytes received per second
+     * Sets the number of bits received per second, on average, of this SystemNicMetric
      *
-     * @param bytesReceived The number of bytes received per second
+     * @param avgReceiveBandwidth The average number of bits received per second
      */
-    public void setBytesReceived(long bytesReceived) {
-        this.bytesReceived = bytesReceived;
+    public void setAvgReceiveBandwidth(long avgReceiveBandwidth) {
+        this.avgReceiveBandwidth = avgReceiveBandwidth;
     }
 
     /**
-     * Returns the number of bytes received per second on the device (at the time
+     * Returns the number of bits received per second on the device, on average,
+     * when this SystemNicMetric was collected.
+     * This value returns signed
+     *
+     * @return A long integer containing the amount of data received in bits per second
+     */
+    public long getMaxSendBandwidth() {
+        return maxSendBandwidth;
+    }
+
+    public void setMaxSendBandwidth(long maxSendBandwidth) {
+        this.maxSendBandwidth = maxSendBandwidth;
+    }
+
+    public long getMaxReceiveBandwidth() {
+        return maxReceiveBandwidth;
+    }
+
+    public void setMaxReceiveBandwidth(long maxReceiveBandwidth) {
+        this.maxReceiveBandwidth = maxReceiveBandwidth;
+    }
+
+    public long getMinSendBandwidth() {
+        return minSendBandwidth;
+    }
+
+    public void setMinSendBandwidth(long minSendBandwidth) {
+        this.minSendBandwidth = minSendBandwidth;
+    }
+
+    public long getMinReceiveBandwidth() {
+        return minReceiveBandwidth;
+    }
+
+    public void setMinReceiveBandwidth(long minReceiveBandwidth) {
+        this.minReceiveBandwidth = minReceiveBandwidth;
+    }
+
+    /**
+     * Returns the number of bits sent per second on the device (at the time
      * of metrics collection) when this SystemNicMetric was collected as an
      * unsigned String
      *
-     * @return A String containing the amount of data received in bytes per second, unsigned
+     * @return A String containing the amount of data sent in bits per second, unsigned
      */
-    public String getBytesReceivedUnsigned() {
-        return Long.toUnsignedString(bytesReceived);
+    public String getSendBandwidthUnsigned() {
+        return Long.toUnsignedString(avgSendBandwidth);
+    }
+
+
+    /**
+     * Returns the number of bits received per second on the device (at the time
+     * of metrics collection) when this SystemNicMetric was collected as an
+     * unsigned String
+     *
+     * @return A String containing the amount of data received in bits per second, unsigned
+     */
+    public String getReceiveBandwidthUnsigned() {
+        return Long.toUnsignedString(avgReceiveBandwidth);
     }
 
     /**
-     * Returns whether the nicBandwidth value is supposed to be signed
+     * Returns whether the operatingBandwidth value is supposed to be signed
      * or unsigned as a boolean value
      *
-     * @return A boolean specifying whether nicBandwidth is unsigned
+     * @return A boolean specifying whether operatingBandwidth is unsigned
      * (true) or not (false)
      */
-    public boolean isNicBandwidthUnsigned() {
-        return nicBandwidthIsUnsigned;
+    public boolean isOperatingBandwidthUnsigned() {
+        return operatingBandwidthIsUnsigned;
     }
 
     /**
      * Sets whether the NIC bandwidth value should be treated as unsigned
      *
-     * @param nicBandwidthIsUnsigned Whether to treat the value as unsigned
+     * @param operatingBandwidthIsUnsigned Whether to treat the value as unsigned
      */
-    public void setNicBandwidthUnsigned(boolean nicBandwidthIsUnsigned) {
-        this.nicBandwidthIsUnsigned = nicBandwidthIsUnsigned;
+    public void setOperatingBandwidthUnsigned(boolean operatingBandwidthIsUnsigned) {
+        this.operatingBandwidthIsUnsigned = operatingBandwidthIsUnsigned;
     }
 
     /**
-     * Returns whether the bytesSent value is supposed to be signed
+     * Returns whether the SendBandwidth value is supposed to be signed
      * or unsigned as a boolean value
      *
-     * @return A boolean specifying whether bytesSent is unsigned
+     * @return A boolean specifying whether SendBandwidth is unsigned
      * (true) or not (false)
      */
-    public boolean isBytesSentUnsigned() {
-        return bytesSentIsUnsigned;
+    public boolean isSendBandwidthUnsigned() {
+        return sendBandwidthIsUnsigned;
     }
 
     /**
-     * Sets whether the bytes sent value should be treated as unsigned
+     * Sets whether the bits sent value should be treated as unsigned
      *
-     * @param bytesSentIsUnsigned Whether to treat the value as unsigned
+     * @param SendBandwidthIsUnsigned Whether to treat the value as unsigned
      */
-    public void setBytesSentUnsigned(boolean bytesSentIsUnsigned) {
-        this.bytesSentIsUnsigned = bytesSentIsUnsigned;
+    public void setSendBandwidthUnsigned(boolean SendBandwidthIsUnsigned) {
+        this.sendBandwidthIsUnsigned = SendBandwidthIsUnsigned;
     }
 
     /**
-     * Returns whether the bytesReceived value is supposed to be signed
+     * Returns whether the ReceiveBandwidth value is supposed to be signed
      * or unsigned as a boolean value
      *
-     * @return A boolean specifying whether bytesReceived is unsigned
+     * @return A boolean specifying whether ReceiveBandwidth is unsigned
      * (true) or not (false)
      */
-    public boolean isBytesReceivedUnsigned() {
-        return bytesReceivedIsUnsigned;
+    public boolean isReceiveBandwidthUnsigned() {
+        return receiveBandwidthIsUnsigned;
     }
 
     /**
-     * Sets whether the bytes received value should be treated as unsigned
+     * Sets whether the bits received value should be treated as unsigned
      *
-     * @param bytesReceivedIsUnsigned Whether to treat the value as unsigned
+     * @param receiveBandwidthIsUnsigned Whether to treat the value as unsigned
      */
-    public void setBytesReceivedUnsigned(boolean bytesReceivedIsUnsigned) {
-        this.bytesReceivedIsUnsigned = bytesReceivedIsUnsigned;
+    public void setReceiveBandwidthUnsigned(boolean receiveBandwidthIsUnsigned) {
+        this.receiveBandwidthIsUnsigned = receiveBandwidthIsUnsigned;
     }
 
     public String getDeviceName() {

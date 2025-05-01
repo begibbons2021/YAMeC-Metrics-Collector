@@ -246,28 +246,28 @@ class YamecApplicationTests {
             assertNotNull(nicMetric.getDeviceName(), "nicMetric.getDeviceName() should not be null");
 
 
-            if (!nicMetric.isBytesSentUnsigned())
+            if (!nicMetric.isSendBandwidthUnsigned())
             {
                 // Read bandwidth must not be a negative number
                 assertTrue("NIC Sent Bytes must be greater than or equal to 0, but it is "
-                                + nicMetric.getAvgBytesSent() + "B/s for Disk " + nicMetric.getDeviceName(),
-                        nicMetric.getAvgBytesSent() >= 0);
+                                + nicMetric.getAvgSendBandwidth() + "B/s for Disk " + nicMetric.getDeviceName(),
+                        nicMetric.getAvgSendBandwidth() >= 0);
             }
 
-            if (!nicMetric.isBytesReceivedUnsigned())
+            if (!nicMetric.isReceiveBandwidthUnsigned())
             {
                 // Write bandwidth must not be a negative number
                 assertTrue("NIC Received Bytes must be greater than or equal to 0, but it is "
-                                + nicMetric.getAvgBytesReceived() + "B/s for Disk " + nicMetric.getDeviceName(),
-                        nicMetric.getAvgBytesReceived() >= 0);
+                                + nicMetric.getAvgReceiveBandwidth() + "B/s for Disk " + nicMetric.getDeviceName(),
+                        nicMetric.getAvgReceiveBandwidth() >= 0);
             }
 
-            if (!nicMetric.isNicBandwidthUnsigned())
+            if (!nicMetric.isOperatingBandwidthUnsigned())
             {
                 // Write bandwidth must not be a negative number
                 assertTrue("NIC Received Bytes must be greater than or equal to 0, but it is "
-                                + nicMetric.getNicBandwidth() + "B/s for Disk " + nicMetric.getDeviceName(),
-                        nicMetric.getNicBandwidth() >= 0);
+                                + nicMetric.getOperatingBandwidth() + "B/s for Disk " + nicMetric.getDeviceName(),
+                        nicMetric.getOperatingBandwidth() >= 0);
             }
 
 
@@ -694,9 +694,12 @@ class YamecApplicationTests {
                     }
 
                     System.err.printf("\t%s\n", nicMetric.getDeviceName());
-                    System.err.printf("\t\tCurrent Operation Bandwidth: %s bps\n", nicMetric.getNicBandwidthUnsigned());
-                    System.err.printf("\t\tUpload Bandwidth: %s bits/sec\n", nicMetric.getBytesSentUnsigned());
-                    System.err.printf("\t\tDownload Bandwidth: %s bits/sec\n", nicMetric.getBytesReceivedUnsigned());
+                    System.err.printf("\t\tCurrent Operation Bandwidth: %s bps\n",
+                                            Long.toUnsignedString(nicMetric.getOperatingBandwidth()));
+                    System.err.printf("\t\tUpload Bandwidth: %s bits/sec\n",
+                                            Long.toUnsignedString(nicMetric.getAvgSendBandwidth()));
+                    System.err.printf("\t\tDownload Bandwidth: %s bits/sec\n",
+                                            Long.toUnsignedString(nicMetric.getAvgReceiveBandwidth()));
                 }
             }
             else {
