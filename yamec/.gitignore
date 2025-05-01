@@ -35,6 +35,12 @@ build/
 ## Database
 db.sqlite
 
-## Logs
+## Logs ##
 logs/*
 yamec-app/logs/*
+!/logs/
+
+
+## CMAKE  ##
+!/cmake-build-default-visual-studio/
+!/cmake-build-debug-visual-studio/
