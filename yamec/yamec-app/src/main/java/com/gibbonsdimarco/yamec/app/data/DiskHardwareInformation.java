@@ -3,6 +3,7 @@ package com.gibbonsdimarco.yamec.app.data;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -10,7 +11,10 @@ import java.util.UUID;
  *
  */
 @Entity
-@Table(name = "disk_hardware_information")
+@Table(name = "disk_hardware_information", indexes = {
+        @Index(name = "idx_disk_unique_id", columnList = "unique_id"),
+        @Index(name = "idx_disk_number", columnList = "disk_number")
+})
 public class DiskHardwareInformation implements Serializable {
 
     @Id
@@ -69,7 +73,7 @@ public class DiskHardwareInformation implements Serializable {
     @ElementCollection
     @CollectionTable(name = "disk_partitions", joinColumns = @JoinColumn(name = "disk_id"))
     @Column(name = "partition")
-    private ArrayList<String> partitions;
+    private List<String> partitions;
 
     /**
      * Default constructor for JPA
@@ -183,8 +187,14 @@ public class DiskHardwareInformation implements Serializable {
         return capacityIsUnsigned;
     }
 
-    public ArrayList<String> getPartitions() {
+    public List<String> getPartitions() {
         // Since Strings are immutable, this is safe
         return new ArrayList<>(partitions);
     }
+
+    public void setPartitions(List<String> partitions) {
+        this.partitions.clear();
+        this.partitions.addAll(partitions);
+    }
+
 }

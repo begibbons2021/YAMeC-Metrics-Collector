@@ -584,7 +584,7 @@ class YamecApplicationTests {
                         System.err.printf("\t\tMedia Type: %s\n",
                                 DiskHardwareInformation.getMediaTypeString(diskHardwareInformation.getMediaType()));
                         System.err.print("\t\tPartitions: ");
-                        ArrayList<String> partitions = diskHardwareInformation.getPartitions();
+                        ArrayList<String> partitions = new ArrayList<>(diskHardwareInformation.getPartitions());
                         int numPartitions = partitions.size();
                         if (numPartitions == 0) {
                             System.err.println("No Partitions");
