@@ -33,7 +33,7 @@ public class Granularity {
      * A string of up to 255 characters in length acting as a label
      * for this Granularity level
      */
-    @Column(name="label", length = 255, nullable = false)
+    @Column(name="label", length = 255, nullable = false, unique = true)
     private String label;
 
     /**
