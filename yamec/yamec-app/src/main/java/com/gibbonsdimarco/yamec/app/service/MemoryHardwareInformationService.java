@@ -8,19 +8,29 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class MemoryHardwareInformationService {
 
     private final MemoryHardwareInformationRepository memoryRepository;
+    private final MemoryHardwareInformationRepository memoryHardwareInformationRepository;
 
     @Autowired
-    public MemoryHardwareInformationService(MemoryHardwareInformationRepository memoryRepository) {
+    public MemoryHardwareInformationService(MemoryHardwareInformationRepository memoryRepository, MemoryHardwareInformationRepository memoryHardwareInformationRepository) {
         this.memoryRepository = memoryRepository;
+        this.memoryHardwareInformationRepository = memoryHardwareInformationRepository;
     }
 
     @Transactional
     public MemoryHardwareInformation saveMemoryInformation(MemoryHardwareInformation memoryInformation) {
-        return memoryRepository.save(memoryInformation);
+
+        MemoryHardwareInformation matchingConfiguration
+                = memoryHardwareInformationRepository.findMatchingMemoryHardwareInformation(memoryInformation);
+
+        // Returns the matching hardware object if it exists; otherwise, it saves it to the database
+        return Objects.requireNonNullElseGet(matchingConfiguration, () -> memoryRepository.save(memoryInformation));
+
     }
 
     public java.util.List<MemoryHardwareInformation> getStoredMemoryInformation() {

@@ -4,6 +4,7 @@ import com.gibbonsdimarco.yamec.app.data.*;
 import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
 import com.gibbonsdimarco.yamec.app.service.ApplicationDataService;
 import com.gibbonsdimarco.yamec.app.service.CpuHardwareInformationService;
+import com.gibbonsdimarco.yamec.app.service.MemoryHardwareInformationService;
 import jakarta.annotation.PreDestroy;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnOpen;
@@ -360,19 +361,20 @@ public class YamecApplication {
             logger.error("Failed to save CPU Hardware Information to database.", e);
         }
 
-//        try {
-//
-//            MemoryHardwareInformation memory = monitor.getMemoryHardwareInformation();
-//            logger.info("Memory Hardware Information:{}", memory.toString());
-//
-//            CpuHardwareInformationService cpuHardwareService = context.getBean(CpuHardwareInformationService.class);
-//            cpuHardwareService.saveCpuInformation(cpu);
-//
-//
-//
-//        } catch (Exception e) {
-//            logger.error("Failed to save CPU Hardware Information to database.", e);
-//        }
+        try {
+
+            MemoryHardwareInformation memory = monitor.getMemoryHardwareInformation();
+            logger.info("Memory Hardware Information:{}", memory.toString());
+
+            MemoryHardwareInformationService memoryHardwareService
+                    = context.getBean(MemoryHardwareInformationService.class);
+            memoryHardwareService.saveMemoryInformation(memory);
+
+
+
+        } catch (Exception e) {
+            logger.error("Failed to save Memory Hardware Information to database.", e);
+        }
 
 
         try {

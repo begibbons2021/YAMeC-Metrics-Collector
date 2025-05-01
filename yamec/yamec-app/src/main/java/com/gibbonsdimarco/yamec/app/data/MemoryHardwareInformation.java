@@ -58,7 +58,7 @@ public class MemoryHardwareInformation implements Serializable {
     /**
      * Default constructor for JPA
      */
-    protected MemoryHardwareInformation() {
+    public MemoryHardwareInformation() {
     }
 
     /**
