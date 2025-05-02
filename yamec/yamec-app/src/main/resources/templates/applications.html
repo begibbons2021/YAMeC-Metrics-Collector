@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Application Dashboard | YAMeC</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Navigation tabs styles */
+        .nav-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ddd;
+        }
+        .nav-tab {
+            padding: 10px 20px;
+            margin-right: 5px;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            background-color: #f8f9fa;
+            color: #495057;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .nav-tab:hover {
+            background-color: #e9ecef;
+        }
+        .nav-tab.active {
+            background-color: #fff;
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            font-weight: bold;
+        }
+        
+        /* Application list styles */
+        .app-list {
+            margin-bottom: 30px;
+        }
+        .app-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .app-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        .app-item.active {
+            border-left: 4px solid #3498db;
+        }
+        .app-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .app-metrics {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>YAMeC Application Dashboard</h1>
+            <p class="subtitle">Real-time application metrics monitoring</p>
+        </header>
+        
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <a href="/" class="nav-tab">System Dashboard</a>
+            <a href="/applications" class="nav-tab active">Application Dashboard</a>
+        </div>
+        
+        <div class="dashboard">
+            <!-- Application List Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Applications</h2>
+                    <i class="fas fa-laptop card-icon"></i>
+                </div>
+                <div class="app-list" id="app-list">
+                    <!-- Application items will be populated by JavaScript -->
+                    <div th:each="app : ${appMetrics.applications}" class="app-item" th:data-id="${app.id}">
+                        <div class="app-name" th:text="${app.applicationName}">Application Name</div>
+                        <div class="app-metrics">
+                            <span>CPU: <span th:text="${#numbers.formatDecimal(app.avgCpuUsage, 1, 1) + '%'}">0%</span></span>
+                            <span>Memory: <span th:text="${#numbers.formatDecimal(app.avgPhysicalMemoryUsed / (1024 * 1024), 1, 0) + ' MB'}">0 MB</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CPU Usage Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">CPU Usage</h2>
+                    <i class="fas fa-microchip card-icon"></i>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Average Usage</div>
+                    <div class="metric-value" id="app-cpu-avg">0%</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Maximum Usage</div>
+                    <div class="metric-value" id="app-cpu-max">0%</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Minimum Usage</div>
+                    <div class="metric-value" id="app-cpu-min">0%</div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar progress-cpu" id="app-cpu-progress"></div>
+                </div>
+            </div>
+            
+            <!-- Memory Usage Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Memory Usage</h2>
+                    <i class="fas fa-memory card-icon"></i>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Physical Memory (Average)</div>
+                    <div class="metric-value" id="app-physical-memory-avg">0 MB</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Physical Memory (Maximum)</div>
+                    <div class="metric-value" id="app-physical-memory-max">0 MB</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Physical Memory (Minimum)</div>
+                    <div class="metric-value" id="app-physical-memory-min">0 MB</div>
+                </div>
+            </div>
+            
+            <!-- Virtual Memory Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Virtual Memory</h2>
+                    <i class="fas fa-hdd card-icon"></i>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Virtual Memory (Average)</div>
+                    <div class="metric-value" id="app-virtual-memory-avg">0 MB</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Virtual Memory (Maximum)</div>
+                    <div class="metric-value" id="app-virtual-memory-max">0 MB</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Virtual Memory (Minimum)</div>
+                    <div class="metric-value" id="app-virtual-memory-min">0 MB</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Last updated: <span id="last-updated" th:text="${#dates.format(#dates.createNow(), 'HH:mm:ss')}">00:00:00</span></p>
+            <p>YAMeC - Yet Another Metrics Collector</p>
+        </div>
+    </div>
+    
+    <script th:src="@{/js/application-dashboard.js}"></script>
+</body>
+</html>
