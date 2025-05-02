@@ -6,6 +6,34 @@
     <title>Dashboard | YAMeC</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Navigation tabs styles */
+        .nav-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ddd;
+        }
+        .nav-tab {
+            padding: 10px 20px;
+            margin-right: 5px;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            background-color: #f8f9fa;
+            color: #495057;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .nav-tab:hover {
+            background-color: #e9ecef;
+        }
+        .nav-tab.active {
+            background-color: #fff;
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -13,7 +41,13 @@
             <h1>YAMeC System Dashboard</h1>
             <p class="subtitle">Real-time system metrics monitoring</p>
         </header>
-        
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <a href="/" class="nav-tab active">System Dashboard</a>
+            <a href="/applications" class="nav-tab">Application Dashboard</a>
+        </div>
+
         <div class="dashboard">
             <!-- CPU Card -->
             <div class="card">
@@ -29,7 +63,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Memory Card -->
             <div class="card">
                 <div class="card-header">
@@ -56,7 +90,7 @@
                     <div class="metric-value" id="free-memory" th:text="${#numbers.formatDecimal(metrics.freeMemory / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
                 </div>
             </div>
-            
+
             <!-- Disk Card -->
             <div class="card">
                 <div class="card-header">
@@ -84,7 +118,7 @@
                     <div class="metric-value" id="free-disk" th:text="${#numbers.formatDecimal(metrics.diskFree / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
                 </div>
             </div>
-            
+
             <!-- Network Card -->
             <div class="card">
                 <div class="card-header">
@@ -103,13 +137,13 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="footer">
             <p>Last updated: <span id="last-updated" th:text="${#dates.format(#dates.createNow(), 'HH:mm:ss')}">00:00:00</span></p>
             <p>YAMeC - Yet Another Metrics Collector</p>
         </div>
     </div>
-    
+
     <script th:src="@{/js/dashboard.js}"></script>
 </body>
 </html>
