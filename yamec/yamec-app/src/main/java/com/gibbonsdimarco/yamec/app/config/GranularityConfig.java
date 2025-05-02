@@ -33,14 +33,14 @@ public class GranularityConfig {
      * by default
      */
     @Column(name="record_timespan", nullable=false)
-    private long recordTimespan;
+    private Integer recordTimespan;
 
     /**
      * Defines the number of seconds it takes for metrics at this Granularity to age
      * (be moved to the next granularity level or deleted)
      */
     @Column(name="time_to_age")
-    private long timeToAge;
+    private Integer timeToAge;
 
     public GranularityConfig() {
     }
@@ -61,19 +61,19 @@ public class GranularityConfig {
         this.granularity = granularity;
     }
 
-    public long getRecordTimespan() {
+    public int getRecordTimespan() {
         return recordTimespan;
     }
 
-    public void setRecordTimespan(long recordTimespan) {
+    public void setRecordTimespan(int recordTimespan) {
         this.recordTimespan = recordTimespan;
     }
 
-    public long getTimeToAge() {
+    public int getTimeToAge() {
         return timeToAge;
     }
 
-    public void setTimeToAge(long timeToAge) {
+    public void setTimeToAge(int timeToAge) {
         this.timeToAge = timeToAge;
     }
 }
