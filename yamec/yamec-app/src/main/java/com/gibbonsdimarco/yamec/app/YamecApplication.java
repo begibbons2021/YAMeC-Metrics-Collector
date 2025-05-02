@@ -2,10 +2,7 @@ package com.gibbonsdimarco.yamec.app;
 
 import com.gibbonsdimarco.yamec.app.data.*;
 import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
-import com.gibbonsdimarco.yamec.app.service.ApplicationDataService;
-import com.gibbonsdimarco.yamec.app.service.CpuHardwareInformationService;
-import com.gibbonsdimarco.yamec.app.service.DiskHardwareInformationService;
-import com.gibbonsdimarco.yamec.app.service.MemoryHardwareInformationService;
+import com.gibbonsdimarco.yamec.app.service.*;
 import jakarta.annotation.PreDestroy;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnOpen;
@@ -387,6 +384,22 @@ public class YamecApplication {
 
         } catch (Exception e) {
             logger.error("Failed to save Disk Hardware Information to database.", e);
+        }
+
+        try {
+
+            java.util.ArrayList<NicHardwareInformation> nicDevices = monitor.getNicHardwareInformation();
+            logger.info("NIC Hardware Information:");
+            for (NicHardwareInformation nicDevice : nicDevices) {
+                logger.info(nicDevice.toString());
+            }
+
+            NicHardwareInformationService nicHardwareService
+                    = context.getBean(NicHardwareInformationService.class);
+            nicHardwareService.saveNicInformation(nicDevices);
+
+        } catch (Exception e) {
+            logger.error("Failed to save NIC Hardware Information to database.", e);
         }
 
 
