@@ -356,6 +356,7 @@ public class YamecApplication {
 
         CpuHardwareInformation cpu = null;
         MemoryHardwareInformation memory = null;
+        java.util.List<DiskHardwareInformation> disks = new ArrayList<>();
         try {
 
             cpu = monitor.getCpuHardwareInformation();
@@ -382,13 +383,13 @@ public class YamecApplication {
 
         try {
 
-            java.util.ArrayList<DiskHardwareInformation> disks = monitor.getDiskHardwareInformation();
+            disks = monitor.getDiskHardwareInformation();
             logger.info("Disk Hardware Information:");
             for (DiskHardwareInformation disk : disks) {
                 logger.info(disk.toString());
             }
 
-            diskHardwareService.saveDiskInformation(disks);
+            disks = diskHardwareService.saveDiskInformation(disks);
 
         } catch (Exception e) {
             logger.error("Failed to save Disk Hardware Information to database.", e);
@@ -415,6 +416,7 @@ public class YamecApplication {
             ArrayList<SystemMemoryMetric> memoryMetrics = new ArrayList<>();
             SystemCpuMetric cpuMetric1 = monitor.getCpuMetrics();
             SystemMemoryMetric memoryMetric1 = monitor.getMemoryMetrics();
+            java.util.List<SystemDiskMetric> diskMetricList = monitor.getDiskMetrics();
             Timestamp startTimestamp = new Timestamp(System.currentTimeMillis());
 
             for (ProcessMetric processMetric : processMetricList) {
@@ -436,6 +438,11 @@ public class YamecApplication {
 
                 memoryMetrics.add(memoryMetric1);
             }
+            if (diskMetricList != null) {
+                for (SystemDiskMetric diskMetric : diskMetricList) {
+                    diskMetric.setTimestamp(startTimestamp);
+                }
+            }
 
             Thread.sleep(1000);
             monitor.collectCounterData();
@@ -443,6 +450,7 @@ public class YamecApplication {
             ArrayList<ProcessMetric> processMetricList2 = monitor.getProcessMetrics();
             SystemCpuMetric cpuMetric2 = monitor.getCpuMetrics();
             SystemMemoryMetric memoryMetric2 = monitor.getMemoryMetrics();
+            java.util.List<SystemDiskMetric> diskMetrics2 = monitor.getDiskMetrics();
             Timestamp endTimestamp = new Timestamp(System.currentTimeMillis());
 
             for (ProcessMetric processMetric : processMetricList2) {
@@ -463,6 +471,16 @@ public class YamecApplication {
 
                 memoryMetrics.add(memoryMetric2);
             }
+            if (diskMetrics2 != null) {
+                if (diskMetricList == null) {
+                    diskMetricList = new ArrayList<>();
+                }
+
+                for (SystemDiskMetric diskMetric : diskMetrics2) {
+                    diskMetric.setTimestamp(endTimestamp);
+                    diskMetricList.add(diskMetric);
+                }
+            }
 
             processMetricList.addAll(processMetricList2);
 
@@ -472,6 +490,7 @@ public class YamecApplication {
             applicationDataService.saveApplicationMetrics(processMetricList, startTimestamp, duration);
             cpuHardwareService.saveCpuMetrics(cpuMetrics, startTimestamp, duration);
             memoryHardwareService.saveMemoryMetrics(memoryMetrics, startTimestamp, duration);
+            diskHardwareService.saveDiskMetrics(diskMetricList, startTimestamp, duration, disks);
 
         } catch (Exception e) {
             logger.error("Failed to save metrics data to database.\n", e);
