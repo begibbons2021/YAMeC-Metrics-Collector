@@ -52,18 +52,24 @@ public class SystemMemoryMetric extends SystemDeviceMetric implements Serializab
     private double minVirtualUtilization;
 
     /**
-     * Whether the physical memory available should be represented using an
+     * Whether the <code>physicalUtilization</code> should be represented using an
      * unsigned value
      */
-    @Column(name = "physical_memory_available_is_unsigned")
-    private boolean physicalMemoryAvailableIsUnsigned;
+    @Column(name = "physical_utilization_is_unsigned")
+    private boolean physicalUtilizationIsUnsigned;
 
     /**
-     * Whether the virtual memory committed should be represented using an
+     * Whether the <code>virtualUtilization</code> should be represented using an
      * unsigned value
      */
-    @Column(name = "virtual_memory_committed_is_unsigned")
-    private boolean virtualMemoryCommittedIsUnsigned;
+    @Column(name = "virtual_utilization_is_unsigned")
+    private boolean virtualUtilizationIsUnsigned;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "memory_id", nullable = false,
+            foreignKey = @ForeignKey(name="fk_memory_hardware_information"))
+    private MemoryHardwareInformation memory;
+
 
     protected SystemMemoryMetric() {}
 
@@ -74,13 +80,13 @@ public class SystemMemoryMetric extends SystemDeviceMetric implements Serializab
      * @param physicalUtilization The number of bytes of physical memory in use
      * @param virtualCommitted The number of bytes of virtual memory committed on disk
      * @param virtualCommittedUtilization The percentage of committed virtual memory in use
-     * @param physicalMemoryAvailableIsUnsigned Whether <code>physicalUtilization</code> should be treated
+     * @param physicalUtilizationIsUnsigned Whether <code>physicalUtilization</code> should be treated
      *                                          as an unsigned value (true) or not (false)
-     * @param virtualMemoryCommittedIsUnsigned Whether <code>virtualCommitted</code>/<code>virtualUtilization</code>
+     * @param virtualUtilizationIsUnsigned Whether <code>virtualCommitted</code>/<code>virtualUtilization</code>
      *                                         should be treated as an unsigned value (true) or not (false)
      */
     public SystemMemoryMetric(long physicalUtilization, long virtualCommitted, double virtualCommittedUtilization,
-                              boolean physicalMemoryAvailableIsUnsigned, boolean virtualMemoryCommittedIsUnsigned) {
+                              boolean physicalUtilizationIsUnsigned, boolean virtualUtilizationIsUnsigned) {
         super();
         this.setDuration(1);
 
@@ -95,30 +101,42 @@ public class SystemMemoryMetric extends SystemDeviceMetric implements Serializab
         this.maxVirtualUtilization = virtualMemoryUsed;
         this.minVirtualUtilization = virtualMemoryUsed;
 
-        this.physicalMemoryAvailableIsUnsigned = physicalMemoryAvailableIsUnsigned;
-        this.virtualMemoryCommittedIsUnsigned = virtualMemoryCommittedIsUnsigned;
+        this.physicalUtilizationIsUnsigned = physicalUtilizationIsUnsigned;
+        this.virtualUtilizationIsUnsigned = virtualUtilizationIsUnsigned;
 
     }
 
-    public SystemMemoryMetric(Integer duration, UUID granularityId, Long averagePhysicalUtilization, Long maxPhysicalUtilization, Long minPhysicalUtilization) {
+    public SystemMemoryMetric(Integer duration, UUID granularityId,
+                              Long averagePhysicalUtilization,
+                              Long maxPhysicalUtilization,
+                              Long minPhysicalUtilization) {
         super(duration, granularityId);
         this.averagePhysicalUtilization = averagePhysicalUtilization;
         this.maxPhysicalUtilization = maxPhysicalUtilization;
         this.minPhysicalUtilization = minPhysicalUtilization;
-        this.physicalMemoryAvailableIsUnsigned = true;
-        this.virtualMemoryCommittedIsUnsigned = true;
+        this.physicalUtilizationIsUnsigned = true;
+        this.virtualUtilizationIsUnsigned = true;
     }
 
-    public SystemMemoryMetric(Integer duration, UUID granularityId, Long averagePhysicalUtilization, Long maxPhysicalUtilization, Long minPhysicalUtilization, Timestamp timestamp) {
+    public SystemMemoryMetric(Integer duration, UUID granularityId,
+                              Long averagePhysicalUtilization,
+                              Long maxPhysicalUtilization,
+                              Long minPhysicalUtilization, Timestamp timestamp) {
         super(duration, granularityId, timestamp);
         this.averagePhysicalUtilization = averagePhysicalUtilization;
         this.maxPhysicalUtilization = maxPhysicalUtilization;
         this.minPhysicalUtilization = minPhysicalUtilization;
-        this.physicalMemoryAvailableIsUnsigned = true;
-        this.virtualMemoryCommittedIsUnsigned = true;
+        this.physicalUtilizationIsUnsigned = true;
+        this.virtualUtilizationIsUnsigned = true;
     }
 
-    public SystemMemoryMetric(Integer duration, UUID granularityId, Long averagePhysicalUtilization, Long maxPhysicalUtilization, Long minPhysicalUtilization, Double averageVirtualUtilization, Double maxVirtualUtilization, Double minVirtualUtilization) {
+    public SystemMemoryMetric(Integer duration, UUID granularityId,
+                              Long averagePhysicalUtilization,
+                              Long maxPhysicalUtilization,
+                              Long minPhysicalUtilization,
+                              Double averageVirtualUtilization,
+                              Double maxVirtualUtilization,
+                              Double minVirtualUtilization) {
         super(duration, granularityId);
         this.averagePhysicalUtilization = averagePhysicalUtilization;
         this.maxPhysicalUtilization = maxPhysicalUtilization;
@@ -126,11 +144,18 @@ public class SystemMemoryMetric extends SystemDeviceMetric implements Serializab
         this.averageVirtualUtilization = averageVirtualUtilization;
         this.maxVirtualUtilization = maxVirtualUtilization;
         this.minVirtualUtilization = minVirtualUtilization;
-        this.physicalMemoryAvailableIsUnsigned = true;
-        this.virtualMemoryCommittedIsUnsigned = true;
+        this.physicalUtilizationIsUnsigned = true;
+        this.virtualUtilizationIsUnsigned = true;
     }
 
-    public SystemMemoryMetric(Integer duration, UUID granularityId, Long averagePhysicalUtilization, Long maxPhysicalUtilization, Long minPhysicalUtilization, Double averageVirtualUtilization, Double maxVirtualUtilization, Double minVirtualUtilization, Timestamp timestamp) {
+    public SystemMemoryMetric(Integer duration, UUID granularityId,
+                              Long averagePhysicalUtilization,
+                              Long maxPhysicalUtilization,
+                              Long minPhysicalUtilization,
+                              Double averageVirtualUtilization,
+                              Double maxVirtualUtilization,
+                              Double minVirtualUtilization,
+                              Timestamp timestamp) {
         super(duration, granularityId, timestamp);
         this.averagePhysicalUtilization = averagePhysicalUtilization;
         this.maxPhysicalUtilization = maxPhysicalUtilization;
@@ -138,8 +163,8 @@ public class SystemMemoryMetric extends SystemDeviceMetric implements Serializab
         this.averageVirtualUtilization = averageVirtualUtilization;
         this.maxVirtualUtilization = maxVirtualUtilization;
         this.minVirtualUtilization = minVirtualUtilization;
-        this.physicalMemoryAvailableIsUnsigned = true;
-        this.virtualMemoryCommittedIsUnsigned = true;
+        this.physicalUtilizationIsUnsigned = true;
+        this.virtualUtilizationIsUnsigned = true;
     }
 
     /* TODO: Add setters/getters and refactor below */
@@ -285,43 +310,51 @@ public class SystemMemoryMetric extends SystemDeviceMetric implements Serializab
         this.minVirtualUtilization = minVirtualUtilization;
     }
 
+    public MemoryHardwareInformation getMemory() {
+        return memory;
+    }
+
+    public void setMemory(MemoryHardwareInformation memoryHardware) {
+        this.memory = memoryHardware;
+    }
+
     /**
-     * Returns whether the physicalMemoryAvailable value is supposed to be signed
+     * Returns whether the <code>physicalUtilization</code> value is supposed to be signed
      * or unsigned as a boolean value
      *
-     * @return A boolean specifying whether physicalMemoryAvailable is unsigned
+     * @return A boolean specifying whether <code>physicalUtilization</code> is unsigned
      * (true) or not (false)
      */
-    public boolean isPhysicalMemoryAvailableUnsigned() {
-        return physicalMemoryAvailableIsUnsigned;
+    public boolean isPhysicalUtilizationUnsigned() {
+        return physicalUtilizationIsUnsigned;
     }
 
     /**
-     * Sets whether the physical memory available value should be treated as unsigned
+     * Sets whether the <code>physicalUtilization</code> value should be treated as unsigned
      *
-     * @param physicalMemoryAvailableIsUnsigned Whether to treat the value as unsigned
+     * @param physicalUtilizationIsUnsigned Whether to treat the value as unsigned
      */
-    public void setPhysicalMemoryAvailableUnsigned(boolean physicalMemoryAvailableIsUnsigned) {
-        this.physicalMemoryAvailableIsUnsigned = physicalMemoryAvailableIsUnsigned;
+    public void setPhysicalUtilizationIsUnsigned(boolean physicalUtilizationIsUnsigned) {
+        this.physicalUtilizationIsUnsigned = physicalUtilizationIsUnsigned;
     }
 
     /**
-     * Returns whether the virtualMemoryCommitted value is supposed to be signed
+     * Returns whether the <code>virtualUtilization</code> value is supposed to be signed
      * or unsigned as a boolean value
      *
-     * @return A boolean specifying whether virtualMemoryCommitted is unsigned
+     * @return A boolean specifying whether <code>virtualUtilization</code> is unsigned
      * (true) or not (false)
      */
-    public boolean isVirtualMemoryCommittedUnsigned() {
-        return virtualMemoryCommittedIsUnsigned;
+    public boolean isVirtualUtilizationUnsigned() {
+        return virtualUtilizationIsUnsigned;
     }
 
     /**
-     * Sets whether the virtual memory committed value should be treated as unsigned
+     * Sets whether the <code>virtualUtilization</code> value should be treated as unsigned
      *
-     * @param virtualMemoryCommittedIsUnsigned Whether to treat the value as unsigned
+     * @param virtualUtilizationIsUnsigned Whether to treat the value as unsigned
      */
-    public void setVirtualMemoryCommittedIsUnsigned(boolean virtualMemoryCommittedIsUnsigned) {
-        this.virtualMemoryCommittedIsUnsigned = virtualMemoryCommittedIsUnsigned;
+    public void setVirtualUtilizationIsUnsigned(boolean virtualUtilizationIsUnsigned) {
+        this.virtualUtilizationIsUnsigned = virtualUtilizationIsUnsigned;
     }
 }

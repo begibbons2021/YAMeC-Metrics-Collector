@@ -104,7 +104,7 @@ class YamecApplicationTests {
                 "getMemoryMetrics() should not return null.");
 
         // Use the unsigned values for physical and virtual memory usage
-        boolean physicalMemoryIsUnsigned = metric.isPhysicalMemoryAvailableUnsigned();
+        boolean physicalMemoryIsUnsigned = metric.isPhysicalUtilizationUnsigned();
         boolean capacityIsUnsigned = memoryHardware.isCapacityUnsigned();
 
         // Separate tests for returned signed and unsigned values
@@ -141,7 +141,7 @@ class YamecApplicationTests {
                     + " Keeping them the same ensures they can be properly compared.");
         }
 
-        boolean virtualMemoryIsUnsigned = metric.isVirtualMemoryCommittedUnsigned();
+        boolean virtualMemoryIsUnsigned = metric.isVirtualUtilizationUnsigned();
 
         if (!virtualMemoryIsUnsigned) {
             // Virtual memory must be greater than or equal to 0 bytes if stored as a signed value
