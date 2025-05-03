@@ -11,7 +11,7 @@ import java.util.UUID;
  * Repository interface for ApplicationMetric entities
  */
 @Repository
-public interface GranularityConfigRepository extends JpaRepository<GranularityConfig, Long> {
+public interface GranularityConfigRepository extends JpaRepository<GranularityConfig, UUID> {
     // Add custom query methods if needed
 
     GranularityConfig findByGranularity(Granularity granularity);

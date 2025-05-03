@@ -1,10 +1,7 @@
 package com.gibbonsdimarco.yamec.app.service;
 
 import com.gibbonsdimarco.yamec.app.data.DiskHardwareInformation;
-import com.gibbonsdimarco.yamec.app.data.MemoryHardwareInformation;
-import com.gibbonsdimarco.yamec.app.data.SystemDiskMetric;
 import com.gibbonsdimarco.yamec.app.repository.DiskHardwareInformationRepository;
-import com.gibbonsdimarco.yamec.app.repository.MemoryHardwareInformationRepository;
 import com.gibbonsdimarco.yamec.app.repository.SystemDiskMetricRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
