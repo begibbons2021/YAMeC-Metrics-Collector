@@ -6,11 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.UUID;
+
 /**
  * Repository interface for MemoryHardwareInformation entities
  */
 @Repository
-public interface MemoryHardwareInformationRepository extends JpaRepository<MemoryHardwareInformation, Long> {
+public interface MemoryHardwareInformationRepository extends JpaRepository<MemoryHardwareInformation, UUID> {
     // Add custom query methods if needed
 
     /**

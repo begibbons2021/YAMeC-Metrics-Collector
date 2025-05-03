@@ -355,6 +355,7 @@ public class YamecApplication {
         ApplicationDataService applicationDataService = context.getBean(ApplicationDataService.class);
 
         CpuHardwareInformation cpu = null;
+        MemoryHardwareInformation memory = null;
         try {
 
             cpu = monitor.getCpuHardwareInformation();
@@ -369,11 +370,11 @@ public class YamecApplication {
 
         try {
 
-            MemoryHardwareInformation memory = monitor.getMemoryHardwareInformation();
+            memory = monitor.getMemoryHardwareInformation();
             logger.info("Memory Hardware Information:{}", memory.toString());
 
 
-            memoryHardwareService.saveMemoryInformation(memory);
+            memory = memoryHardwareService.saveMemoryInformation(memory);
 
         } catch (Exception e) {
             logger.error("Failed to save Memory Hardware Information to database.", e);
@@ -410,8 +411,10 @@ public class YamecApplication {
 
         try {
             ArrayList<ProcessMetric> processMetricList = monitor.getProcessMetrics();
-            ArrayList<SystemCpuMetric> cpuMetrics = new ArrayList<SystemCpuMetric>();
+            ArrayList<SystemCpuMetric> cpuMetrics = new ArrayList<>();
+            ArrayList<SystemMemoryMetric> memoryMetrics = new ArrayList<>();
             SystemCpuMetric cpuMetric1 = monitor.getCpuMetrics();
+            SystemMemoryMetric memoryMetric1 = monitor.getMemoryMetrics();
             Timestamp startTimestamp = new Timestamp(System.currentTimeMillis());
 
             for (ProcessMetric processMetric : processMetricList) {
@@ -425,12 +428,21 @@ public class YamecApplication {
 
                 cpuMetrics.add(cpuMetric1);
             }
+            if (memoryMetric1 != null) {
+                memoryMetric1.setTimestamp(startTimestamp);
+                if (memory != null) {
+                    memoryMetric1.setMemory(memory);
+                }
+
+                memoryMetrics.add(memoryMetric1);
+            }
 
             Thread.sleep(1000);
             monitor.collectCounterData();
 
             ArrayList<ProcessMetric> processMetricList2 = monitor.getProcessMetrics();
             SystemCpuMetric cpuMetric2 = monitor.getCpuMetrics();
+            SystemMemoryMetric memoryMetric2 = monitor.getMemoryMetrics();
             Timestamp endTimestamp = new Timestamp(System.currentTimeMillis());
 
             for (ProcessMetric processMetric : processMetricList2) {
@@ -443,6 +455,14 @@ public class YamecApplication {
                 }
                 cpuMetrics.add(cpuMetric2);
             }
+            if (memoryMetric2 != null) {
+                memoryMetric2.setTimestamp(endTimestamp);
+                if (memory != null) {
+                    memoryMetric2.setMemory(memory);
+                }
+
+                memoryMetrics.add(memoryMetric2);
+            }
 
             processMetricList.addAll(processMetricList2);
 
@@ -451,9 +471,10 @@ public class YamecApplication {
 
             applicationDataService.saveApplicationMetrics(processMetricList, startTimestamp, duration);
             cpuHardwareService.saveCpuMetrics(cpuMetrics, startTimestamp, duration);
+            memoryHardwareService.saveMemoryMetrics(memoryMetrics, startTimestamp, duration);
 
         } catch (Exception e) {
-            logger.error("Failed to save Process/Application data to database.\n", e);
+            logger.error("Failed to save metrics data to database.\n", e);
         }
     }
 
