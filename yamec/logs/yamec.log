@@ -1813,3 +1813,214 @@ java.lang.NullPointerException: Cannot invoke "com.gibbonsdimarco.yamec.app.jni.
 2025-05-03 08:52:21 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@35d19dc5: (connection evicted)
 2025-05-03 08:52:21 [SpringApplicationShutdownHook] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
 2025-05-03 08:52:21 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-03 19:10:43 [main] INFO  c.g.yamec.app.YamecApplication - Starting YamecApplication using Java 23.0.2 with PID 30132 (C:\Users\cmarc\IdeaProjects\yamec\yamec\yamec-app\target\yamec-app-0.0.1-SNAPSHOT.jar started by cmarc in C:\Users\cmarc\IdeaProjects\yamec\yamec)
+2025-05-03 19:10:43 [main] DEBUG c.g.yamec.app.YamecApplication - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-05-03 19:10:43 [main] INFO  c.g.yamec.app.YamecApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-03 19:10:44 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-03 19:10:44 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 74 ms. Found 13 JPA repository interfaces.
+2025-05-03 19:10:44 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8084 (http)
+2025-05-03 19:10:44 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-03 19:10:44 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-05-03 19:10:44 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-05-03 19:10:44 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1237 ms
+2025-05-03 19:10:44 [main] DEBUG com.zaxxer.hikari.HikariConfig - Driver class org.sqlite.JDBC found in Thread context class loader org.springframework.boot.loader.launch.LaunchedClassLoader@4d405ef7
+2025-05-03 19:10:45 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-03 19:10:45 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-05-03 19:10:45 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-03 19:10:45 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - HikariPool-1 - configuration:
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - allowPoolSuspension.............false
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - autoCommit......................true
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - catalog.........................none
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionInitSql...............none
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTestQuery............."SELECT 1"
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTimeout...............30000
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSource......................none
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceClassName.............none
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceJNDI..................none
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceProperties............{password=<masked>}
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - driverClassName................."org.sqlite.JDBC"
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - exceptionOverrideClassName......none
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckProperties...........{}
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckRegistry.............none
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - idleTimeout.....................600000
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - initializationFailTimeout.......1
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - isolateInternalQueries..........false
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - jdbcUrl.........................jdbc:sqlite:db.sqlite
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - keepaliveTime...................0
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - leakDetectionThreshold..........30000
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - maxLifetime.....................1800000
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - maximumPoolSize.................25
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricRegistry..................none
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricsTrackerFactory...........none
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - minimumIdle.....................25
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - password........................<masked>
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - poolName........................"HikariPool-1"
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - readOnly........................false
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - registerMbeans..................false
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - scheduledExecutor...............none
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - schema..........................none
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - threadFactory...................internal
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - transactionIsolation............default
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - username........................none
+2025-05-03 19:10:45 [main] DEBUG com.zaxxer.hikari.HikariConfig - validationTimeout...............5000
+2025-05-03 19:10:45 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-03 19:10:45 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@51ed2f68
+2025-05-03 19:10:45 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-03 19:10:45 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 3.49.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-03 19:10:45 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Pool stats (total=1, active=0, idle=1, waiting=0)
+2025-05-03 19:10:45 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@5102af7c
+2025-05-03 19:10:45 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=2, active=0, idle=2, waiting=0)
+2025-05-03 19:10:45 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@5fc55b2c
+2025-05-03 19:10:45 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=3, active=0, idle=3, waiting=0)
+2025-05-03 19:10:45 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@5bfac40c
+2025-05-03 19:10:45 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=4, active=0, idle=4, waiting=0)
+2025-05-03 19:10:45 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@1ef85117
+2025-05-03 19:10:45 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=5, active=0, idle=5, waiting=0)
+2025-05-03 19:10:45 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@5ac574fb
+2025-05-03 19:10:45 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=6, active=0, idle=6, waiting=0)
+2025-05-03 19:10:45 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@2f2c48b4
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=7, active=0, idle=7, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@22fb33f9
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=8, active=0, idle=8, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@7ed7ae58
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=9, active=0, idle=9, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@f446fd5
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=10, active=0, idle=10, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@4260ff61
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=11, active=0, idle=11, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@39ff782f
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=12, active=0, idle=12, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@7a99b426
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=13, active=0, idle=13, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@560f5667
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=14, active=0, idle=14, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@13513030
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=15, active=0, idle=15, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@51ad1c75
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=16, active=0, idle=16, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@66a2aae2
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=17, active=0, idle=17, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@4a32743f
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=18, active=0, idle=18, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@50f81df9
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=19, active=0, idle=19, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@698fed27
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=20, active=0, idle=20, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@1a09af4e
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=21, active=0, idle=21, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@4343b3bc
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=22, active=0, idle=22, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@53c469f8
+2025-05-03 19:10:46 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=23, active=0, idle=23, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@45345072
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - create table application (id blob not null, application_name varchar(255) not null unique, primary key (id))
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - create table application_metrics (id blob not null, avg_cpu_usage float, avg_physical_memory_used bigint, avg_virtual_memory_used bigint, duration integer not null, max_cpu_usage float, max_physical_memory_used bigint, max_virtual_memory_used bigint, min_cpu_usage float, min_physical_memory_used bigint, min_virtual_memory_used bigint, timestamp timestamp not null, application_id blob not null, primary key (id))
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - create table cpu_hardware_information (id blob not null, cores bigint, name varchar(255) not null, l1_cache_size bigint, l2_cache_size bigint, l3_cache_size bigint, logical_processors bigint, virtualization boolean, primary key (id))
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - create table disk_hardware_information (id blob not null, capacity bigint not null, capacity_is_unsigned boolean, disk_number bigint not null, friendly_name varchar(255) not null, media_type bigint not null, unique_id varchar(255) not null, primary key (id))
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - create table disk_partitions (disk_id blob not null, partition varchar(255))
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - create table gpu_metrics (id blob not null, duration integer not null, granularity_id blob not null, timestamp timestamp not null, dedicated_memory_use bigint, shared_memory_use bigint, temperature float, usage float not null, primary key (id))
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=24, active=1, idle=23, waiting=0)
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@1210f445
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - create table granularity (id blob not null, label varchar(255) not null unique, primary key (id))
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - create table granularity_config (granularity_id blob not null, record_timespan integer not null, time_to_age integer, primary key (granularity_id))
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - create table memory_hardware_information (id blob not null, capacity bigint not null, capacity_is_unsigned boolean, slots_total bigint not null, slots_used bigint not null, speed bigint not null, speed_is_unsigned boolean, primary key (id))
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - create table nic_hardware_information (id blob not null, friendly_name varchar(255) not null, label varchar(255) not null, nic_type bigint not null, unique_id varchar(255) not null, primary key (id))
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - alter table system_disk_metrics add column disk_id blob not null
+2025-05-03 19:10:46 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After adding stats (total=25, active=1, idle=24, waiting=0)
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - alter table system_nic_metrics add column nic_id blob not null
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - create index idx_application_name on application (application_name)
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - alter table application drop constraint UK5jl5nuoh207t0japuutb4avd4
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - create index idx_application_metrics_timestamp on application_metrics (timestamp)
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - create index idx_application_metrics_application on application_metrics (application_id)
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - create index idx_disk_unique_id on disk_hardware_information (unique_id)
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - create index idx_disk_number on disk_hardware_information (disk_number)
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - create index idx_gpu_metrics_timestamp on gpu_metrics (timestamp)
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - create index idx_granularity_label on granularity (label)
+2025-05-03 19:10:46 [main] DEBUG org.hibernate.SQL - alter table granularity drop constraint UKhil71qro15pd2lohoekn870eo
+2025-05-03 19:10:46 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-03 19:10:47 [main] WARN  c.g.y.a.jni.SystemMonitorManagerJNI - System Monitor Manager - Could not be initialized.
+2025-05-03 19:10:47 [main] WARN  c.g.y.a.jni.SystemMonitorManagerJNI - Error Code: -2
+2025-05-03 19:10:47 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'systemMonitorManagerJNI' defined in URL [jar:nested:/C:/Users/cmarc/IdeaProjects/yamec/yamec/yamec-app/target/yamec-app-0.0.1-SNAPSHOT.jar/!BOOT-INF/classes/!/com/gibbonsdimarco/yamec/app/jni/SystemMonitorManagerJNI.class]: Failed to instantiate [com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI]: Constructor threw exception
+2025-05-03 19:10:47 [main] INFO  c.g.yamec.app.YamecApplication - CLEANUP - Closing the System Monitor... 
+2025-05-03 19:10:47 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-03 19:10:47 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-03 19:10:47 [main] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Before shutdown stats (total=25, active=0, idle=25, waiting=0)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@51ed2f68: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@5102af7c: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@5fc55b2c: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@5bfac40c: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@1ef85117: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@5ac574fb: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@2f2c48b4: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@22fb33f9: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@7ed7ae58: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@f446fd5: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@4260ff61: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@39ff782f: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@7a99b426: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@560f5667: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@13513030: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@51ad1c75: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@66a2aae2: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@4a32743f: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@50f81df9: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@698fed27: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@1a09af4e: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@4343b3bc: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@53c469f8: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@45345072: (connection evicted)
+2025-05-03 19:10:47 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection org.sqlite.jdbc4.JDBC4Connection@1210f445: (connection evicted)
+2025-05-03 19:10:47 [main] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+2025-05-03 19:10:47 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-03 19:10:47 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-05-03 19:10:47 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-05-03 19:10:47 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'systemMonitorManagerJNI' defined in URL [jar:nested:/C:/Users/cmarc/IdeaProjects/yamec/yamec/yamec-app/target/yamec-app-0.0.1-SNAPSHOT.jar/!BOOT-INF/classes/!/com/gibbonsdimarco/yamec/app/jni/SystemMonitorManagerJNI.class]: Failed to instantiate [com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI]: Constructor threw exception
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1343)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1228)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:346)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1155)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1121)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1056)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at com.gibbonsdimarco.yamec.app.YamecApplication.main(YamecApplication.java:344)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:102)
+	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:64)
+	at org.springframework.boot.loader.launch.JarLauncher.main(JarLauncher.java:40)
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI]: Constructor threw exception
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:222)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:122)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1337)
+	... 24 common frames omitted
+Caused by: java.lang.RuntimeException: Unable to initialize system monitor manager
+	at com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI.<init>(SystemMonitorManagerJNI.java:50)
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:501)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:485)
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:196)
+	... 26 common frames omitted
