@@ -89,9 +89,8 @@ public class SystemMemoryMetric extends SystemDeviceMetric implements Serializab
                               boolean physicalUtilizationIsUnsigned, boolean virtualUtilizationIsUnsigned) {
         super();
         this.setDuration(1);
-
         // Calculate the actual amount of virtual memory in use out of the committed virtual memory size
-        long virtualMemoryUsed = (long)(java.lang.Math.ceil(virtualCommitted * virtualCommittedUtilization));
+        long virtualMemoryUsed = (long)(java.lang.Math.ceil(virtualCommitted * (virtualCommittedUtilization/100.0)));
 
         this.averagePhysicalUtilization = physicalUtilization;
         this.maxPhysicalUtilization = physicalUtilization;
