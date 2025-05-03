@@ -344,14 +344,24 @@ public class YamecApplication {
         context = SpringApplication.run(YamecApplication.class, args);
         logger.info("Yamec Application Started");
 
+        CpuHardwareInformationService cpuHardwareService
+                = context.getBean(CpuHardwareInformationService.class);
+        MemoryHardwareInformationService memoryHardwareService
+                = context.getBean(MemoryHardwareInformationService.class);
+        DiskHardwareInformationService diskHardwareService
+                = context.getBean(DiskHardwareInformationService.class);
+        NicHardwareInformationService nicHardwareService
+                = context.getBean(NicHardwareInformationService.class);
+        ApplicationDataService applicationDataService = context.getBean(ApplicationDataService.class);
 
+        CpuHardwareInformation cpu = null;
         try {
 
-            CpuHardwareInformation cpu = monitor.getCpuHardwareInformation();
+            cpu = monitor.getCpuHardwareInformation();
             logger.info("CPU Hardware Information:{}", cpu.toString());
 
-            CpuHardwareInformationService cpuHardwareService = context.getBean(CpuHardwareInformationService.class);
-            cpuHardwareService.saveCpuInformation(cpu);
+
+            cpu = cpuHardwareService.saveCpuInformation(cpu);
 
         } catch (Exception e) {
             logger.error("Failed to save CPU Hardware Information to database.", e);
@@ -362,8 +372,7 @@ public class YamecApplication {
             MemoryHardwareInformation memory = monitor.getMemoryHardwareInformation();
             logger.info("Memory Hardware Information:{}", memory.toString());
 
-            MemoryHardwareInformationService memoryHardwareService
-                    = context.getBean(MemoryHardwareInformationService.class);
+
             memoryHardwareService.saveMemoryInformation(memory);
 
         } catch (Exception e) {
@@ -378,8 +387,6 @@ public class YamecApplication {
                 logger.info(disk.toString());
             }
 
-            DiskHardwareInformationService diskHardwareService
-                    = context.getBean(DiskHardwareInformationService.class);
             diskHardwareService.saveDiskInformation(disks);
 
         } catch (Exception e) {
@@ -394,8 +401,6 @@ public class YamecApplication {
                 logger.info(nicDevice.toString());
             }
 
-            NicHardwareInformationService nicHardwareService
-                    = context.getBean(NicHardwareInformationService.class);
             nicHardwareService.saveNicInformation(nicDevices);
 
         } catch (Exception e) {
@@ -404,29 +409,48 @@ public class YamecApplication {
 
 
         try {
-
             ArrayList<ProcessMetric> processMetricList = monitor.getProcessMetrics();
+            ArrayList<SystemCpuMetric> cpuMetrics = new ArrayList<SystemCpuMetric>();
+            SystemCpuMetric cpuMetric1 = monitor.getCpuMetrics();
             Timestamp startTimestamp = new Timestamp(System.currentTimeMillis());
 
             for (ProcessMetric processMetric : processMetricList) {
                 processMetric.setTimestamp(startTimestamp);
             }
+            if (cpuMetric1 != null) {
+                cpuMetric1.setTimestamp(startTimestamp);
+                if (cpu != null) {
+                    cpuMetric1.setCpu(cpu);
+                }
+
+                cpuMetrics.add(cpuMetric1);
+            }
 
             Thread.sleep(1000);
             monitor.collectCounterData();
+
             ArrayList<ProcessMetric> processMetricList2 = monitor.getProcessMetrics();
+            SystemCpuMetric cpuMetric2 = monitor.getCpuMetrics();
             Timestamp endTimestamp = new Timestamp(System.currentTimeMillis());
 
             for (ProcessMetric processMetric : processMetricList2) {
                 processMetric.setTimestamp(endTimestamp);
             }
+            if (cpuMetric2 != null) {
+                cpuMetric2.setTimestamp(endTimestamp);
+                if (cpu != null) {
+                    cpuMetric2.setCpu(cpu);
+                }
+                cpuMetrics.add(cpuMetric2);
+            }
 
             processMetricList.addAll(processMetricList2);
 
+
             int duration = 2;
 
-            ApplicationDataService applicationDataService = context.getBean(ApplicationDataService.class);
             applicationDataService.saveApplicationMetrics(processMetricList, startTimestamp, duration);
+            cpuHardwareService.saveCpuMetrics(cpuMetrics, startTimestamp, duration);
 
         } catch (Exception e) {
             logger.error("Failed to save Process/Application data to database.\n", e);
