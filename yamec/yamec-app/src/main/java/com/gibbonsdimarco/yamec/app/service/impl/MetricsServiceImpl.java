@@ -1,5 +1,7 @@
 package com.gibbonsdimarco.yamec.app.service.impl;
 
+import com.gibbonsdimarco.yamec.app.config.Granularity;
+import com.gibbonsdimarco.yamec.app.config.GranularityConfig;
 import com.gibbonsdimarco.yamec.app.data.*;
 import com.gibbonsdimarco.yamec.app.repository.*;
 import com.gibbonsdimarco.yamec.app.service.MetricsService;
@@ -23,6 +25,8 @@ public class MetricsServiceImpl implements MetricsService {
     private final SystemDiskMetricRepository diskMetricRepository;
     private final SystemGpuMetricRepository gpuMetricRepository;
     private final SystemNicMetricRepository nicMetricRepository;
+    private final GranularityRepository granularityRepository;
+    private final GranularityConfigRepository granularityConfigRepository;
 
     @Autowired
     public MetricsServiceImpl(
@@ -30,12 +34,41 @@ public class MetricsServiceImpl implements MetricsService {
             SystemMemoryMetricRepository memoryMetricRepository,
             SystemDiskMetricRepository diskMetricRepository,
             SystemGpuMetricRepository gpuMetricRepository,
-            SystemNicMetricRepository nicMetricRepository) {
+            SystemNicMetricRepository nicMetricRepository,
+            GranularityRepository granularityRepository,
+            GranularityConfigRepository granularityConfigRepository) {
         this.cpuMetricRepository = cpuMetricRepository;
         this.memoryMetricRepository = memoryMetricRepository;
         this.diskMetricRepository = diskMetricRepository;
         this.gpuMetricRepository = gpuMetricRepository;
         this.nicMetricRepository = nicMetricRepository;
+        this.granularityRepository = granularityRepository;
+        this.granularityConfigRepository = granularityConfigRepository;
+
+        setupGranularityLevels();
+    }
+
+    @jakarta.transaction.Transactional(jakarta.transaction.Transactional.TxType.REQUIRES_NEW)
+    public void setupGranularityLevels() {
+        long granularityLevels = granularityRepository.count();
+
+        if (granularityLevels == 0) {
+            Granularity highGranularity = new Granularity("HIGH");
+            GranularityConfig highGranularityConfig = new GranularityConfig();
+            highGranularityConfig.setRecordTimespan(60); // 1 minute
+            highGranularityConfig.setTimeToAge(604800); // 7 days
+            highGranularityConfig.setGranularity(highGranularity);
+            highGranularity.setGranularityConfig(highGranularityConfig);
+            highGranularity = granularityRepository.save(highGranularity);
+
+            Granularity lowGranularity = new Granularity("LOW");
+            GranularityConfig lowGranularityConfig = new GranularityConfig();
+            lowGranularityConfig.setRecordTimespan(300); // 5 minute
+            lowGranularityConfig.setTimeToAge(2592000); // 30 days
+            lowGranularityConfig.setGranularity(lowGranularity);
+            lowGranularity.setGranularityConfig(lowGranularityConfig);
+            lowGranularity = granularityRepository.save(lowGranularity);
+        }
     }
 
     @Override
