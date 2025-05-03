@@ -1,5 +1,6 @@
 package com.gibbonsdimarco.yamec.app.data;
 
+import com.gibbonsdimarco.yamec.app.config.Granularity;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -20,6 +21,11 @@ public class SystemCpuMetric extends SystemDeviceMetric implements Serializable 
      */
     @Transient
     private String deviceName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cpu_id", nullable = false,
+            foreignKey = @ForeignKey(name="fk_cpu_hardware_information"))
+    private CpuHardwareInformation cpu;
 
     /**
      * The average percentage of utilization measured within this SystemDeviceMetric
@@ -60,15 +66,24 @@ public class SystemCpuMetric extends SystemDeviceMetric implements Serializable 
         this.minUtilization = minUtilization;
     }
 
-    public SystemCpuMetric(Integer duration, UUID granularityId,
+    public SystemCpuMetric(CpuHardwareInformation cpuId,
+                           Timestamp timestamp,
+                           Integer duration, UUID granularityId,
                            Double averageUtilization,
                            Double maxUtilization,
-                           Double minUtilization,
-                           Timestamp timestamp) {
+                           Double minUtilization) {
         super(duration, granularityId, timestamp);
         this.averageUtilization = averageUtilization;
         this.maxUtilization = maxUtilization;
         this.minUtilization = minUtilization;
+    }
+
+    public CpuHardwareInformation getCpu() {
+        return cpu;
+    }
+
+    public void setCpu(CpuHardwareInformation cpu) {
+        this.cpu = cpu;
     }
 
     public Double getAverageUtilization() {
