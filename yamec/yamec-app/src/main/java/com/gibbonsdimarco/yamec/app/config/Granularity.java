@@ -22,8 +22,9 @@ public class Granularity {
      * associate granularity configurations with specific levels.</p>
      */
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
-    private long id;
+    private UUID id;
 
     @OneToOne(mappedBy = "granularity", cascade=CascadeType.ALL)
     @PrimaryKeyJoinColumn
@@ -55,7 +56,7 @@ public class Granularity {
      * Returns the unique identifier for this Granularity level
      * @return This Granularity level's ID
      */
-    public long getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -63,7 +64,7 @@ public class Granularity {
      * Sets the value of this Granularity level
      * @param id This Granularity level's ID
      */
-    public void setId(long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

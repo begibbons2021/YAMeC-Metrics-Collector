@@ -2,6 +2,8 @@ package com.gibbonsdimarco.yamec.app.config;
 
 import jakarta.persistence.*;
 
+import java.util.UUID;
+
 /**
  * <p>A class/database table which controls the amount of time records of a specific
  * Granularity level take to age.</p>
@@ -18,7 +20,7 @@ public class GranularityConfig {
      */
     @Id
     @Column(name = "granularity_id")
-    private long granularityId;
+    private UUID granularityId;
 
     /**
      * The Granularity entity this GranularityConfig is associated with
@@ -45,11 +47,11 @@ public class GranularityConfig {
     public GranularityConfig() {
     }
 
-    public long getGranularityId() {
+    public UUID getGranularityId() {
         return granularityId;
     }
 
-    public void setGranularityId(long granularityId) {
+    public void setGranularityId(UUID granularityId) {
         this.granularityId = granularityId;
     }
 

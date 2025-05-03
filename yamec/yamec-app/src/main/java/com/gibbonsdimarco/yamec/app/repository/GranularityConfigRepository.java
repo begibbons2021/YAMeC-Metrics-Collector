@@ -5,6 +5,8 @@ import com.gibbonsdimarco.yamec.app.config.GranularityConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.UUID;
+
 /**
  * Repository interface for ApplicationMetric entities
  */
@@ -14,13 +16,13 @@ public interface GranularityConfigRepository extends JpaRepository<GranularityCo
 
     GranularityConfig findByGranularity(Granularity granularity);
 
-    GranularityConfig findByGranularityId(Long granularityId);
+    GranularityConfig findByGranularityId(UUID granularityId);
 
     GranularityConfig findByGranularityLabel(String label);
 
     GranularityConfig getByGranularity(Granularity granularity);
 
-    GranularityConfig getByGranularityId(Long granularityId);
+    GranularityConfig getByGranularityId(UUID granularityId);
 
     GranularityConfig getByGranularityLabel(String label);
 
