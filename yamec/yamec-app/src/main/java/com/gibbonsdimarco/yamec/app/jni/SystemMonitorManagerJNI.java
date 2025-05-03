@@ -1,15 +1,19 @@
 package com.gibbonsdimarco.yamec.app.jni;
 import com.gibbonsdimarco.yamec.app.data.*;
 import com.github.fommil.jni.JniLoader;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.websocket.OnClose;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * TODO:
  * This class should never be instantiated more than once! It will fail to run if it is
  * re-initiated due to a native dependency's behavior.
  */
+@Service
 public class SystemMonitorManagerJNI implements AutoCloseable {
     private static final Logger logger = LoggerFactory.getLogger(SystemMonitorManagerJNI.class);
 
@@ -47,6 +51,15 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
         }
 
         this.monitorAddress = ptrAddress;
+    }
+
+    @PostConstruct
+    protected void initCollectCounterData() {
+        int status = this.collectCounterData();
+
+        if (status != 0) {
+            logger.error("System Monitor Manager - Initial collection of counter data failed: Code: {}", status);
+        }
     }
 
     public int collectCounterData() {

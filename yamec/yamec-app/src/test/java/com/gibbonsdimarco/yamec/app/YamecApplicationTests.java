@@ -20,7 +20,7 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 class YamecApplicationTests {
 
     @Autowired
-    private static SystemMonitorManagerJNI monitor;
+    private SystemMonitorManagerJNI monitor;
 
     @Test
     void contextLoads() {
