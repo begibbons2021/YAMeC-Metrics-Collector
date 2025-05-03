@@ -5,12 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Repository interface for DiskHardwareInformation entities
  */
 @Repository
-public interface DiskHardwareInformationRepository extends JpaRepository<DiskHardwareInformation, Long> {
+public interface DiskHardwareInformationRepository extends JpaRepository<DiskHardwareInformation, UUID> {
     // Add custom query methods if needed
 
     DiskHardwareInformation findByUniqueId(String uniqueId);
@@ -20,7 +21,5 @@ public interface DiskHardwareInformationRepository extends JpaRepository<DiskHar
     DiskHardwareInformation getByDiskNumber(Long diskNumber);
 
     DiskHardwareInformation getByUniqueId(String uniqueId);
-
-    List<DiskHardwareInformation> findAllByUniqueId(String uniqueId);
 
 } 

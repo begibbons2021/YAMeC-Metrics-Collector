@@ -5,12 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Repository interface for NicHardwareInformation entities
  */
 @Repository
-public interface NicHardwareInformationRepository extends JpaRepository<NicHardwareInformation, Long> {
+public interface NicHardwareInformationRepository extends JpaRepository<NicHardwareInformation, UUID> {
     // Add custom query methods if needed
 
 
