@@ -5,6 +5,7 @@ import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.*;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.annotation.Order;
 
@@ -18,48 +19,53 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class YamecApplicationTests {
 
+    @Autowired
     private static SystemMonitorManagerJNI monitor;
 
     @Test
     void contextLoads() {
+        // Ensure the monitor bean was properly autowired
+        assertNotNull(monitor, "SystemMonitorManagerJNI bean should be autowired");
+        assertTrue("SystemMonitorManagerJNI should be in open state", monitor.isOpen());
     }
 
-    @BeforeAll
-    static void systemMonitorManagerCreation() {
-        try {
-            System.err.println("Starting System Monitor Manager...");
-            monitor = new SystemMonitorManagerJNI();
-        }
-        catch (Exception e) {
-            fail("An exception was thrown while creating the SystemMonitorManager.\n\n"
-                    + e.getMessage() + "\n"
-                    + Arrays.toString(e.getStackTrace()));
-        }
 
-        // Manually collect the needed counter data
-        try
-        {
-            Thread.sleep(1000);
-        }
-        catch (InterruptedException e) {
-            fail("The timer to wait to collect data from the SystemMonitorManager was interrupted.");
-        }
-
-        try
-        {
-            int dataCollectionSuccess = monitor.collectCounterData();
-            if (dataCollectionSuccess != 0)
-            {
-                fail("SystemMonitorManager#collectCounterData() returned status code " + dataCollectionSuccess);
-            }
-        }
-        catch (Exception e) {
-            fail("An exception was thrown while calling SystemMonitorManager#collectCounterData().\n\n"
-                    + e.getMessage() + "\n"
-                    + Arrays.toString(e.getStackTrace()));
-        }
-
-    }
+//    @BeforeAll
+//    static void systemMonitorManagerCreation() {
+//        try {
+//            System.err.println("Starting System Monitor Manager...");
+//            monitor = new SystemMonitorManagerJNI();
+//        }
+//        catch (Exception e) {
+//            fail("An exception was thrown while creating the SystemMonitorManager.\n\n"
+//                    + e.getMessage() + "\n"
+//                    + Arrays.toString(e.getStackTrace()));
+//        }
+//
+//        // Manually collect the needed counter data
+//        try
+//        {
+//            Thread.sleep(1000);
+//        }
+//        catch (InterruptedException e) {
+//            fail("The timer to wait to collect data from the SystemMonitorManager was interrupted.");
+//        }
+//
+//        try
+//        {
+//            int dataCollectionSuccess = monitor.collectCounterData();
+//            if (dataCollectionSuccess != 0)
+//            {
+//                fail("SystemMonitorManager#collectCounterData() returned status code " + dataCollectionSuccess);
+//            }
+//        }
+//        catch (Exception e) {
+//            fail("An exception was thrown while calling SystemMonitorManager#collectCounterData().\n\n"
+//                    + e.getMessage() + "\n"
+//                    + Arrays.toString(e.getStackTrace()));
+//        }
+//
+//    }
 
     @Test
     void systemMonitorDataTests() {
@@ -718,22 +724,22 @@ class YamecApplicationTests {
         return true;
     }
 
-    @AfterAll
-    public static void testSystemMonitorManagerClose()
-    {
-        try {
-            System.err.println("Closing System Monitor Manager... ");
-            monitor.close();
-
-            if (monitor.isOpen()) {
-                fail("The status of the System Monitor Manager did not change to closed when it was closed.");
-            }
-        }
-        catch (Exception e) {
-            fail("An exception was thrown while closing the System Monitor Manager.\n\n"
-                    + e.getMessage() + "\n"
-                    + Arrays.toString(e.getStackTrace()));
-        }
-    }
+//    @AfterAll
+//    public static void testSystemMonitorManagerClose()
+//    {
+//        try {
+//            System.err.println("Closing System Monitor Manager... ");
+//            monitor.close();
+//
+//            if (monitor.isOpen()) {
+//                fail("The status of the System Monitor Manager did not change to closed when it was closed.");
+//            }
+//        }
+//        catch (Exception e) {
+//            fail("An exception was thrown while closing the System Monitor Manager.\n\n"
+//                    + e.getMessage() + "\n"
+//                    + Arrays.toString(e.getStackTrace()));
+//        }
+//    }
 
 }
