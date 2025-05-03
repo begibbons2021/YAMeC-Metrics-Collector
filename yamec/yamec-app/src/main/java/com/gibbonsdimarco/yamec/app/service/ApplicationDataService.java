@@ -237,4 +237,92 @@ public class ApplicationDataService {
         return applicationMetricRepository.findByApplicationId(applicationId);
     }
 
+    /**
+     * Returns all applications with their associated metrics
+     * This method efficiently loads all applications and their metrics in a single operation
+     * 
+     * @return Map of Application objects to their associated metrics
+     */
+    public java.util.Map<Application, java.util.List<ApplicationMetric>> getAllApplicationsWithMetrics() {
+        // Get all applications
+        java.util.List<Application> applications = applicationRepository.findAll();
+        
+        // Initialize result map
+        java.util.Map<Application, java.util.List<ApplicationMetric>> applicationsWithMetrics = new java.util.HashMap<>();
+        
+        // For each application, get its metrics and add to the map
+        for (Application application : applications) {
+            java.util.List<ApplicationMetric> metrics = applicationMetricRepository.findByApplication(application);
+            applicationsWithMetrics.put(application, metrics);
+        }
+        
+        return applicationsWithMetrics;
+    }
+
+    /**
+     * Returns a specific application with its metrics
+     *
+     * @param applicationId The UUID of the application to retrieve
+     * @return The application and its metrics, or null if application not found
+     */
+    public java.util.Map.Entry<Application, java.util.List<ApplicationMetric>> getApplicationWithMetricsById(UUID applicationId) {
+        // Check if application exists
+        java.util.Optional<Application> appOptional = applicationRepository.findById(applicationId);
+        if (appOptional.isEmpty()) {
+            return null;
+        }
+        
+        Application application = appOptional.get();
+        java.util.List<ApplicationMetric> metrics = applicationMetricRepository.findByApplicationId(applicationId);
+        
+        return java.util.Map.entry(application, metrics);
+    }
+
+    /**
+     * Returns a specific application with its metrics by application name
+     *
+     * @param applicationName The name of the application to retrieve
+     * @return The application and its metrics, or null if application not found
+     */
+    public java.util.Map.Entry<Application, java.util.List<ApplicationMetric>> getApplicationWithMetricsByName(String applicationName) {
+        Application application = applicationRepository.findByApplicationName(applicationName);
+        if (application == null) {
+            return null;
+        }
+        
+        java.util.List<ApplicationMetric> metrics = applicationMetricRepository.findAllByApplicationApplicationName(applicationName);
+        
+        return java.util.Map.entry(application, metrics);
+    }
+
+    /**
+     * Returns all applications with their latest metrics
+     * This is useful for dashboards that only need the most recent metric for each application
+     *
+     * @return Map of Application objects to their latest metric
+     */
+    public java.util.Map<Application, ApplicationMetric> getAllApplicationsWithLatestMetrics() {
+        // Get all applications
+        java.util.List<Application> applications = applicationRepository.findAll();
+
+        // Initialize result map
+        java.util.Map<Application, ApplicationMetric> applicationsWithLatestMetrics = new java.util.HashMap<>();
+
+        // For each application, get its latest metric
+        for (Application application : applications) {
+            // Find the latest metric for this application
+            // We need to use Sort to get the most recent one by timestamp
+            java.util.List<ApplicationMetric> metrics = applicationMetricRepository.getByApplicationApplicationName(
+                    application.getApplicationName(),
+                    org.springframework.data.domain.Sort.by(
+                            org.springframework.data.domain.Sort.Direction.DESC, "timestamp"));
+
+            // Add to result map if metrics exist
+            if (!metrics.isEmpty()) {
+                applicationsWithLatestMetrics.put(application, metrics.getFirst());
+            }
+        }
+
+        return applicationsWithLatestMetrics;
+    }
 }

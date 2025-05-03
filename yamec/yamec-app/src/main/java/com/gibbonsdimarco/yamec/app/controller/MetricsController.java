@@ -2,9 +2,8 @@ package com.gibbonsdimarco.yamec.app.controller;
 
 import com.gibbonsdimarco.yamec.app.model.ApplicationMetricsData;
 import com.gibbonsdimarco.yamec.app.model.MetricsData;
-import com.gibbonsdimarco.yamec.app.model.mock.MockApplicationMetricsDataService;
 import com.gibbonsdimarco.yamec.app.model.mock.MockMetricsDataService;
-//import com.gibbonsdimarco.yamec.app.service.RealMetricsDataService;
+import com.gibbonsdimarco.yamec.app.service.ApplicationMetricsAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,13 +16,13 @@ import java.util.UUID;
 @Controller
 public class MetricsController {
     private final MockMetricsDataService metricsDataService;
-    private final MockApplicationMetricsDataService applicationMetricsDataService;
+    private final ApplicationMetricsAdapter applicationMetricsAdapter;
 
     @Autowired
     public MetricsController(MockMetricsDataService metricsDataService, 
-                            MockApplicationMetricsDataService applicationMetricsDataService) {
+                            ApplicationMetricsAdapter applicationMetricsAdapter) {
         this.metricsDataService = metricsDataService;
-        this.applicationMetricsDataService = applicationMetricsDataService;
+        this.applicationMetricsAdapter = applicationMetricsAdapter;
     }
 
     @GetMapping("/")
@@ -34,7 +33,7 @@ public class MetricsController {
 
     @GetMapping("/applications")
     public String getApplicationMetricsPage(Model model) {
-        model.addAttribute("appMetrics", applicationMetricsDataService.getCurrentApplicationMetrics());
+        model.addAttribute("appMetrics", applicationMetricsAdapter.getCurrentApplicationMetrics());
         return "applications";
     }
 
@@ -47,12 +46,12 @@ public class MetricsController {
     @GetMapping("/api/applications")
     @ResponseBody
     public ApplicationMetricsData.ApplicationMetricsDataList getApplicationMetricsApi() {
-        return applicationMetricsDataService.getCurrentApplicationMetrics();
+        return applicationMetricsAdapter.getCurrentApplicationMetrics();
     }
 
     @GetMapping("/api/applications/{id}")
     @ResponseBody
     public ApplicationMetricsData getApplicationMetricsById(@PathVariable("id") UUID id) {
-        return applicationMetricsDataService.getApplicationMetricsById(id);
+        return applicationMetricsAdapter.getApplicationMetricsById(id);
     }
 }
