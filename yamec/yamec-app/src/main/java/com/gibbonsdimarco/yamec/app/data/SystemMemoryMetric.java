@@ -37,19 +37,19 @@ public class SystemMemoryMetric extends SystemDeviceMetric implements Serializab
      * The average amount of virtual memory in bytes used by the entire system within the measured timespan
      */
     @Column(name = "average_virtual_utilization")
-    private double averageVirtualUtilization;
+    private long averageVirtualUtilization;
 
     /**
      * The maximum amount of virtual memory in bytes used by the entire system within the measured timespan
      */
     @Column(name = "max_virtual_utilization")
-    private double maxVirtualUtilization;
+    private long maxVirtualUtilization;
 
     /**
      * The minimum amount of virtual memory in bytes used by the entire system within the measured timespan
      */
     @Column(name = "min_virtual_utilization")
-    private double minVirtualUtilization;
+    private long minVirtualUtilization;
 
     /**
      * Whether the <code>physicalUtilization</code> should be represented using an
@@ -107,9 +107,9 @@ public class SystemMemoryMetric extends SystemDeviceMetric implements Serializab
     }
 
     public SystemMemoryMetric(Integer duration, UUID granularityId,
-                              Long averagePhysicalUtilization,
-                              Long maxPhysicalUtilization,
-                              Long minPhysicalUtilization) {
+                              long averagePhysicalUtilization,
+                              long maxPhysicalUtilization,
+                              long minPhysicalUtilization) {
         super(duration, granularityId);
         this.averagePhysicalUtilization = averagePhysicalUtilization;
         this.maxPhysicalUtilization = maxPhysicalUtilization;
@@ -118,10 +118,11 @@ public class SystemMemoryMetric extends SystemDeviceMetric implements Serializab
         this.virtualUtilizationIsUnsigned = true;
     }
 
-    public SystemMemoryMetric(Integer duration, UUID granularityId,
-                              Long averagePhysicalUtilization,
-                              Long maxPhysicalUtilization,
-                              Long minPhysicalUtilization, Timestamp timestamp) {
+    public SystemMemoryMetric(Timestamp timestamp, Integer duration,
+                              UUID granularityId,
+                              long averagePhysicalUtilization,
+                              long maxPhysicalUtilization,
+                              long minPhysicalUtilization) {
         super(duration, granularityId, timestamp);
         this.averagePhysicalUtilization = averagePhysicalUtilization;
         this.maxPhysicalUtilization = maxPhysicalUtilization;
@@ -131,12 +132,12 @@ public class SystemMemoryMetric extends SystemDeviceMetric implements Serializab
     }
 
     public SystemMemoryMetric(Integer duration, UUID granularityId,
-                              Long averagePhysicalUtilization,
-                              Long maxPhysicalUtilization,
-                              Long minPhysicalUtilization,
-                              Double averageVirtualUtilization,
-                              Double maxVirtualUtilization,
-                              Double minVirtualUtilization) {
+                              long averagePhysicalUtilization,
+                              long maxPhysicalUtilization,
+                              long minPhysicalUtilization,
+                              long averageVirtualUtilization,
+                              long maxVirtualUtilization,
+                              long minVirtualUtilization) {
         super(duration, granularityId);
         this.averagePhysicalUtilization = averagePhysicalUtilization;
         this.maxPhysicalUtilization = maxPhysicalUtilization;
@@ -148,14 +149,14 @@ public class SystemMemoryMetric extends SystemDeviceMetric implements Serializab
         this.virtualUtilizationIsUnsigned = true;
     }
 
-    public SystemMemoryMetric(Integer duration, UUID granularityId,
-                              Long averagePhysicalUtilization,
-                              Long maxPhysicalUtilization,
-                              Long minPhysicalUtilization,
-                              Double averageVirtualUtilization,
-                              Double maxVirtualUtilization,
-                              Double minVirtualUtilization,
-                              Timestamp timestamp) {
+    public SystemMemoryMetric(Timestamp timestamp,
+                              Integer duration, UUID granularityId,
+                              long averagePhysicalUtilization,
+                              long maxPhysicalUtilization,
+                              long minPhysicalUtilization,
+                              long averageVirtualUtilization,
+                              long maxVirtualUtilization,
+                              long minVirtualUtilization) {
         super(duration, granularityId, timestamp);
         this.averagePhysicalUtilization = averagePhysicalUtilization;
         this.maxPhysicalUtilization = maxPhysicalUtilization;
@@ -167,100 +168,26 @@ public class SystemMemoryMetric extends SystemDeviceMetric implements Serializab
         this.virtualUtilizationIsUnsigned = true;
     }
 
-    /* TODO: Add setters/getters and refactor below */
-
-//    /**
-//     * Returns the number of bytes of physical memory available on the device
-//     * when this SystemMemoryMetric was collected. This value returns signed
-//     *
-//     * @return A long integer containing the amount of physical memory available
-//     */
-//    public long getPhysicalMemoryAvailable() {
-//        return physicalMemoryAvailable;
-//    }
-//
-//    /**
-//     * Sets the number of bytes of physical memory available
-//     *
-//     * @param physicalMemoryAvailable The amount of physical memory available in bytes
-//     */
-//    public void setPhysicalMemoryAvailable(long physicalMemoryAvailable) {
-//        this.physicalMemoryAvailable = physicalMemoryAvailable;
-//    }
-//
-//    /**
-//     * Returns the number of bytes of physical memory available on the device
-//     * when this SystemMemoryMetric was collected as an unsigned String
-//     *
-//     * @return A String containing the amount of physical memory available,
-//     * unsigned
-//     */
-//    public String getPhysicalMemoryAvailableUnsigned() {
-//        return Long.toUnsignedString(physicalMemoryAvailable);
-//    }
-//
-//    /**
-//     * Returns the number of bytes of virtual memory committed on the device
-//     * when this SystemMemoryMetric was collected. This value returns signed
-//     *
-//     * @return A long integer containing the amount of virtual memory committed
-//     */
-//    public long getVirtualMemoryCommitted() {
-//        return virtualMemoryCommitted;
-//    }
-//
-//    /**
-//     * Sets the number of bytes of virtual memory committed
-//     *
-//     * @param virtualMemoryCommitted The amount of virtual memory committed in bytes
-//     */
-//    public void setVirtualMemoryCommitted(long virtualMemoryCommitted) {
-//        this.virtualMemoryCommitted = virtualMemoryCommitted;
-//    }
-//
-//    /**
-//     * Returns the number of bytes of virtual memory committed on the device
-//     * when this SystemMemoryMetric was collected as an unsigned String
-//     *
-//     * @return A String containing the amount of virtual memory committed,
-//     * unsigned
-//     */
-//    public String getVirtualMemoryCommittedUnsigned() {
-//        return Long.toUnsignedString(virtualMemoryCommitted);
-//    }
-//
-//    /**
-//     * Returns the percentage of committed virtual memory which is actively
-//     * in use when this SystemMemoryMetric was collected as a double
-//     *
-//     * @return A double containing the percentage of virtual memory committed
-//     */
-//    public double getCommittedVirtualMemoryUsage() {
-//        return committedVirtualMemoryUsage;
-//    }
-//
-//    /**
-//     * Sets the percentage of committed virtual memory in use
-//     *
-//     * @param committedVirtualMemoryUsage The percentage of virtual memory in use
-//     */
-//    public void setCommittedVirtualMemoryUsage(double committedVirtualMemoryUsage) {
-//        this.committedVirtualMemoryUsage = committedVirtualMemoryUsage;
-//    }
-//
-//    /**
-//     * Calculates the number of bytes of virtual memory in use (treating the numbers as signed)
-//     * by multiplying the amount of memory committed to the page file/virtual memory by the
-//     * percent of that memory in use. It is then returned as a double rounded up to the next
-//     * full number of bytes
-//     *
-//     * @return A double containing the number of bytes of virtual memory in use
-//     */
-//    public double getCommittedVirtualMemoryBytes() {
-//        // Calculate the actual virtual memory use from the amount of committed memory used.
-//        return Math.ceil(this.getVirtualMemoryCommitted()
-//                * this.getCommittedVirtualMemoryUsage());
-//    }
+    public SystemMemoryMetric(Timestamp timestamp,
+                              Integer duration, UUID granularityId,
+                              long averagePhysicalUtilization,
+                              long maxPhysicalUtilization,
+                              long minPhysicalUtilization,
+                              long averageVirtualUtilization,
+                              long maxVirtualUtilization,
+                              long minVirtualUtilization,
+                              boolean physicalUtilizationIsUnsigned,
+                              boolean virtualUtilizationIsUnsigned) {
+        super(duration, granularityId, timestamp);
+        this.averagePhysicalUtilization = averagePhysicalUtilization;
+        this.maxPhysicalUtilization = maxPhysicalUtilization;
+        this.minPhysicalUtilization = minPhysicalUtilization;
+        this.averageVirtualUtilization = averageVirtualUtilization;
+        this.maxVirtualUtilization = maxVirtualUtilization;
+        this.minVirtualUtilization = minVirtualUtilization;
+        this.physicalUtilizationIsUnsigned = physicalUtilizationIsUnsigned;
+        this.virtualUtilizationIsUnsigned = virtualUtilizationIsUnsigned;
+    }
 
     public long getAveragePhysicalUtilization() {
         return averagePhysicalUtilization;
@@ -286,27 +213,27 @@ public class SystemMemoryMetric extends SystemDeviceMetric implements Serializab
         this.minPhysicalUtilization = minPhysicalUtilization;
     }
 
-    public double getAverageVirtualUtilization() {
+    public long getAverageVirtualUtilization() {
         return averageVirtualUtilization;
     }
 
-    public void setAverageVirtualUtilization(double averageVirtualUtilization) {
+    public void setAverageVirtualUtilization(long averageVirtualUtilization) {
         this.averageVirtualUtilization = averageVirtualUtilization;
     }
 
-    public double getMaxVirtualUtilization() {
+    public long getMaxVirtualUtilization() {
         return maxVirtualUtilization;
     }
 
-    public void setMaxVirtualUtilization(double maxVirtualUtilization) {
+    public void setMaxVirtualUtilization(long maxVirtualUtilization) {
         this.maxVirtualUtilization = maxVirtualUtilization;
     }
 
-    public double getMinVirtualUtilization() {
+    public long getMinVirtualUtilization() {
         return minVirtualUtilization;
     }
 
-    public void setMinVirtualUtilization(double minVirtualUtilization) {
+    public void setMinVirtualUtilization(long minVirtualUtilization) {
         this.minVirtualUtilization = minVirtualUtilization;
     }
 

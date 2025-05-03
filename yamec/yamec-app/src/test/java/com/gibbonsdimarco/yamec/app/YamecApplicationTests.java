@@ -551,7 +551,7 @@ class YamecApplicationTests {
                 System.err.println("Memory Information:");
                 System.err.printf("\tPhysical Memory Used : %s bytes\n",
                         memoryMetrics.getAveragePhysicalUtilization());
-                System.err.printf("\tVirtual Memory Used: ~%.0f bytes\n",
+                System.err.printf("\tVirtual Memory Used: ~%d bytes\n",
                         memoryMetrics.getAverageVirtualUtilization());
             }
             else {
