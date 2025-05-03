@@ -20,6 +20,13 @@ public class SystemNicMetric extends SystemDeviceMetric {
     @Transient
     private String deviceName;
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "nic_id", nullable = false,
+            foreignKey = @ForeignKey(name="fk_nic_hardware_information"))
+    private NicHardwareInformation nic;
+
+
     /**
      * The number of bits sent per second currently supported
      * on the device (at the time of metrics collection)
@@ -328,5 +335,13 @@ public class SystemNicMetric extends SystemDeviceMetric {
 
     public void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
+    }
+
+    public NicHardwareInformation getNic() {
+        return nic;
+    }
+
+    public void setNic(NicHardwareInformation nic) {
+        this.nic = nic;
     }
 }

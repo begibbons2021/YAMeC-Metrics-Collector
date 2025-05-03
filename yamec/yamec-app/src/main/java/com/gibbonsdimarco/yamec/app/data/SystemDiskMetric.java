@@ -1,7 +1,9 @@
 package com.gibbonsdimarco.yamec.app.data;
 
+import com.gibbonsdimarco.yamec.app.service.DiskHardwareInformationService;
 import jakarta.persistence.*;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 /**
@@ -21,6 +23,11 @@ public class SystemDiskMetric extends SystemDeviceMetric {
      */
     @Transient
     private String deviceName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "disk_id", nullable = false,
+            foreignKey = @ForeignKey(name="fk_disk_hardware_information"))
+    private DiskHardwareInformation disk;
 
     /**
      * The percentage of total disk utilization for the device,
@@ -182,8 +189,8 @@ public class SystemDiskMetric extends SystemDeviceMetric {
         this.writeBandwidthIsUnsigned = writeBandwidthIsUnsigned;
     }
 
-    public SystemDiskMetric(Integer duration, UUID granularityId,
-                            String deviceName,
+    public SystemDiskMetric(Timestamp timestamp, Integer duration,
+                            UUID granularityId,
                             double avgUtilization,
                             double maxUtilization,
                             double minUtilization,
@@ -193,9 +200,11 @@ public class SystemDiskMetric extends SystemDeviceMetric {
                             long avgWriteBandwidth,
                             long maxWriteBandwidth,
                             long minWriteBandwidth,
-                            long avgTimeToTransfer,
-                            long maxTimeToTransfer,
-                            long minTimeToTransfer) {
+                            double avgTimeToTransfer,
+                            double maxTimeToTransfer,
+                            double minTimeToTransfer,
+                            boolean readBandwidthIsUnsigned,
+                            boolean writeBandwidthIsUnsigned) {
         super(duration, granularityId);
         this.deviceName = deviceName;
 
@@ -214,6 +223,9 @@ public class SystemDiskMetric extends SystemDeviceMetric {
         this.avgTimeToTransfer = avgTimeToTransfer;
         this.maxTimeToTransfer = maxTimeToTransfer;
         this.minTimeToTransfer = minTimeToTransfer;
+
+        this.readBandwidthIsUnsigned = readBandwidthIsUnsigned;
+        this.writeBandwidthIsUnsigned = writeBandwidthIsUnsigned;
     }
 
     public SystemDiskMetric() {
@@ -430,5 +442,13 @@ public class SystemDiskMetric extends SystemDeviceMetric {
 
     public void setMinTimeToTransfer(double minTimeToTransfer) {
         this.minTimeToTransfer = minTimeToTransfer;
+    }
+
+    public DiskHardwareInformation getDisk() {
+        return disk;
+    }
+
+    public void setDisk(DiskHardwareInformation disk) {
+        this.disk = disk;
     }
 }

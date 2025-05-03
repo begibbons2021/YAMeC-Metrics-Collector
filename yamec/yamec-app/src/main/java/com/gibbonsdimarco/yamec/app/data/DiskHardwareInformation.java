@@ -70,7 +70,7 @@ public class DiskHardwareInformation implements Serializable {
      * The partitions (drive letters, system paths, etc.) associated
      * with the Disk Device this DiskHardwareInformation object pertains to
      */
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "disk_partitions", joinColumns = @JoinColumn(name = "disk_id"))
     @Column(name = "partition")
     private List<String> partitions;
@@ -195,6 +195,15 @@ public class DiskHardwareInformation implements Serializable {
     public void setPartitions(List<String> partitions) {
         this.partitions.clear();
         this.partitions.addAll(partitions);
+    }
+
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
 }
