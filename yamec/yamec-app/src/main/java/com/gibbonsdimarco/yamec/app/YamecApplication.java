@@ -357,6 +357,7 @@ public class YamecApplication {
         CpuHardwareInformation cpu = null;
         MemoryHardwareInformation memory = null;
         java.util.List<DiskHardwareInformation> disks = new ArrayList<>();
+        java.util.List<NicHardwareInformation> nics = new ArrayList<>();
         try {
 
             cpu = monitor.getCpuHardwareInformation();
@@ -397,13 +398,13 @@ public class YamecApplication {
 
         try {
 
-            java.util.ArrayList<NicHardwareInformation> nicDevices = monitor.getNicHardwareInformation();
+            nics = monitor.getNicHardwareInformation();
             logger.info("NIC Hardware Information:");
-            for (NicHardwareInformation nicDevice : nicDevices) {
+            for (NicHardwareInformation nicDevice : nics) {
                 logger.info(nicDevice.toString());
             }
 
-            nicHardwareService.saveNicInformation(nicDevices);
+            nics = nicHardwareService.saveNicInformation(nics);
 
         } catch (Exception e) {
             logger.error("Failed to save NIC Hardware Information to database.", e);
@@ -417,6 +418,7 @@ public class YamecApplication {
             SystemCpuMetric cpuMetric1 = monitor.getCpuMetrics();
             SystemMemoryMetric memoryMetric1 = monitor.getMemoryMetrics();
             java.util.List<SystemDiskMetric> diskMetricList = monitor.getDiskMetrics();
+            java.util.List<SystemNicMetric> nicMetricList = monitor.getNicMetrics();
             Timestamp startTimestamp = new Timestamp(System.currentTimeMillis());
 
             for (ProcessMetric processMetric : processMetricList) {
@@ -443,6 +445,11 @@ public class YamecApplication {
                     diskMetric.setTimestamp(startTimestamp);
                 }
             }
+            if (nicMetricList != null) {
+                for (SystemNicMetric nicMetric : nicMetricList) {
+                    nicMetric.setTimestamp(startTimestamp);
+                }
+            }
 
             Thread.sleep(1000);
             monitor.collectCounterData();
@@ -451,6 +458,7 @@ public class YamecApplication {
             SystemCpuMetric cpuMetric2 = monitor.getCpuMetrics();
             SystemMemoryMetric memoryMetric2 = monitor.getMemoryMetrics();
             java.util.List<SystemDiskMetric> diskMetrics2 = monitor.getDiskMetrics();
+            java.util.List<SystemNicMetric> nicMetrics2 = monitor.getNicMetrics();
             Timestamp endTimestamp = new Timestamp(System.currentTimeMillis());
 
             for (ProcessMetric processMetric : processMetricList2) {
@@ -481,6 +489,16 @@ public class YamecApplication {
                     diskMetricList.add(diskMetric);
                 }
             }
+            if (nicMetrics2 != null) {
+                if (nicMetricList == null) {
+                    nicMetricList = new ArrayList<>();
+                }
+
+                for (SystemNicMetric nicMetric : nicMetrics2) {
+                    nicMetric.setTimestamp(endTimestamp);
+                    nicMetricList.add(nicMetric);
+                }
+            }
 
             processMetricList.addAll(processMetricList2);
 
@@ -491,6 +509,7 @@ public class YamecApplication {
             cpuHardwareService.saveCpuMetrics(cpuMetrics, startTimestamp, duration);
             memoryHardwareService.saveMemoryMetrics(memoryMetrics, startTimestamp, duration);
             diskHardwareService.saveDiskMetrics(diskMetricList, startTimestamp, duration, disks);
+            nicHardwareService.saveNicMetrics(nicMetricList, startTimestamp, duration, nics);
 
         } catch (Exception e) {
             logger.error("Failed to save metrics data to database.\n", e);
