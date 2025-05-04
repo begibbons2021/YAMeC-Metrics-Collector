@@ -314,48 +314,51 @@ public class DiskHardwareInformationService {
         // If we collect metrics every second and collect hardware data every minute,
         // drive letters and numbers could change!
         for (SystemDiskMetric metric : diskMetrics) {
-            // Skip metrics without a device/friendly name
-            if (metric.getDeviceName().trim().isEmpty()) {
-                continue;
-            }
+            // Identify the disk if there is not one already associated with the metric directly
+            if (metric.getDisk() == null) {
+                // Skip metrics without a device/friendly name
+                if (metric.getDeviceName().trim().isEmpty()) {
+                    continue;
+                }
 
-            String[] deviceNameSplit = metric.getDeviceName().split(" ");
-            Long diskNumber = null;
+                String[] deviceNameSplit = metric.getDeviceName().split(" ");
+                Long diskNumber = null;
 
-            // Attempt to get the disk number from the metric collected
-            try {
-                diskNumber = Long.parseLong(deviceNameSplit[0]);
-            } catch (NumberFormatException e) {
-                // Skip if it can't be extracted
-                continue;
-            }
+                // Attempt to get the disk number from the metric collected
+                try {
+                    diskNumber = Long.parseLong(deviceNameSplit[0]);
+                } catch (NumberFormatException e) {
+                    // Skip if it can't be extracted
+                    continue;
+                }
 
-            // Map the metric to a disk based on which disks are connected to the system
-            // and their partitions
-            for (DiskHardwareInformation disk : currentDisks) {
-                java.util.List<String> partitions = disk.getPartitions();
-                boolean hasMatchingPartitions = true;
+                // Map the metric to a disk based on which disks are connected to the system
+                // and their partitions
+                for (DiskHardwareInformation disk : currentDisks) {
+                    java.util.List<String> partitions = disk.getPartitions();
+                    boolean hasMatchingPartitions = true;
 
-                // Check for matching disk number
-                if (disk.getDiskNumber() == diskNumber) {
+                    // Check for matching disk number
+                    if (disk.getDiskNumber() == diskNumber) {
 
-                    // Check each partition on the disk to ensure the disk metric lists all of them
-                    // Since PhysicalDisk doesn't get the friendly name of disks on Windows,
-                    // this is an extra check to ensure metrics match up
-                    for (int diskNumIndex  = 1; diskNumIndex < deviceNameSplit.length; diskNumIndex++) {
-                        if (!partitions.contains(deviceNameSplit[diskNumIndex].substring(0, 1))) {
-                            hasMatchingPartitions = false;
-                            break;
+                        // Check each partition on the disk to ensure the disk metric lists all of them
+                        // Since PhysicalDisk doesn't get the friendly name of disks on Windows,
+                        // this is an extra check to ensure metrics match up
+                        for (int diskNumIndex  = 1; diskNumIndex < deviceNameSplit.length; diskNumIndex++) {
+                            if (!partitions.contains(deviceNameSplit[diskNumIndex].substring(0, 1))) {
+                                hasMatchingPartitions = false;
+                                break;
+                            }
                         }
-                    }
 
-                    // If all partitions match, then we can set the disk of the metric
-                    if (hasMatchingPartitions) {
-                        metric.setDisk(disk);
+                        // If all partitions match, then we can set the disk of the metric
+                        if (hasMatchingPartitions) {
+                            metric.setDisk(disk);
+                        }
+
                     }
 
                 }
-
             }
 
             // If there is a matching disk, we're safe to record to the database
