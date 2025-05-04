@@ -8,14 +8,22 @@ import jakarta.websocket.OnClose;
 import jakarta.websocket.OnOpen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.thymeleaf.context.WebContext;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +37,6 @@ public class YamecApplication {
 
     private static File yamecHome;
 
-    @Value("${server.port}")
     private static int serverPort;
 
     /**
@@ -40,6 +47,7 @@ public class YamecApplication {
      * and exits gracefully.</p>
      */
     private static void setupApplicationFileSystem() {
+        System.setProperty("java.awt.headless", "false");
         yamecHome = new File(System.getProperty("user.home") + "/.yamec-home");
 
         logger.info("SETUP - Attempting to access YAMeC Home directory: {}", yamecHome);
@@ -87,6 +95,7 @@ public class YamecApplication {
 
 
         logger.info("SETUP - YAMeC Home directory found and loaded successfully: {}", yamecHome);
+        System.setProperty("java.awt.headless", "true");
 
     }
 
@@ -114,6 +123,7 @@ public class YamecApplication {
 
         if (monitor == null) {
             logger.error("SETUP - Exiting due to application setup failure (cannot initialize system monitor).");
+            System.setProperty("java.awt.headless", "false");
             JOptionPane.showMessageDialog(null, """
                     YAMeC cannot be loaded because it could not load the system monitoring\
                     components.
@@ -128,7 +138,7 @@ public class YamecApplication {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             logger.error("""
-                    SETUP - System Monitor - The timer to wait to collect data\
+                   SETUP - System Monitor - The timer to wait to collect data\
                     from the SystemMonitorManager was interrupted.""");
         }
 
@@ -145,6 +155,7 @@ public class YamecApplication {
             for (int i = 0; i < stackTraceElements.length; i++) {
                 logger.error("SETUP - System Monitor Test Stack Trace [{}]: {}", i + 1, stackTraceElements[i]);
             }
+            System.setProperty("java.awt.headless", "false");
             // Exit with error message
             JOptionPane.showMessageDialog(null, """
                     YAMeC cannot be loaded because the system monitoring components\
@@ -302,6 +313,8 @@ public class YamecApplication {
         // Start Spring application first, so beans are available
         context = SpringApplication.run(YamecApplication.class, args);
 
+        serverPort = context.getBean(ServerProperties.class).getPort();
+
         // Get monitor bean from Spring context and initialize it
         initializeSystemMonitorManager(context);
 
@@ -309,20 +322,23 @@ public class YamecApplication {
         logger.info("User home directory: {}", System.getProperty("user.home"));
 //        testSystemMonitorManager();
         logger.info("Yamec Application Started");
-        Desktop desk = Desktop.getDesktop();
 
         // now we enter our URL that we want to open in our
         // default browser
+        System.setProperty("java.awt.headless", "false");
         try {
+            Desktop desk = Desktop.getDesktop();
             desk.browse(new URI("http://localhost:" + serverPort + "/"));
-        } catch (IOException | URISyntaxException e) {
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
-                        String.format("""
+                    String.format("""
                         YAMeC started successfully, but the default browser could not be opened.
                         To view system metrics, please open the following URL in your browser: \
                         http://localhost:%d/""", serverPort),
                     "YAMeC", JOptionPane.WARNING_MESSAGE);
         }
+        System.setProperty("java.awt.headless", "true");
+
 
     }
 
