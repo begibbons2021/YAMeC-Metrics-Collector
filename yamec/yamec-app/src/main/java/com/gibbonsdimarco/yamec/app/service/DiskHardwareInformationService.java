@@ -2,7 +2,6 @@ package com.gibbonsdimarco.yamec.app.service;
 
 import com.gibbonsdimarco.yamec.app.data.DiskHardwareInformation;
 import com.gibbonsdimarco.yamec.app.data.SystemDiskMetric;
-import com.gibbonsdimarco.yamec.app.data.SystemMemoryMetric;
 import com.gibbonsdimarco.yamec.app.repository.DiskHardwareInformationRepository;
 import com.gibbonsdimarco.yamec.app.repository.GranularityRepository;
 import com.gibbonsdimarco.yamec.app.repository.SystemDiskMetricRepository;
@@ -10,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -419,6 +419,21 @@ public class DiskHardwareInformationService {
                                 org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC,
                                         "id")))
                 .getContent();
+    }
+
+    public java.util.List<SystemDiskMetric>
+                getLatestDiskMetrics(java.util.List<DiskHardwareInformation> diskDevices) {
+        List<SystemDiskMetric> diskMetrics = new java.util.ArrayList<>();
+
+        for (DiskHardwareInformation diskHardwareInformation : diskDevices) {
+            SystemDiskMetric diskMetric
+                    = diskMetricRepository.getNewestByDiskId(diskHardwareInformation.getId());
+            if (diskMetric != null) {
+                diskMetrics.add(diskMetric);
+            }
+        }
+
+        return diskMetrics;
     }
 
     // Other service methods as needed

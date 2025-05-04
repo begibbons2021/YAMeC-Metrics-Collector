@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -199,6 +200,22 @@ public class CpuHardwareInformationService {
                                         "id")))
                 .getContent();
     }
+
+    public java.util.List<SystemCpuMetric>
+                getLatestCpuMetrics(java.util.List<CpuHardwareInformation> cpuDevices) {
+        List<SystemCpuMetric> cpuMetrics = new java.util.ArrayList<>();
+
+        for (CpuHardwareInformation cpuHardwareInformation : cpuDevices) {
+            SystemCpuMetric cpuMetric
+                    = systemCpuMetricRepository.getNewestByCpuId(cpuHardwareInformation.getId());
+            if (cpuMetric != null) {
+                cpuMetrics.add(cpuMetric);
+            }
+        }
+
+        return cpuMetrics;
+    }
+
 
     // Other service methods as needed
 }

@@ -1,6 +1,8 @@
 package com.gibbonsdimarco.yamec.app.service;
 
+import com.gibbonsdimarco.yamec.app.data.CpuHardwareInformation;
 import com.gibbonsdimarco.yamec.app.data.NicHardwareInformation;
+import com.gibbonsdimarco.yamec.app.data.SystemCpuMetric;
 import com.gibbonsdimarco.yamec.app.data.SystemNicMetric;
 import com.gibbonsdimarco.yamec.app.repository.GranularityRepository;
 import com.gibbonsdimarco.yamec.app.repository.NicHardwareInformationRepository;
@@ -315,6 +317,21 @@ public class NicHardwareInformationService {
                                 org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC,
                                         "id")))
                 .getContent();
+    }
+
+    public List<SystemNicMetric>
+                getLatestNicMetrics(List<NicHardwareInformation> nicDevices) {
+        List<SystemNicMetric> nicMetrics = new ArrayList<>();
+
+        for (NicHardwareInformation nicHardwareInformation : nicDevices) {
+            SystemNicMetric nicMetric
+                    = nicMetricRepository.getNewestByNicId(nicHardwareInformation.getId());
+            if (nicMetric != null) {
+                nicMetrics.add(nicMetric);
+            }
+        }
+
+        return nicMetrics;
     }
 
     // Other service methods as needed

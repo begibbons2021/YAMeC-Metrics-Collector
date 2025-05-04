@@ -1,8 +1,6 @@
 package com.gibbonsdimarco.yamec.app.service;
 
-import com.gibbonsdimarco.yamec.app.data.CpuHardwareInformation;
-import com.gibbonsdimarco.yamec.app.data.MemoryHardwareInformation;
-import com.gibbonsdimarco.yamec.app.data.SystemMemoryMetric;
+import com.gibbonsdimarco.yamec.app.data.*;
 import com.gibbonsdimarco.yamec.app.repository.CpuHardwareInformationRepository;
 import com.gibbonsdimarco.yamec.app.repository.GranularityRepository;
 import com.gibbonsdimarco.yamec.app.repository.MemoryHardwareInformationRepository;
@@ -271,6 +269,22 @@ public class MemoryHardwareInformationService {
                                 org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC,
                                         "id")))
                 .getContent();
+    }
+
+
+    public List<SystemMemoryMetric>
+                getLatestMemoryMetrics(List<MemoryHardwareInformation> memoryDevices) {
+        List<SystemMemoryMetric> memoryMetrics = new ArrayList<>();
+
+        for (MemoryHardwareInformation memoryHardwareInformation : memoryDevices) {
+            SystemMemoryMetric memoryMetric
+                    = memoryMetricRepository.getNewestByMemoryId(memoryHardwareInformation.getId());
+            if (memoryMetric != null) {
+                memoryMetrics.add(memoryMetric);
+            }
+        }
+
+        return memoryMetrics;
     }
 
     // Other service methods as needed
