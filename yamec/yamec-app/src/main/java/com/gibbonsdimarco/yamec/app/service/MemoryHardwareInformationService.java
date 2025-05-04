@@ -25,7 +25,8 @@ public class MemoryHardwareInformationService {
 
     @Autowired
     public MemoryHardwareInformationService(SystemMemoryMetricRepository memoryMetricRepository,
-                                            MemoryHardwareInformationRepository memoryHardwareInformationRepository, GranularityRepository granularityRepository) {
+                                            MemoryHardwareInformationRepository memoryHardwareInformationRepository,
+                                            GranularityRepository granularityRepository) {
         this.memoryMetricRepository = memoryMetricRepository;
         this.memoryHardwareInformationRepository = memoryHardwareInformationRepository;
         this.granularityRepository = granularityRepository;
