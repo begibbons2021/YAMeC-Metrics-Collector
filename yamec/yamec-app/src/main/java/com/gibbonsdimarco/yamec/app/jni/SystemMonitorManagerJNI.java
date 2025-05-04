@@ -1,4 +1,5 @@
 package com.gibbonsdimarco.yamec.app.jni;
+
 import com.gibbonsdimarco.yamec.app.data.*;
 import com.github.fommil.jni.JniLoader;
 import jakarta.annotation.PostConstruct;
@@ -8,23 +9,29 @@ import jakarta.websocket.OnClose;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.ArrayList;
+
+
 /**
  * TODO:
  * This class should never be instantiated more than once! It will fail to run if it is
  * re-initiated due to a native dependency's behavior.
  */
-@Service
+//@Service
 public class SystemMonitorManagerJNI implements AutoCloseable {
     private static final Logger logger = LoggerFactory.getLogger(SystemMonitorManagerJNI.class);
 
-    static {
-        try {
-            JniLoader.load("native/windows/x64/yamecjni.dll");
-            initLogger(logger);
-        } catch (UnsatisfiedLinkError e) {
-            logger.error("Native code library failed to load", e);
-        }
-    }
+//    static {
+//        try {
+//            JniLoader.load("native/windows/x64/yamecjni.dll");
+//            initLogger(logger);
+//        } catch (UnsatisfiedLinkError e) {
+//            logger.error("Native code library failed to load", e);
+//        }
+//    }
 
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,27 +40,41 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
 
     private long monitorAddress = -1;
     private boolean closed = false;
+    private final ExecutorService jniExecutor = Executors.newSingleThreadExecutor();
 
     /**
      * Instantiates the System Monitor Manager.
      *
      * @throws RuntimeException If the System Monitor Manager cannot be instantiated
-     * via the JNI call to native code
-     *
+     *                          via the JNI call to native code
      */
-    public SystemMonitorManagerJNI()
-    {
-        long ptrAddress = initialize();
+    public SystemMonitorManagerJNI() {
+        try {
+            // Load the library and initialize everything in the executor thread
+            Future<?> loadFuture = jniExecutor.submit(() -> {
+                try {
+                    JniLoader.load("native/windows/x64/yamecjni.dll");
+                    initLogger(logger);
+                    long ptr = initialize();
+                    if (ptr == -1) {
+                        throw new RuntimeException("Failed to initialize native monitor");
+                    }
+                    return ptr;
+                } catch (UnsatisfiedLinkError e) {
+                    logger.error("Native code library failed to load", e);
+                    throw e;
+                }
+            });
 
-        if (ptrAddress == -1)
-        {
-            throw new RuntimeException("Unable to initialize system monitor manager");
+            // Wait for initialization to complete
+            monitorAddress = (Long) loadFuture.get();
+        } catch (Exception e) {
+            logger.error("Error initializing SystemMonitorManagerJNI", e);
+            throw new RuntimeException("Unable to initialize system monitor manager", e);
         }
-
-        this.monitorAddress = ptrAddress;
     }
 
-    @PostConstruct
+    //    @PostConstruct
     protected void initCollectCounterData() {
         int status = this.collectCounterData();
 
@@ -64,12 +85,20 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
 
     public int collectCounterData() {
         if (closed) {
-            logger.warn("Attempting to call SystemMonitorManagerJNI#collectCounterData() when closed");
-            return 0;
+            logger.warn("Attempt to collect counter data on closed SystemMonitorManagerJNI");
+            return -1;
         }
 
-        return collectCounterData(monitorAddress);
+        try {
+            // Run the native call on our dedicated thread for JNI operations
+            Future<Integer> future = jniExecutor.submit(() -> collectCounterData(monitorAddress));
+            return future.get(); // Wait for the result
+        } catch (Exception e) {
+            logger.error("Error collecting counter data", e);
+            return -1;
+        }
     }
+
 
     /**
      * Returns a boolean variable containing whether this SystemMonitorManager is closed
@@ -81,9 +110,9 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
     }
 
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Function Calls
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Function Calls
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * Releases the memory allocated to the native SystemMonitorManager
@@ -98,13 +127,23 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
             return;
         }
 
-        if (this.release(this.monitorAddress)) {
-            closed = true;
-        }
-        else {
-            throw new RuntimeException("Unable to release system monitor manager memory");
-        }
+        try {
+            Future<Boolean> future = jniExecutor.submit(() -> release(monitorAddress));
+            boolean success = future.get();
 
+            if (success) {
+                logger.info("Successfully released native resources");
+                closed = true;
+            } else {
+                logger.error("Failed to release native resources");
+                throw new RuntimeException("Unable to release system monitor manager memory");
+            }
+        } catch (Exception e) {
+            logger.error("Error while closing SystemMonitorManagerJNI", e);
+            throw new RuntimeException("Error releasing native resources", e);
+        } finally {
+            jniExecutor.shutdown();
+        }
     }
 
     /**
@@ -119,7 +158,13 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
             return null;
         }
 
-        return getCpuMetrics(this.monitorAddress);
+        try {
+            Future<SystemCpuMetric> future = jniExecutor.submit(() -> getCpuMetrics(monitorAddress));
+            return future.get();
+        } catch (Exception e) {
+            logger.error("Error getting CPU metrics", e);
+            return null;
+        }
     }
 
     /**
@@ -134,7 +179,13 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
             return null;
         }
 
-        return getGpuMetrics(this.monitorAddress);
+        try {
+            Future<SystemGpuMetric> future = jniExecutor.submit(() -> getGpuMetrics(monitorAddress));
+            return future.get();
+        } catch (Exception e) {
+            logger.error("Error getting GPU metrics", e);
+            return null;
+        }
     }
 
     /**
@@ -149,34 +200,58 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
             return null;
         }
 
-        return getMemoryMetrics(this.monitorAddress);
+        try {
+            Future<SystemMemoryMetric> future = jniExecutor.submit(() -> getMemoryMetrics(monitorAddress));
+            return future.get();
+        } catch (Exception e) {
+            logger.error("Error getting memory metrics", e);
+            return null;
+        }
     }
 
-    public java.util.ArrayList<SystemDiskMetric> getDiskMetrics() {
+    public ArrayList<SystemDiskMetric> getDiskMetrics() {
         if (closed) {
             logger.warn("Attempting to call SystemMonitorManagerJNI#getDiskMetrics() when closed");
             return null;
         }
 
-        return getDiskMetrics(this.monitorAddress);
+        try {
+            Future<ArrayList<SystemDiskMetric>> future = jniExecutor.submit(() -> getDiskMetrics(monitorAddress));
+            return future.get();
+        } catch (Exception e) {
+            logger.error("Error getting disk metrics", e);
+            return null;
+        }
     }
 
-    public java.util.ArrayList<SystemNicMetric> getNicMetrics() {
+    public ArrayList<SystemNicMetric> getNicMetrics() {
         if (closed) {
             logger.warn("Attempting to call SystemMonitorManagerJNI#getNicMetrics() when closed");
             return null;
         }
 
-        return getNicMetrics(this.monitorAddress);
+        try {
+            Future<ArrayList<SystemNicMetric>> future = jniExecutor.submit(() -> getNicMetrics(monitorAddress));
+            return future.get();
+        } catch (Exception e) {
+            logger.error("Error getting NIC metrics", e);
+            return null;
+        }
     }
 
-    public java.util.ArrayList<ProcessMetric> getProcessMetrics() {
+    public ArrayList<ProcessMetric> getProcessMetrics() {
         if (closed) {
             logger.warn("Attempting to call SystemMonitorManagerJNI#getProcessMetrics() when closed");
             return null;
         }
 
-        return getProcessMetrics(this.monitorAddress);
+        try {
+            Future<ArrayList<ProcessMetric>> future = jniExecutor.submit(() -> getProcessMetrics(monitorAddress));
+            return future.get();
+        } catch (Exception e) {
+            logger.error("Error getting process metrics", e);
+            return null;
+        }
     }
 
     public CpuHardwareInformation getCpuHardwareInformation() {
@@ -185,7 +260,13 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
             return null;
         }
 
-        return getHardwareCpuInformation(this.monitorAddress);
+        try {
+            Future<CpuHardwareInformation> future = jniExecutor.submit(() -> getHardwareCpuInformation(monitorAddress));
+            return future.get();
+        } catch (Exception e) {
+            logger.error("Error getting CPU hardware information", e);
+            return null;
+        }
     }
 
     public MemoryHardwareInformation getMemoryHardwareInformation() {
@@ -194,36 +275,55 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
             return null;
         }
 
-        return getHardwareMemoryInformation(this.monitorAddress);
+        try {
+            Future<MemoryHardwareInformation> future = jniExecutor.submit(() -> getHardwareMemoryInformation(monitorAddress));
+            return future.get();
+        } catch (Exception e) {
+            logger.error("Error getting memory hardware information", e);
+            return null;
+        }
     }
 
-    public java.util.ArrayList<DiskHardwareInformation> getDiskHardwareInformation() {
+    public ArrayList<DiskHardwareInformation> getDiskHardwareInformation() {
         if (closed) {
             logger.warn("Attempting to call SystemMonitorManagerJNI#getDiskHardwareInformation() when closed");
             return null;
         }
 
-        return getHardwareDiskInformation(this.monitorAddress);
+        try {
+            Future<ArrayList<DiskHardwareInformation>> future = jniExecutor.submit(() -> getHardwareDiskInformation(monitorAddress));
+            return future.get();
+        } catch (Exception e) {
+            logger.error("Error getting disk hardware information", e);
+            return null;
+        }
     }
 
-    public java.util.ArrayList<NicHardwareInformation> getNicHardwareInformation() {
+    public ArrayList<NicHardwareInformation> getNicHardwareInformation() {
         if (closed) {
             logger.warn("Attempting to call SystemMonitorManagerJNI#geNicHardwareInformation() when closed");
             return null;
         }
 
-        return getHardwareNicInformation(this.monitorAddress);
+        try {
+            Future<ArrayList<NicHardwareInformation>> future = jniExecutor.submit(() -> getHardwareNicInformation(monitorAddress));
+            return future.get();
+        } catch (Exception e) {
+            logger.error("Error getting NIC hardware information", e);
+            return null;
+        }
     }
 
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Native Calls
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Native Calls
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * A test function which prints "Hello World" from native code
      */
     private static native void initLogger(Object javaLogger);
+
     public native void sayHello();
 
     /**
@@ -270,39 +370,3 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
     private native boolean release(long ptr);
 
 }
-
-/*
- * Signatures:
- * public class com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI {
- *   public com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI();
- *     descriptor: ()V
- *
- *   public boolean isClosed();
- *     descriptor: ()Z
- *
- *   public boolean close();
- *     descriptor: ()Z
- *
- *   public com.gibbonsdimarco.yamec.app.data.SystemCpuMetric getCpuMetrics();
- *     descriptor: ()Lcom/gibbonsdimarco/yamec/app/data/SystemCpuMetric;
- *
- *   public com.gibbonsdimarco.yamec.app.data.SystemGpuMetric getGpuMetrics();
- *     descriptor: ()Lcom/gibbonsdimarco/yamec/app/data/SystemGpuMetric;
- *
- *   public java.util.ArrayList<com.gibbonsdimarco.yamec.app.data.SystemMemoryMetric> getMemoryMetrics();
- *     descriptor: ()Ljava/util/ArrayList;
- *
- *   public java.util.ArrayList<com.gibbonsdimarco.yamec.app.data.SystemDiskMetric> getDiskMetrics();
- *     descriptor: ()Ljava/util/ArrayList;
- *
- *   public java.util.ArrayList<com.gibbonsdimarco.yamec.app.data.SystemNicMetric> getNicMetrics();
- *     descriptor: ()Ljava/util/ArrayList;
- *
- *   public native void sayHello();
- *     descriptor: ()V
- *
- *   static {};
- *     descriptor: ()V
- * }
- *
- */

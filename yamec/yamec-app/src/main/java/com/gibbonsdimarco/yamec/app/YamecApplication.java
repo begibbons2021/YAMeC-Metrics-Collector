@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 @SpringBootApplication
+@EnableScheduling
 public class YamecApplication {
     private static final Logger logger = LoggerFactory.getLogger(YamecApplication.class);
 
@@ -27,7 +29,8 @@ public class YamecApplication {
 
     private static File yamecHome;
 
-    private static SystemMonitorManagerJNI monitor = null;
+    @Value("${server.port}")
+    private static int serverPort;
 
     /**
      * <p>Prepares the application to store all necessary files in the application home directory.</p>
@@ -44,33 +47,25 @@ public class YamecApplication {
         boolean homeDirectoryExists = yamecHome.exists();
         if (homeDirectoryExists) {
             if (!yamecHome.isDirectory()) {
-                logger.error("SETUP - Cannot create the YAMeC Home directory because "
-                        + "a file exists with the name 'yamec'.");
+                logger.error("SETUP - Cannot create the YAMeC Home directory because " + "a file exists with the name 'yamec'.");
                 logger.error("SETUP - Exiting due to application setup failure (cannot load home directory).");
-                JOptionPane.showMessageDialog(null,
-                        """
-                                YAMeC cannot be loaded because there is a file with the name '.yamec-home' \
-                                in your home directory.
-                                The file conflicts with the home directory of the application.
-                                Please delete or rename the file, then try running YAMeC again."""
-                        ,
-                        "YAMeC - Error Starting Up",
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, """
+                        YAMeC cannot be loaded because there is a file with the name '.yamec-home' \
+                        in your home directory.
+                        The file conflicts with the home directory of the application.
+                        Please delete or rename the file, then try running YAMeC again.""", "YAMeC - Error Starting Up", JOptionPane.ERROR_MESSAGE);
                 System.exit(-1);
             }
         }
 
         if (!homeDirectoryExists) {
             // Create the '.yamec-home' folder
-            logger.info("SETUP - No YAMeC Home directory found. Creating the YAMeC Home directory in: {}",
-                    yamecHome);
+            logger.info("SETUP - No YAMeC Home directory found. Creating the YAMeC Home directory in: {}", yamecHome);
             boolean directoryCreationSuccess = false;
             try {
                 directoryCreationSuccess = yamecHome.mkdir();
             } catch (Exception e) {
-                logger.error("SETUP - Creation of the YAMeC Home directory failed because "
-                                + "of an exception: {} - {}",
-                        e.getCause(), e.getMessage());
+                logger.error("SETUP - Creation of the YAMeC Home directory failed because " + "of an exception: {} - {}", e.getCause(), e.getMessage());
                 // Log stack trace contents
                 StackTraceElement[] stackTraceElements = e.getStackTrace();
                 logger.error("SETUP - Directory Creation Stack Trace [0]: ");
@@ -81,22 +76,17 @@ public class YamecApplication {
 
             if (!directoryCreationSuccess) {
                 logger.error("SETUP - Exiting due to application setup failure (cannot create home directory).");
-                JOptionPane.showMessageDialog(null,
-                        """
-                                YAMeC cannot be loaded because the '.yamec-home' directory could not be created \
-                                during first-time application setup.
-                                Please try running YAMeC again and ensure your anti-virus is not blocking \
-                                YAMeC from running and creating files."""
-                        ,
-                        "YAMeC - Error Starting Up",
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, """
+                        YAMeC cannot be loaded because the '.yamec-home' directory could not be created \
+                        during first-time application setup.
+                        Please try running YAMeC again and ensure your anti-virus is not blocking \
+                        YAMeC from running and creating files.""", "YAMeC - Error Starting Up", JOptionPane.ERROR_MESSAGE);
                 System.exit(-2);
             }
         }
 
 
-        logger.info("SETUP - YAMeC Home directory found and loaded successfully: {}",
-                yamecHome);
+        logger.info("SETUP - YAMeC Home directory found and loaded successfully: {}", yamecHome);
 
     }
 
@@ -104,13 +94,16 @@ public class YamecApplication {
      * Attempts to initialize the System Monitor component of YAMeC. If it cannot be initialized or appears
      * not to be initialized properly, the application will be exited.
      */
-    private static void initializeSystemMonitorManager() {
+    private static void initializeSystemMonitorManager(ApplicationContext context) {
+        SystemMonitorManagerJNI monitor = context.getBean(SystemMonitorManagerJNI.class);
         try {
-            System.err.println("Starting System Monitor Manager...");
-            monitor = new SystemMonitorManagerJNI();
+            System.err.println("Verifying System Monitor Manager...");
+            if (monitor == null) {
+                throw new NullPointerException("System Monitor Manager is null.");
+            }
+            System.err.println("System Monitor Manager Verified.");
         } catch (Exception e) {
-            logger.error("SETUP - Cannot load the SystemMonitorManager because of an exception: {} - {}",
-                    e.getCause(), e.getMessage());
+            logger.error("SETUP - Cannot load the SystemMonitorManager because of an exception: {} - {}", e.getCause(), e.getMessage());
             // Log stack trace contents
             StackTraceElement[] stackTraceElements = e.getStackTrace();
             logger.error("SETUP - Monitor Creation Stack Trace [0]: ");
@@ -121,15 +114,11 @@ public class YamecApplication {
 
         if (monitor == null) {
             logger.error("SETUP - Exiting due to application setup failure (cannot initialize system monitor).");
-            JOptionPane.showMessageDialog(null,
-                    """
-                            YAMeC cannot be loaded because it could not load the system monitoring\
-                            components.
-                            Please try running YAMeC again and ensure your anti-virus is not blocking\
-                            YAMeC from running and creating files."""
-                    ,
-                    "YAMeC - Error Starting Up",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, """
+                    YAMeC cannot be loaded because it could not load the system monitoring\
+                    components.
+                    Please try running YAMeC again and ensure your anti-virus is not blocking\
+                    YAMeC from running and creating files.""", "YAMeC - Error Starting Up", JOptionPane.ERROR_MESSAGE);
             System.exit(-3);
         }
 
@@ -146,12 +135,10 @@ public class YamecApplication {
         try {
             int dataCollectionSuccess = monitor.collectCounterData();
             if (dataCollectionSuccess != 0) {
-                logger.error("SETUP - System Monitor - Data collection failed with status code: {}",
-                        dataCollectionSuccess);
+                logger.error("SETUP - System Monitor - Data collection failed with status code: {}", dataCollectionSuccess);
             }
         } catch (Exception e) {
-            logger.error("SETUP - System Monitor - Cannot collect data because of an exception: {} - {}",
-                    e.getCause(), e.getMessage());
+            logger.error("SETUP - System Monitor - Cannot collect data because of an exception: {} - {}", e.getCause(), e.getMessage());
             // Log stack trace contents
             StackTraceElement[] stackTraceElements = e.getStackTrace();
             logger.error("SETUP - System Monitor Test Stack Trace [0]: ");
@@ -159,15 +146,11 @@ public class YamecApplication {
                 logger.error("SETUP - System Monitor Test Stack Trace [{}]: {}", i + 1, stackTraceElements[i]);
             }
             // Exit with error message
-            JOptionPane.showMessageDialog(null,
-                    """
-                            YAMeC cannot be loaded because the system monitoring components\
-                            are not working as expected.
-                            Please try running YAMeC again and ensure your anti-virus is not blocking\
-                            YAMeC from running and creating files."""
-                    ,
-                    "YAMeC - Error Starting Up",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, """
+                    YAMeC cannot be loaded because the system monitoring components\
+                    are not working as expected.
+                    Please try running YAMeC again and ensure your anti-virus is not blocking\
+                    YAMeC from running and creating files.""", "YAMeC - Error Starting Up", JOptionPane.ERROR_MESSAGE);
 
             System.exit(-4);
         }
@@ -183,28 +166,7 @@ public class YamecApplication {
      */
     @PreDestroy
     private static void cleanUp() {
-        if (monitor != null) {
-            try {
-                logger.info("CLEANUP - Closing the System Monitor... ");
-                monitor.close();
-            } catch (Exception e) {
-                logger.error("CLEANUP - Closure of the System Monitor Component failed because "
-                                + "of an exception: {} - {}",
-                        e.getCause(), e.getMessage());
-                // Log stack trace contents
-                StackTraceElement[] stackTraceElements = e.getStackTrace();
-                logger.error("CLEANUP - System Monitor Closure Stack Trace [0]: ");
-                for (int i = 0; i < stackTraceElements.length; i++) {
-                    logger.error("CLEANUP - System Monitor Closure Stack Trace [{}]: {}", i + 1, stackTraceElements[i]);
-                }
-            }
-
-            if (monitor.isOpen()) {
-                logger.warn("CLEANUP - The System Monitor component did not close properly.");
-                logger.warn("CLEANUP - This could be due to an unexpected error. ");
-                logger.warn("CLEANUP - There is a chance of a resource leak as a result.");
-            }
-        }
+        logger.info("CLEANUP - YamecApplication is shutting down...");
     }
 
 //    /**
@@ -336,165 +298,32 @@ public class YamecApplication {
 
     public static void main(String[] args) {
         setupApplicationFileSystem();
-        initializeSystemMonitorManager();
+
+        // Start Spring application first, so beans are available
+        context = SpringApplication.run(YamecApplication.class, args);
+
+        // Get monitor bean from Spring context and initialize it
+        initializeSystemMonitorManager(context);
+
 
         logger.info("User home directory: {}", System.getProperty("user.home"));
 //        testSystemMonitorManager();
-
-        context = SpringApplication.run(YamecApplication.class, args);
         logger.info("Yamec Application Started");
+        Desktop desk = Desktop.getDesktop();
 
-        CpuHardwareInformationService cpuHardwareService
-                = context.getBean(CpuHardwareInformationService.class);
-        MemoryHardwareInformationService memoryHardwareService
-                = context.getBean(MemoryHardwareInformationService.class);
-        DiskHardwareInformationService diskHardwareService
-                = context.getBean(DiskHardwareInformationService.class);
-        NicHardwareInformationService nicHardwareService
-                = context.getBean(NicHardwareInformationService.class);
-        ApplicationDataService applicationDataService = context.getBean(ApplicationDataService.class);
-
-        CpuHardwareInformation cpu = null;
-        MemoryHardwareInformation memory = null;
-        java.util.List<DiskHardwareInformation> disks = new ArrayList<>();
+        // now we enter our URL that we want to open in our
+        // default browser
         try {
-
-            cpu = monitor.getCpuHardwareInformation();
-            logger.info("CPU Hardware Information:{}", cpu.toString());
-
-
-            cpu = cpuHardwareService.saveCpuInformation(cpu);
-
-        } catch (Exception e) {
-            logger.error("Failed to save CPU Hardware Information to database.", e);
+            desk.browse(new URI("http://localhost:" + serverPort + "/"));
+        } catch (IOException | URISyntaxException e) {
+            JOptionPane.showMessageDialog(null,
+                        String.format("""
+                        YAMeC started successfully, but the default browser could not be opened.
+                        To view system metrics, please open the following URL in your browser: \
+                        http://localhost:%d/""", serverPort),
+                    "YAMeC", JOptionPane.WARNING_MESSAGE);
         }
 
-        try {
-
-            memory = monitor.getMemoryHardwareInformation();
-            logger.info("Memory Hardware Information:{}", memory.toString());
-
-
-            memory = memoryHardwareService.saveMemoryInformation(memory);
-
-        } catch (Exception e) {
-            logger.error("Failed to save Memory Hardware Information to database.", e);
-        }
-
-        try {
-
-            disks = monitor.getDiskHardwareInformation();
-            logger.info("Disk Hardware Information:");
-            for (DiskHardwareInformation disk : disks) {
-                logger.info(disk.toString());
-            }
-
-            disks = diskHardwareService.saveDiskInformation(disks);
-
-        } catch (Exception e) {
-            logger.error("Failed to save Disk Hardware Information to database.", e);
-        }
-
-        try {
-
-            java.util.ArrayList<NicHardwareInformation> nicDevices = monitor.getNicHardwareInformation();
-            logger.info("NIC Hardware Information:");
-            for (NicHardwareInformation nicDevice : nicDevices) {
-                logger.info(nicDevice.toString());
-            }
-
-            nicHardwareService.saveNicInformation(nicDevices);
-
-        } catch (Exception e) {
-            logger.error("Failed to save NIC Hardware Information to database.", e);
-        }
-
-
-        try {
-            ArrayList<ProcessMetric> processMetricList = monitor.getProcessMetrics();
-            ArrayList<SystemCpuMetric> cpuMetrics = new ArrayList<>();
-            ArrayList<SystemMemoryMetric> memoryMetrics = new ArrayList<>();
-            SystemCpuMetric cpuMetric1 = monitor.getCpuMetrics();
-            SystemMemoryMetric memoryMetric1 = monitor.getMemoryMetrics();
-            java.util.List<SystemDiskMetric> diskMetricList = monitor.getDiskMetrics();
-            Timestamp startTimestamp = new Timestamp(System.currentTimeMillis());
-
-            for (ProcessMetric processMetric : processMetricList) {
-                processMetric.setTimestamp(startTimestamp);
-            }
-            if (cpuMetric1 != null) {
-                cpuMetric1.setTimestamp(startTimestamp);
-                if (cpu != null) {
-                    cpuMetric1.setCpu(cpu);
-                }
-
-                cpuMetrics.add(cpuMetric1);
-            }
-            if (memoryMetric1 != null) {
-                memoryMetric1.setTimestamp(startTimestamp);
-                if (memory != null) {
-                    memoryMetric1.setMemory(memory);
-                }
-
-                memoryMetrics.add(memoryMetric1);
-            }
-            if (diskMetricList != null) {
-                for (SystemDiskMetric diskMetric : diskMetricList) {
-                    diskMetric.setTimestamp(startTimestamp);
-                }
-            }
-
-            Thread.sleep(1000);
-            monitor.collectCounterData();
-
-            ArrayList<ProcessMetric> processMetricList2 = monitor.getProcessMetrics();
-            SystemCpuMetric cpuMetric2 = monitor.getCpuMetrics();
-            SystemMemoryMetric memoryMetric2 = monitor.getMemoryMetrics();
-            java.util.List<SystemDiskMetric> diskMetrics2 = monitor.getDiskMetrics();
-            Timestamp endTimestamp = new Timestamp(System.currentTimeMillis());
-
-            for (ProcessMetric processMetric : processMetricList2) {
-                processMetric.setTimestamp(endTimestamp);
-            }
-            if (cpuMetric2 != null) {
-                cpuMetric2.setTimestamp(endTimestamp);
-                if (cpu != null) {
-                    cpuMetric2.setCpu(cpu);
-                }
-                cpuMetrics.add(cpuMetric2);
-            }
-            if (memoryMetric2 != null) {
-                memoryMetric2.setTimestamp(endTimestamp);
-                if (memory != null) {
-                    memoryMetric2.setMemory(memory);
-                }
-
-                memoryMetrics.add(memoryMetric2);
-            }
-            if (diskMetrics2 != null) {
-                if (diskMetricList == null) {
-                    diskMetricList = new ArrayList<>();
-                }
-
-                for (SystemDiskMetric diskMetric : diskMetrics2) {
-                    diskMetric.setTimestamp(endTimestamp);
-                    diskMetricList.add(diskMetric);
-                }
-            }
-
-            processMetricList.addAll(processMetricList2);
-
-
-            int duration = 2;
-
-            applicationDataService.saveApplicationMetrics(processMetricList, startTimestamp, duration);
-            cpuHardwareService.saveCpuMetrics(cpuMetrics, startTimestamp, duration);
-            memoryHardwareService.saveMemoryMetrics(memoryMetrics, startTimestamp, duration);
-            diskHardwareService.saveDiskMetrics(diskMetricList, startTimestamp, duration, disks);
-
-        } catch (Exception e) {
-            logger.error("Failed to save metrics data to database.\n", e);
-        }
     }
 
 }
