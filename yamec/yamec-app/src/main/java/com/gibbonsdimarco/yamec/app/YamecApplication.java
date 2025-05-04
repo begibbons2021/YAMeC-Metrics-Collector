@@ -1,32 +1,23 @@
 package com.gibbonsdimarco.yamec.app;
 
-import com.gibbonsdimarco.yamec.app.data.*;
 import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
-import com.gibbonsdimarco.yamec.app.service.*;
 import jakarta.annotation.PreDestroy;
-import jakarta.websocket.OnClose;
-import jakarta.websocket.OnOpen;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-import org.thymeleaf.context.WebContext;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
+
 
 @SpringBootApplication
 @EnableScheduling
@@ -61,7 +52,8 @@ public class YamecApplication {
                         YAMeC cannot be loaded because there is a file with the name '.yamec-home' \
                         in your home directory.
                         The file conflicts with the home directory of the application.
-                        Please delete or rename the file, then try running YAMeC again.""", "YAMeC - Error Starting Up", JOptionPane.ERROR_MESSAGE);
+                        Please delete or rename the file, then try running YAMeC again.""",
+                        "YAMeC - Error Starting Up", JOptionPane.ERROR_MESSAGE);
                 System.exit(-1);
             }
         }
@@ -73,7 +65,8 @@ public class YamecApplication {
             try {
                 directoryCreationSuccess = yamecHome.mkdir();
             } catch (Exception e) {
-                logger.error("SETUP - Creation of the YAMeC Home directory failed because " + "of an exception: {} - {}", e.getCause(), e.getMessage());
+                logger.error("SETUP - Creation of the YAMeC Home directory failed because "
+                                + "of an exception: {} - {}", e.getCause(), e.getMessage());
                 // Log stack trace contents
                 StackTraceElement[] stackTraceElements = e.getStackTrace();
                 logger.error("SETUP - Directory Creation Stack Trace [0]: ");
@@ -88,7 +81,8 @@ public class YamecApplication {
                         YAMeC cannot be loaded because the '.yamec-home' directory could not be created \
                         during first-time application setup.
                         Please try running YAMeC again and ensure your anti-virus is not blocking \
-                        YAMeC from running and creating files.""", "YAMeC - Error Starting Up", JOptionPane.ERROR_MESSAGE);
+                        YAMeC from running and creating files.""",
+                        "YAMeC - Error Starting Up", JOptionPane.ERROR_MESSAGE);
                 System.exit(-2);
             }
         }
@@ -112,7 +106,8 @@ public class YamecApplication {
             }
             System.err.println("System Monitor Manager Verified.");
         } catch (Exception e) {
-            logger.error("SETUP - Cannot load the SystemMonitorManager because of an exception: {} - {}", e.getCause(), e.getMessage());
+            logger.error("SETUP - Cannot load the SystemMonitorManager because of an exception: {} - {}",
+                            e.getCause(), e.getMessage());
             // Log stack trace contents
             StackTraceElement[] stackTraceElements = e.getStackTrace();
             logger.error("SETUP - Monitor Creation Stack Trace [0]: ");
@@ -128,7 +123,8 @@ public class YamecApplication {
                     YAMeC cannot be loaded because it could not load the system monitoring\
                     components.
                     Please try running YAMeC again and ensure your anti-virus is not blocking\
-                    YAMeC from running and creating files.""", "YAMeC - Error Starting Up", JOptionPane.ERROR_MESSAGE);
+                    YAMeC from running and creating files.""",
+                    "YAMeC - Error Starting Up", JOptionPane.ERROR_MESSAGE);
             System.exit(-3);
         }
 
@@ -145,10 +141,12 @@ public class YamecApplication {
         try {
             int dataCollectionSuccess = monitor.collectCounterData();
             if (dataCollectionSuccess != 0) {
-                logger.error("SETUP - System Monitor - Data collection failed with status code: {}", dataCollectionSuccess);
+                logger.error("SETUP - System Monitor - Data collection failed with status code: {}",
+                        dataCollectionSuccess);
             }
         } catch (Exception e) {
-            logger.error("SETUP - System Monitor - Cannot collect data because of an exception: {} - {}", e.getCause(), e.getMessage());
+            logger.error("SETUP - System Monitor - Cannot collect data because of an exception: {} - {}",
+                    e.getCause(), e.getMessage());
             // Log stack trace contents
             StackTraceElement[] stackTraceElements = e.getStackTrace();
             logger.error("SETUP - System Monitor Test Stack Trace [0]: ");
@@ -161,7 +159,8 @@ public class YamecApplication {
                     YAMeC cannot be loaded because the system monitoring components\
                     are not working as expected.
                     Please try running YAMeC again and ensure your anti-virus is not blocking\
-                    YAMeC from running and creating files.""", "YAMeC - Error Starting Up", JOptionPane.ERROR_MESSAGE);
+                    YAMeC from running and creating files.""",
+                    "YAMeC - Error Starting Up", JOptionPane.ERROR_MESSAGE);
 
             System.exit(-4);
         }
@@ -308,36 +307,69 @@ public class YamecApplication {
 
 
     public static void main(String[] args) {
-        setupApplicationFileSystem();
 
-        // Start Spring application first, so beans are available
-        context = SpringApplication.run(YamecApplication.class, args);
-
-        serverPort = context.getBean(ServerProperties.class).getPort();
-
-        // Get monitor bean from Spring context and initialize it
-        initializeSystemMonitorManager(context);
-
-
-        logger.info("User home directory: {}", System.getProperty("user.home"));
-//        testSystemMonitorManager();
-        logger.info("Yamec Application Started");
-
-        // now we enter our URL that we want to open in our
-        // default browser
-        System.setProperty("java.awt.headless", "false");
         try {
-            Desktop desk = Desktop.getDesktop();
-            desk.browse(new URI("http://localhost:" + serverPort + "/"));
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null,
-                    String.format("""
+            setupApplicationFileSystem();
+
+            // Start Spring application first, so beans are available
+            context = SpringApplication.run(YamecApplication.class, args);
+
+            serverPort = context.getBean(ServerProperties.class).getPort();
+
+            // Get monitor bean from Spring context and initialize it
+            initializeSystemMonitorManager(context);
+
+
+            logger.info("User home directory: {}", System.getProperty("user.home"));
+//        testSystemMonitorManager();
+            logger.info("Yamec Application Started");
+
+            // now we enter our URL that we want to open in our
+            // default browser
+            System.setProperty("java.awt.headless", "false");
+            try {
+                Desktop desk = Desktop.getDesktop();
+                desk.browse(new URI("http://localhost:" + serverPort + "/"));
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null,
+                        String.format("""
                         YAMeC started successfully, but the default browser could not be opened.
                         To view system metrics, please open the following URL in your browser: \
                         http://localhost:%d/""", serverPort),
-                    "YAMeC", JOptionPane.WARNING_MESSAGE);
+                        "YAMeC", JOptionPane.WARNING_MESSAGE);
+            }
+            System.setProperty("java.awt.headless", "true");
+        } catch (Exception e) {
+            // http://www.java2s.com/example/java/swing/opens-a-joptionpane-with-the-error-message-and-formatted-stack-trace-o.html
+
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+
+            pw.println("""
+                        YAMeC has ran into a problem and must be closed.
+                        
+                        For assistance and to report the bug to the YAMeC team, \
+                        please send this crash log to them:
+                        """);
+
+            pw.println("Exception Type: " + e.getClass().getName());
+            pw.println("Exception Message: " + e.getMessage());
+            pw.println("\nStack Trace: ");
+            e.printStackTrace(pw);
+            pw.flush();
+
+            JFrame frame = new JFrame();
+            JTextArea textArea = new JTextArea();
+            JScrollPane scrollPane = new JScrollPane(textArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+
+            System.setProperty("java.awt.headless", "false");
+            JOptionPane.showMessageDialog(null, scrollPane,
+                    "YAMeC Has Crashed!", JOptionPane.ERROR_MESSAGE);
+            System.exit(-1);
         }
-        System.setProperty("java.awt.headless", "true");
+
 
 
     }

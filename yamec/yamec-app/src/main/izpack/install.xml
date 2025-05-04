@@ -8,6 +8,7 @@
         <appversion>0.5.0</appversion>
         <appsubpath>yamec</appsubpath>
         <javaversion>23</javaversion>
+        <run-privileged uninstaller="yes" condition="izpack.windowsinstall"/>
     </info>
 
     <locale>
@@ -36,12 +37,12 @@
             <parsable targetfile="${INSTALL_PATH}/test.properties"/>
         </pack>
 
-<!--        <pack name="Database" required="yes">-->
-<!--            <description>Database initialization files</description>-->
-<!--            <file src="db/init.sql" targetdir="$INSTALL_PATH/db"/>-->
-<!--            <executable targetfile="$INSTALL_PATH/bin/init-database.sh" os="unix"/>-->
-<!--            <executable targetfile="$INSTALL_PATH/bin/init-database.bat" os="windows"/>-->
-<!--        </pack>-->
+        <!--        <pack name="Database" required="yes">-->
+        <!--            <description>Database initialization files</description>-->
+        <!--            <file src="db/init.sql" targetdir="$INSTALL_PATH/db"/>-->
+        <!--            <executable targetfile="$INSTALL_PATH/bin/init-database.sh" os="unix"/>-->
+        <!--            <executable targetfile="$INSTALL_PATH/bin/init-database.bat" os="windows"/>-->
+        <!--        </pack>-->
     </packs>
 
 
