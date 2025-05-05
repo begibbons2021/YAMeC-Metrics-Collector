@@ -1,8 +1,6 @@
 package com.gibbonsdimarco.yamec.app.service;
 
-import com.gibbonsdimarco.yamec.app.data.CpuHardwareInformation;
-import com.gibbonsdimarco.yamec.app.data.MemoryHardwareInformation;
-import com.gibbonsdimarco.yamec.app.data.SystemMemoryMetric;
+import com.gibbonsdimarco.yamec.app.data.*;
 import com.gibbonsdimarco.yamec.app.repository.CpuHardwareInformationRepository;
 import com.gibbonsdimarco.yamec.app.repository.GranularityRepository;
 import com.gibbonsdimarco.yamec.app.repository.MemoryHardwareInformationRepository;
@@ -25,7 +23,8 @@ public class MemoryHardwareInformationService {
 
     @Autowired
     public MemoryHardwareInformationService(SystemMemoryMetricRepository memoryMetricRepository,
-                                            MemoryHardwareInformationRepository memoryHardwareInformationRepository, GranularityRepository granularityRepository) {
+                                            MemoryHardwareInformationRepository memoryHardwareInformationRepository,
+                                            GranularityRepository granularityRepository) {
         this.memoryMetricRepository = memoryMetricRepository;
         this.memoryHardwareInformationRepository = memoryHardwareInformationRepository;
         this.granularityRepository = granularityRepository;
@@ -44,7 +43,7 @@ public class MemoryHardwareInformationService {
             throw new IllegalArgumentException("Duration must be greater than 0");
         }
 
-        else if (memoryMetrics == null) {
+        if (memoryMetrics == null || memoryMetrics.isEmpty()) {
             return null;
         }
 
@@ -232,6 +231,10 @@ public class MemoryHardwareInformationService {
             throw new IllegalArgumentException("duration must be greater than 0");
         }
 
+        if (memoryMetrics == null || memoryMetrics.isEmpty()) {
+            return null;
+        }
+
 //        // The collection to be sent to the database to complete the rest of the transaction
         java.util.List<SystemMemoryMetric> validMetrics
                 = aggregateMemoryMetrics(memoryMetrics, startTime, duration, "HIGH");
@@ -244,8 +247,12 @@ public class MemoryHardwareInformationService {
 
 
 
-    @Transactional
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public MemoryHardwareInformation saveMemoryInformation(MemoryHardwareInformation memoryInformation) {
+
+        if (memoryInformation == null) {
+            return null;
+        }
 
         MemoryHardwareInformation matchingConfiguration
                 = memoryHardwareInformationRepository.findMatchingMemoryHardwareInformation(memoryInformation);
@@ -256,6 +263,7 @@ public class MemoryHardwareInformationService {
 
     }
 
+    @Transactional
     public java.util.List<MemoryHardwareInformation> getStoredMemoryInformation() {
         return memoryHardwareInformationRepository.findAll(
                 org.springframework.data.domain.PageRequest.of(0, 255,
@@ -264,12 +272,43 @@ public class MemoryHardwareInformationService {
                 .getContent();
     }
 
+    @Transactional
     public java.util.List<MemoryHardwareInformation> getStoredMemoryInformation(int pageNumber) {
         return memoryHardwareInformationRepository.findAll(
                         org.springframework.data.domain.PageRequest.of(pageNumber, 255,
                                 org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC,
                                         "id")))
                 .getContent();
+    }
+
+
+    public List<SystemMemoryMetric>
+                getLatestMemoryMetrics(List<MemoryHardwareInformation> memoryDevices) {
+        if (memoryDevices == null || memoryDevices.isEmpty()) {
+            return null;
+        }
+
+        List<SystemMemoryMetric> memoryMetrics = new ArrayList<>();
+
+        for (MemoryHardwareInformation memoryHardwareInformation : memoryDevices) {
+            SystemMemoryMetric memoryMetric
+                    = memoryMetricRepository.getNewestByMemoryId(memoryHardwareInformation.getId());
+            if (memoryMetric != null) {
+                memoryMetrics.add(memoryMetric);
+            }
+        }
+
+        return memoryMetrics;
+    }
+
+    /**
+     * Returns the latest metric
+     * This is useful for dashboards that only need the most recent metric for memory
+     *
+     * @return The latest SystemMemoryMetric
+     */
+    public SystemMemoryMetric getLatestMetric() {
+        return memoryMetricRepository.getNewest();
     }
 
     // Other service methods as needed

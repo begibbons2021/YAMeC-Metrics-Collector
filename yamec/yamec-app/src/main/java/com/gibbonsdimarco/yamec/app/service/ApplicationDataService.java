@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 /**
@@ -235,6 +236,19 @@ public class ApplicationDataService {
 
     public java.util.List<ApplicationMetric> getApplicationMetricsByApplicationId(UUID applicationId) {
         return applicationMetricRepository.findByApplicationId(applicationId);
+    }
+
+    public java.util.List<ApplicationMetric> getAllApplicationMetrics(Timestamp start, Timestamp end, int pageNumber) {
+        return applicationMetricRepository.findAllByTimestampBetween(start, end,
+                org.springframework.data.domain.PageRequest.of(pageNumber, 100));
+    }
+
+    public java.util.List<ApplicationMetric> getApplicationMetricsByApplicationId(Timestamp start,
+                                                                                  Timestamp end,
+                                                                                  UUID applicationId,
+                                                                                  int pageNumber) {
+        return applicationMetricRepository.findAllByTimestampBetweenAndApplication_Id(start, end, applicationId,
+                org.springframework.data.domain.PageRequest.of(pageNumber, 100));
     }
 
     /**

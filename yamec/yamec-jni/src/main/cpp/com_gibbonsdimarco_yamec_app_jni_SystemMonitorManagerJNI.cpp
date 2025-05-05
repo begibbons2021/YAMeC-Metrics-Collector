@@ -108,7 +108,7 @@ JNIEXPORT jint JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManage
             return status;
         }
 
-        Logger::log(Logger::Level::INFO, "SystemMonitorManager - Collected new counter data");
+        Logger::log(Logger::Level::DEBUG, "SystemMonitorManager - Collected new counter data");
         return 0;
     }
     catch (const std::exception &e)
@@ -751,9 +751,9 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                                                                 &virtualMemoryUsedBytes);
                                                                 0 != status)
         {
-            std::wcerr << "Application metrics could not be retrieved. "
-                        << std::endl;
-            std::wcerr << "Error Code: " << std::hex << status << std::endl;
+            const std::string message("SystemMonitorManager - Application Metric Retrieval failed with error code: ",
+                                        status);
+            Logger::log(Logger::Level::WARN, message);
 
             // Retrieval of counters failed, so return null
             return env->NewGlobalRef(nullptr);
@@ -761,17 +761,11 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     }
     catch (std::exception &e)
     {
-        std::cerr << "GetProcessMetrics failed: \n Error: "
-                        << e.what() << std::endl;
+        const std::string message("SystemMonitorManager - Application Metric Retrieval failed due to an exception: ");
+        Logger::log(Logger::Level::WARN, message);
+        Logger::log(Logger::Level::WARN, e.what());
         return env->NewGlobalRef(nullptr);
     }
-    catch (std::runtime_error &e)
-    {
-        std::cerr << "GetProcessMetrics failed: \n Runtime Error: "
-                        << e.what() << std::endl;
-        return env->NewGlobalRef(nullptr);
-    }
-
 
     // Put data into Java objects
 
@@ -823,6 +817,25 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 
     }
 
+     if (const jthrowable exception = env->ExceptionOccurred(); exception != nullptr)
+        {
+            env->ExceptionClear();
+
+            const jclass exceptionClass = env->FindClass("java/lang/Exception");
+            const jmethodID exceptionMessageMethod = env->GetMethodID(exceptionClass, "getMessage",
+                "()Ljava/lang/String;");
+
+            const auto exceptionMsg(reinterpret_cast<jstring>(env->CallObjectMethod(exception, exceptionMessageMethod)));
+            const std::string exceptionMessage = env->GetStringUTFChars(exceptionMsg, nullptr);
+
+            const std::string message("System Monitor Native - Application Metric Retrieval failed due to a ",
+                                                "Java Exception: ");
+            Logger::log(Logger::Level::ERR, message);
+            Logger::log(Logger::Level::ERR, exceptionMessage);
+
+            return env->NewGlobalRef(nullptr);
+        }
+
     // Return created ArrayList
     return processMetricArrayList;
 
@@ -841,8 +854,8 @@ JNIEXPORT jboolean JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMa
     catch (std::exception &e)
     {
         const std::string message("SystemMonitorManager - Release failed due to an exception: ");
-        Logger::log(Logger::Level::WARN, message);
-        Logger::log(Logger::Level::WARN, e.what());
+        Logger::log(Logger::Level::ERR, message);
+        Logger::log(Logger::Level::ERR, e.what());
         return false; // Memory wasn't freed
     }
 
@@ -950,14 +963,9 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     }
     catch (std::exception &e)
     {
-        std::cerr << "GetHardwareDiskInformation failed: \n Error: "
-                        << e.what() << std::endl;
-        return env->NewGlobalRef(nullptr);
-    }
-    catch (std::runtime_error &e)
-    {
-        std::cerr << "GetHardwareDiskInformation failed: \n Runtime Error: "
-                        << e.what() << std::endl;
+        const std::string message("SystemMonitorManager - Disk Hardware Information Retrieval failed due to an exception: ");
+        Logger::log(Logger::Level::WARN, message);
+        Logger::log(Logger::Level::WARN, e.what());
         return env->NewGlobalRef(nullptr);
     }
 
@@ -1000,7 +1008,9 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                                             (env->NewStringUTF(partitionNameAsUTF8Str.c_str())));
                                             !success)
                 {
-                    // TODO: Add log message
+                    const std::string message("SystemMonitorManager - Disk Hardware Retrieval failed because a list of ",
+                                                "disk partitions could not be retrieved.");
+                    Logger::log(Logger::Level::ERR, message);
                     return env->NewGlobalRef(nullptr);
                 }
             }
@@ -1108,23 +1118,18 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                                                                     &nicUniqueIds,
                                                                     &nicTypes); 0 != status)
         {
-            std::wcerr << "Hardware NIC information could not be retrieved. "
-                        << std::endl;
-            std::wcerr << "Error Code: " << std::hex << status << std::endl;
+            const std::string message("SystemMonitorManager - NIC Hardware Information Retrieval failed with error code: ",
+                                        status);
+            Logger::log(Logger::Level::WARN, message);
             // Retrieval of counters failed, so return null
             return env->NewGlobalRef(nullptr);
         }
     }
     catch (std::exception &e)
     {
-        std::cerr << "GetHardwareNicInformation failed: \n Error: "
-                        << e.what() << std::endl;
-        return env->NewGlobalRef(nullptr);
-    }
-    catch (std::runtime_error &e)
-    {
-        std::cerr << "GetHardwareNicInformation failed: \n Runtime Error: "
-                        << e.what() << std::endl;
+        const std::string message("SystemMonitorManager - NIC Hardware Retrieval failed due to an exception: ");
+        Logger::log(Logger::Level::WARN, message);
+        Logger::log(Logger::Level::WARN, e.what());
         return env->NewGlobalRef(nullptr);
     }
 
@@ -1191,6 +1196,9 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                                                             arrayListAddMethod,
                                                             nicHardwareInformationObject); !success)
         {
+            const std::string message("SystemMonitorManager - Disk Hardware Retrieval failed because a list of ",
+                                                            "disk partitions could not be retrieved.");
+            Logger::log(Logger::Level::ERR, message);
             return env->NewGlobalRef(nullptr);
         }
 
@@ -1200,13 +1208,3 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     return nicHardwareInformationArrayList;
 
 }
-
-
-
-/*
-*std::vector<std::wstring> *hardwareNames,
-std::map<std::wstring, unsigned int> *uniqueIdsToDiskIdMappings,
-std::vector<std::wstring> *uniqueIds, std::vector<unsigned int> *mediaTypes,
-std::vector<unsigned long long> *capacities,
-std::map<std::wstring, unsigned int> *partitionMappings
-*/

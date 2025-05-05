@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -39,13 +40,13 @@ public class CpuHardwareInformationService {
             throw new IllegalArgumentException("Duration must be greater than 0");
         }
 
-        else if (cpuMetrics == null) {
+        else if (cpuMetrics == null || cpuMetrics.isEmpty()) {
             return null;
         }
 
         long startTimeAsLong = startTime.getTime();
 
-        // Use a map to group metrics by the
+        // Use a map to group metrics by the CPU ID
         java.util.List<UUID> recordedCpuIds = new java.util.ArrayList<>();
         java.util.HashMap<UUID, double[]> cpuUtilizationTotalMap = new java.util.HashMap<>();
         java.util.HashMap<UUID, Double> cpuUtilizationMaxMap = new java.util.HashMap<>();
@@ -139,8 +140,12 @@ public class CpuHardwareInformationService {
 
     }
 
-    @Transactional
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public CpuHardwareInformation saveCpuInformation(CpuHardwareInformation cpuInfo) {
+
+        if (cpuInfo == null) {
+            return null;
+        }
 
         CpuHardwareInformation matchingConfiguration
                 = cpuRepository.findMatchingCpuHardwareInformation(cpuInfo);
@@ -173,6 +178,10 @@ public class CpuHardwareInformationService {
             throw new IllegalArgumentException("duration must be greater than 0");
         }
 
+        if (cpuMetrics == null || cpuMetrics.isEmpty() ) {
+            return null;
+        }
+
 //        // The collection to be sent to the database to complete the rest of the transaction
         java.util.List<SystemCpuMetric> validMetrics
                 = aggregateCpuMetrics(cpuMetrics, startTime, duration, "HIGH");
@@ -199,6 +208,30 @@ public class CpuHardwareInformationService {
                                         "id")))
                 .getContent();
     }
+
+    public java.util.List<SystemCpuMetric>
+                getLatestCpuMetrics(java.util.List<CpuHardwareInformation> cpuDevices) {
+        if (cpuDevices == null || cpuDevices.isEmpty()) {
+            return null;
+        }
+
+        List<SystemCpuMetric> cpuMetrics = new java.util.ArrayList<>();
+
+        for (CpuHardwareInformation cpuHardwareInformation : cpuDevices) {
+            SystemCpuMetric cpuMetric
+                    = systemCpuMetricRepository.getNewestByCpuId(cpuHardwareInformation.getId());
+            if (cpuMetric != null) {
+                cpuMetrics.add(cpuMetric);
+            }
+        }
+
+        return cpuMetrics;
+    }
+
+    public SystemCpuMetric getLatestMetric() {
+        return systemCpuMetricRepository.getNewest();
+    }
+
 
     // Other service methods as needed
 }

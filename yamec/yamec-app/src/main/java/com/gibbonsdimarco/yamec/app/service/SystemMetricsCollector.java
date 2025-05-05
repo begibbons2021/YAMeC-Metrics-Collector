@@ -1,10 +1,6 @@
 package com.gibbonsdimarco.yamec.app.service;
 
-import com.gibbonsdimarco.yamec.app.data.CpuHardwareInformation;
-import com.gibbonsdimarco.yamec.app.data.MemoryHardwareInformation;
-import com.gibbonsdimarco.yamec.app.data.ProcessMetric;
-import com.gibbonsdimarco.yamec.app.data.SystemCpuMetric;
-import com.gibbonsdimarco.yamec.app.data.SystemMemoryMetric;
+import com.gibbonsdimarco.yamec.app.data.*;
 import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,25 +20,35 @@ import java.util.ArrayList;
  */
 @Service
 public class SystemMetricsCollector {
-
     private static final Logger logger = LoggerFactory.getLogger(SystemMetricsCollector.class);
+
+    // Services
     private final ApplicationDataService applicationDataService;
     private final CpuHardwareInformationService cpuHardwareService;
     private final MemoryHardwareInformationService memoryHardwareService;
+    private final DiskHardwareInformationService diskHardwareService;
+    private final NicHardwareInformationService nicHardwareService;
 
     private final SystemMonitorManagerJNI monitor;
     private CpuHardwareInformation cpuInfo;
     private MemoryHardwareInformation memoryInfo;
+    private java.util.List<DiskHardwareInformation> diskInfo;
+    private java.util.List<NicHardwareInformation> nicInfo;
 
     @Autowired
     public SystemMetricsCollector(
             ApplicationDataService applicationDataService,
             CpuHardwareInformationService cpuHardwareService,
             MemoryHardwareInformationService memoryHardwareService,
+            DiskHardwareInformationService diskHardwareService,
+            NicHardwareInformationService nicHardwareService,
             SystemMonitorManagerJNI monitor) {
         this.applicationDataService = applicationDataService;
         this.cpuHardwareService = cpuHardwareService;
         this.memoryHardwareService = memoryHardwareService;
+        this.diskHardwareService = diskHardwareService;
+        this.nicHardwareService = nicHardwareService;
+
         this.monitor = monitor;
     }
 
@@ -59,6 +65,8 @@ public class SystemMetricsCollector {
             // Get hardware information once during initialization
             cpuInfo = monitor.getCpuHardwareInformation();
             memoryInfo = monitor.getMemoryHardwareInformation();
+            diskInfo = monitor.getDiskHardwareInformation();
+            nicInfo = monitor.getNicHardwareInformation();
 
             // Save the hardware information to the database
             if (cpuInfo != null) {
@@ -71,6 +79,25 @@ public class SystemMetricsCollector {
                 memoryInfo = memoryHardwareService.saveMemoryInformation(memoryInfo);
             }
 
+            if (diskInfo != null && !diskInfo.isEmpty()) {
+                logger.info("Disk Hardware Information:");
+                for (DiskHardwareInformation disk : diskInfo) {
+                    logger.info(disk.toString());
+                }
+
+                diskInfo = diskHardwareService.saveDiskInformation(diskInfo);
+            }
+
+            if (nicInfo != null && !nicInfo.isEmpty()) {
+                logger.info("NIC Hardware Information:");
+                for (NicHardwareInformation nicDevice : nicInfo) {
+                    logger.info(nicDevice.toString());
+                }
+
+                nicInfo = nicHardwareService.saveNicInformation(nicInfo);
+            }
+
+
         } catch (Exception e) {
             logger.error("Failed to initialize SystemMetricsCollector", e);
         }
@@ -81,7 +108,7 @@ public class SystemMetricsCollector {
      * Scheduled task that runs every 10 seconds to collect the latest system metrics
      * and save them to the database
      */
-    @Scheduled(fixedRate = 10000) // Run every 10 seconds
+    @Scheduled(fixedRate = 1000) // Run every 1 second
     public void collectAndSaveMetrics() {
         if (monitor == null) {
             logger.debug("SystemMonitorManagerJNI not available - skipping metrics collection");
@@ -90,85 +117,68 @@ public class SystemMetricsCollector {
 
         try {
             logger.debug("Collecting system metrics...");
+            long lastCollectionTime = monitor.getLastCollectionTime().getTime();
 
-
-
-            // Collect metrics at the start
-            ArrayList<ProcessMetric> processMetricList = new ArrayList<>();
             ArrayList<SystemCpuMetric> cpuMetrics = new ArrayList<>();
             ArrayList<SystemMemoryMetric> memoryMetrics = new ArrayList<>();
 
-            // First data collection point
+            // Data collection point
             monitor.collectCounterData();
-            ArrayList<ProcessMetric> initialProcessMetrics = monitor.getProcessMetrics();
-            SystemCpuMetric initialCpuMetric = monitor.getCpuMetrics();
-            SystemMemoryMetric initialMemoryMetric = monitor.getMemoryMetrics();
-            Timestamp startTimestamp = new Timestamp(System.currentTimeMillis());
-
-            // Set timestamps on all metrics
-            for (ProcessMetric processMetric : initialProcessMetrics) {
-                processMetric.setTimestamp(startTimestamp);
-            }
-
-            if (initialCpuMetric != null) {
-                initialCpuMetric.setTimestamp(startTimestamp);
-                if (cpuInfo != null) {
-                    initialCpuMetric.setCpu(cpuInfo);
-                }
-                cpuMetrics.add(initialCpuMetric);
-            }
-
-            if (initialMemoryMetric != null) {
-                initialMemoryMetric.setTimestamp(startTimestamp);
-                if (memoryInfo != null) {
-                    initialMemoryMetric.setMemory(memoryInfo);
-                }
-                memoryMetrics.add(initialMemoryMetric);
-            }
-
-            // Wait a bit before collecting again to calculate rates
-            Thread.sleep(5000); // 5-second interval
-
-            // Second data collection point
-            monitor.collectCounterData();
-            ArrayList<ProcessMetric> finalProcessMetrics = monitor.getProcessMetrics();
-            SystemCpuMetric finalCpuMetric = monitor.getCpuMetrics();
-            SystemMemoryMetric finalMemoryMetric = monitor.getMemoryMetrics();
-            Timestamp endTimestamp = new Timestamp(System.currentTimeMillis());
-
-            // Set timestamps on all metrics
-            for (ProcessMetric processMetric : finalProcessMetrics) {
-                processMetric.setTimestamp(endTimestamp);
-            }
-
-            if (finalCpuMetric != null) {
-                finalCpuMetric.setTimestamp(endTimestamp);
-                if (cpuInfo != null) {
-                    finalCpuMetric.setCpu(cpuInfo);
-                }
-                cpuMetrics.add(finalCpuMetric);
-            }
-
-            if (finalMemoryMetric != null) {
-                finalMemoryMetric.setTimestamp(endTimestamp);
-                if (memoryInfo != null) {
-                    finalMemoryMetric.setMemory(memoryInfo);
-                }
-                memoryMetrics.add(finalMemoryMetric);
-            }
-
-            // Combine metrics
-            processMetricList.addAll(initialProcessMetrics);
-            processMetricList.addAll(finalProcessMetrics);
+            ArrayList<ProcessMetric> processMetrics = monitor.getProcessMetrics();
+            SystemCpuMetric cpuMetric = monitor.getCpuMetrics();
+            SystemMemoryMetric memoryMetric = monitor.getMemoryMetrics();
+            ArrayList<SystemDiskMetric> diskMetrics = monitor.getDiskMetrics();
+            ArrayList<SystemNicMetric> nicMetrics = monitor.getNicMetrics();
+            Timestamp now = new Timestamp(System.currentTimeMillis());
 
             // Calculate duration in seconds
-            int duration = (int)((endTimestamp.getTime() - startTimestamp.getTime()) / 1000);
+            int duration = (int)((now.getTime() - lastCollectionTime) / 1000);
 
-            // Save metrics to database
-            applicationDataService.saveApplicationMetrics(processMetricList, startTimestamp, duration);
-            cpuHardwareService.saveCpuMetrics(cpuMetrics, startTimestamp, duration);
-            memoryHardwareService.saveMemoryMetrics(memoryMetrics, startTimestamp, duration);
+            // Avoid divide by zero error
+            if (duration == 0) {
+                duration = 1;
+            }
 
+            // Set timestamps on all metrics
+            if (processMetrics != null) {
+                for (ProcessMetric processMetric : processMetrics) {
+                    processMetric.setTimestamp(now);
+                }
+                applicationDataService.saveApplicationMetrics(processMetrics, now, duration);
+            }
+
+            if (diskMetrics != null) {
+                for (SystemDiskMetric diskMetric : diskMetrics) {
+                    diskMetric.setTimestamp(now);
+                }
+                diskHardwareService.saveDiskMetrics(diskMetrics, now, duration, diskInfo);
+            }
+
+            if (nicMetrics != null) {
+                for (SystemNicMetric nicMetric : nicMetrics) {
+                    nicMetric.setTimestamp(now);
+                }
+                nicHardwareService.saveNicMetrics(nicMetrics, now, duration, nicInfo);
+            }
+
+            if (cpuMetric != null) {
+                cpuMetric.setTimestamp(now);
+                if (cpuInfo != null) {
+                    cpuMetric.setCpu(cpuInfo);
+                    cpuMetrics.add(cpuMetric);
+                    cpuHardwareService.saveCpuMetrics(cpuMetrics, now, duration);
+                }
+            }
+
+            if (memoryMetric != null) {
+                memoryMetric.setTimestamp(now);
+                if (memoryInfo != null) {
+                    memoryMetric.setMemory(memoryInfo);
+                    memoryMetrics.add(memoryMetric);
+                    memoryHardwareService.saveMemoryMetrics(memoryMetrics, now, duration);
+                }
+
+            }
             logger.debug("System metrics collected and saved successfully");
 
         } catch (Exception e) {

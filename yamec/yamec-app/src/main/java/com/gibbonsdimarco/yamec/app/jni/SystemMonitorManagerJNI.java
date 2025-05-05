@@ -9,6 +9,7 @@ import jakarta.websocket.OnClose;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -24,14 +25,6 @@ import java.util.ArrayList;
 public class SystemMonitorManagerJNI implements AutoCloseable {
     private static final Logger logger = LoggerFactory.getLogger(SystemMonitorManagerJNI.class);
 
-//    static {
-//        try {
-//            JniLoader.load("native/windows/x64/yamecjni.dll");
-//            initLogger(logger);
-//        } catch (UnsatisfiedLinkError e) {
-//            logger.error("Native code library failed to load", e);
-//        }
-//    }
 
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -41,6 +34,7 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
     private long monitorAddress = -1;
     private boolean closed = false;
     private final ExecutorService jniExecutor = Executors.newSingleThreadExecutor();
+    private Timestamp lastCollectionTime = null;
 
     /**
      * Instantiates the System Monitor Manager.
@@ -92,7 +86,16 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
         try {
             // Run the native call on our dedicated thread for JNI operations
             Future<Integer> future = jniExecutor.submit(() -> collectCounterData(monitorAddress));
-            return future.get(); // Wait for the result
+            int response = future.get(); // Wait for the result
+
+            if (response == 0) {
+                // Only update the last collection time if the collection was successful
+                this.setLastCollectionTime(new Timestamp(System.currentTimeMillis()));
+            } else {
+                logger.error("System Monitor Manager - Failed to collect counter data: Code: {}", response);
+            }
+
+            return response;
         } catch (Exception e) {
             logger.error("Error collecting counter data", e);
             return -1;
@@ -312,6 +315,14 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
             logger.error("Error getting NIC hardware information", e);
             return null;
         }
+    }
+
+    public Timestamp getLastCollectionTime() {
+        return lastCollectionTime;
+    }
+
+    public void setLastCollectionTime(Timestamp lastCollectionTime) {
+        this.lastCollectionTime = lastCollectionTime;
     }
 
 

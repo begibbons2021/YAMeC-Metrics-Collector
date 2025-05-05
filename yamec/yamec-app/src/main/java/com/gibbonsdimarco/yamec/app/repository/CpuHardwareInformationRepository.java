@@ -39,5 +39,4 @@ public interface CpuHardwareInformationRepository extends JpaRepository<CpuHardw
     );
 
 
-
 }

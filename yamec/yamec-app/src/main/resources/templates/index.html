@@ -91,49 +91,62 @@
                 </div>
             </div>
 
-            <!-- Disk Card -->
-            <div class="card">
+            <!-- Disk Cards -->
+            <div class="card" th:each="disk : ${metrics.disks}">
                 <div class="card-header">
-                    <h2 class="card-title">Disk Usage</h2>
+                    <h2 class="card-title" th:text="${disk.friendlyName + ' (Disk ' + disk.diskNumber + ')'}">Disk Name</h2>
                     <i class="fas fa-hdd card-icon"></i>
                 </div>
                 <div class="metric">
-                    <div class="metric-label">Current Usage</div>
-                    <div class="metric-value" id="disk-usage" th:if="${metrics.diskTotal > 0}" th:text="${#numbers.formatDecimal((metrics.diskUsed / metrics.diskTotal) * 100, 1, 1) + '%'}">0%</div>
-                    <div class="metric-value" th:unless="${metrics.diskTotal > 0}">N/A</div>
-                    <div class="progress-container" th:if="${metrics.diskTotal > 0}">
-                        <div class="progress-bar progress-disk" id="disk-progress" th:style="'width: ' + ${(metrics.diskUsed / metrics.diskTotal) * 100} + '%'"></div>
+                    <div class="metric-label">Disk Type</div>
+                    <div class="metric-value" th:text="${disk.diskType}">Unknown</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Capacity</div>
+                    <div class="metric-value" th:text="${#numbers.formatDecimal(disk.diskCapacity / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Average Usage</div>
+                    <div class="metric-value" th:text="${#numbers.formatDecimal(disk.avgDiskUsage, 1, 1) + '%'}">0%</div>
+                    <div class="progress-container">
+                        <div class="progress-bar progress-disk" th:style="'width: ' + ${disk.avgDiskUsage} + '%'"></div>
                     </div>
                 </div>
-                <div class="metric" th:if="${metrics.diskTotal > 0}">
-                    <div class="metric-label">Total Disk</div>
-                    <div class="metric-value" id="total-disk" th:text="${#numbers.formatDecimal(metrics.diskTotal / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                <div class="metric">
+                    <div class="metric-label">Average Read Speed</div>
+                    <div class="metric-value" th:text="${#numbers.formatDecimal(disk.avgBytesReadPerSecond / (1024 * 1024), 1, 2) + ' MB/s'}">0 MB/s</div>
                 </div>
-                <div class="metric" th:if="${metrics.diskTotal > 0}">
-                    <div class="metric-label">Used Disk</div>
-                    <div class="metric-value" id="used-disk" th:text="${#numbers.formatDecimal(metrics.diskUsed / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                <div class="metric">
+                    <div class="metric-label">Average Write Speed</div>
+                    <div class="metric-value" th:text="${#numbers.formatDecimal(disk.avgBytesWrittenPerSecond / (1024 * 1024), 1, 2) + ' MB/s'}">0 MB/s</div>
                 </div>
-                <div class="metric" th:if="${metrics.diskTotal > 0}">
-                    <div class="metric-label">Free Disk</div>
-                    <div class="metric-value" id="free-disk" th:text="${#numbers.formatDecimal(metrics.diskFree / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                <div class="metric">
+                    <div class="metric-label">Average Time to Transfer</div>
+                    <div class="metric-value" th:text="${#numbers.formatDecimal(disk.avgTimeToTransfer, 1, 2) + ' ms'}">0 ms</div>
                 </div>
             </div>
 
-            <!-- Network Card -->
-            <div class="card">
+            <!-- Network Cards -->
+            <div class="card" th:each="nic : ${metrics.nics}">
                 <div class="card-header">
-                    <h2 class="card-title">Network Traffic</h2>
+                    <h2 class="card-title" th:text="${nic.friendlyName}">Network Interface</h2>
                     <i class="fas fa-network-wired card-icon"></i>
                 </div>
                 <div class="metric">
-                    <div class="metric-label">Data Sent</div>
-                    <div class="metric-value" id="network-sent" th:if="${metrics.networkSent > 0}" th:text="${#numbers.formatDecimal(metrics.networkSent / (1024 * 1024), 1, 2) + ' MB'}">0 MB</div>
-                    <div class="metric-value" th:unless="${metrics.networkSent > 0}">N/A</div>
+                    <div class="metric-label">Label</div>
+                    <div class="metric-value" th:text="${nic.label}">Unknown</div>
                 </div>
                 <div class="metric">
-                    <div class="metric-label">Data Received</div>
-                    <div class="metric-value" id="network-received" th:if="${metrics.networkReceived > 0}" th:text="${#numbers.formatDecimal(metrics.networkReceived / (1024 * 1024), 1, 2) + ' MB'}">0 MB</div>
-                    <div class="metric-value" th:unless="${metrics.networkReceived > 0}">N/A</div>
+                    <div class="metric-label">NIC Type</div>
+                    <div class="metric-value" th:text="${nic.nicType}">Unknown</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Average Data Sent</div>
+                    <div class="metric-value" th:text="${#numbers.formatDecimal(nic.avgNetworkSent / (1024 * 1024), 1, 2) + ' MB'}">0 MB</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Average Data Received</div>
+                    <div class="metric-value" th:text="${#numbers.formatDecimal(nic.avgNetworkReceived / (1024 * 1024), 1, 2) + ' MB'}">0 MB</div>
                 </div>
             </div>
         </div>

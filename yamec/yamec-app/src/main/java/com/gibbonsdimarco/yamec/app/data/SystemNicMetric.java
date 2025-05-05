@@ -1,6 +1,10 @@
 package com.gibbonsdimarco.yamec.app.data;
 
+import com.gibbonsdimarco.yamec.app.config.Granularity;
 import jakarta.persistence.*;
+
+import java.sql.Timestamp;
+import java.util.UUID;
 
 /**
  * Contains collected hardware network interface metrics passed from the
@@ -126,11 +130,37 @@ public class SystemNicMetric extends SystemDeviceMetric {
         this.deviceName = deviceName;
         this.operatingBandwidth = operatingBandwidth;
         this.avgSendBandwidth = sendBandwidth;
+        this.maxSendBandwidth = sendBandwidth;
+        this.minSendBandwidth = sendBandwidth;
         this.avgReceiveBandwidth = receiveBandwidth;
+        this.maxReceiveBandwidth = receiveBandwidth;
+        this.minReceiveBandwidth = receiveBandwidth;
         this.operatingBandwidthIsUnsigned = operatingBandwidthIsUnsigned;
         this.sendBandwidthIsUnsigned = sendBandwidthIsUnsigned;
         this.receiveBandwidthIsUnsigned = receiveBandwidthIsUnsigned;
     }
+
+    public SystemNicMetric(Timestamp timestamp, int duration,
+                           UUID granularityId,
+                           long avgSendBandwidth,
+                           long maxSendBandwidth,
+                           long minSendBandwidth,
+                           long avgReceiveBandwidth,
+                           long maxReceiveBandwidth,
+                           long minReceiveBandwidth,
+                           boolean sendBandwidthIsUnsigned,
+                           boolean receiveBandwidthIsUnsigned) {
+        super(duration, granularityId, timestamp);
+        this.avgSendBandwidth = avgSendBandwidth;
+        this.maxSendBandwidth = maxSendBandwidth;
+        this.minSendBandwidth = minSendBandwidth;
+        this.avgReceiveBandwidth = avgReceiveBandwidth;
+        this.maxReceiveBandwidth = maxReceiveBandwidth;
+        this.minReceiveBandwidth = minReceiveBandwidth;
+        this.sendBandwidthIsUnsigned = sendBandwidthIsUnsigned;
+        this.receiveBandwidthIsUnsigned = receiveBandwidthIsUnsigned;
+    }
+
 
     public SystemNicMetric() {
 
