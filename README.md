@@ -2,8 +2,6 @@
 
 YAMeC is a comprehensive system monitoring application that collects and displays real-time metrics about your computer's performance. It provides detailed information about CPU, memory, disk, and network interface usage through an intuitive web-based dashboard.
 
-![YAMeC Dashboard](https://via.placeholder.com/800x400?text=YAMeC+Dashboard)
-
 ## Features
 
 - **Real-time System Monitoring**: Continuously collects and displays system metrics with automatic updates
@@ -49,10 +47,10 @@ The application uses the following technologies:
 
 ### Installation Steps
 
-1. Download the latest YAMeC installer from the [releases page](https://github.com/gibbonsdimarco/yamec/releases).
-2. Run the installer and follow the on-screen instructions.
-3. Launch YAMeC from the Start menu or desktop shortcut.
-4. Your default web browser will automatically open to the YAMeC dashboard.
+1. Download the latest YAMeC installer from the [releases page]([https://github.com/gibbonsdimarco/yamec/releases](https://github.com/begibbons2021/YAMeC-Metrics-Collector/releases)).
+3. Run the installer and follow the on-screen instructions.
+4. Launch YAMeC from the Start menu or desktop shortcut.
+5. Your default web browser will automatically open to the YAMeC dashboard.
 
 If your browser doesn't open automatically, you can access the dashboard by navigating to `http://localhost:8084/` in your web browser.
 
