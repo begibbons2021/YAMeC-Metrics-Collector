@@ -89,6 +89,17 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
         return -5;
     }
 
+    // After collecting all data vectors and before clearing storage buffers
+    // Check if all collected vectors have the same size
+    if (processNamesAndIds.size() != cpuUsagesTemp.size() ||
+        processNamesAndIds.size() != physicalMemoryUsageTemp.size() ||
+        processNamesAndIds.size() != virtualMemoryUsageTemp.size())
+    {
+        std::cerr << "Vector size mismatch in counter data" << std::endl;
+        return -6;
+    }
+
+
     // Clear storage buffers
     if (processNames != nullptr)
     {

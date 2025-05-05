@@ -1,5 +1,7 @@
 package com.gibbonsdimarco.yamec.app.service;
 
+import com.gibbonsdimarco.yamec.app.data.Application;
+import com.gibbonsdimarco.yamec.app.data.ApplicationMetric;
 import com.gibbonsdimarco.yamec.app.data.DiskHardwareInformation;
 import com.gibbonsdimarco.yamec.app.data.SystemDiskMetric;
 import com.gibbonsdimarco.yamec.app.repository.DiskHardwareInformationRepository;
@@ -42,9 +44,10 @@ public class DiskHardwareInformationService {
             throw new IllegalArgumentException("Duration must be greater than 0");
         }
 
-        else if (diskMetrics == null) {
+        if (diskMetrics == null || diskMetrics.isEmpty() ) {
             return null;
         }
+
 
         long startTimeAsLong = startTime.getTime();
 
@@ -144,21 +147,6 @@ public class DiskHardwareInformationService {
                 writeBandwidthUnsignedMap.put(diskId, false);
             }
 
-//            // If the disk is not being used at all, skip this metric
-//            if (averageUtilization == 0
-//                    && maxUtilization == 0
-//                    && minUtilization == 0
-//                    && averageReadBandwidth == 0
-//                    && maxReadBandwidth == 0
-//                    && minReadBandwidth == 0
-//                    && averageWriteBandwidth == 0
-//                    && maxWriteBandwidth == 0
-//                    && minWriteBandwidth == 0
-//                    && averageTimeToTransfer == 0
-//                    && maxTimeToTransfer == 0
-//                    && minTimeToTransfer == 0) {
-//                continue;
-//            }
 
             // This is a valid metric, and the timestamp
             numValidDiskMetrics.put(diskId, numValidDiskMetrics.get(diskId) + 1);
@@ -310,6 +298,10 @@ public class DiskHardwareInformationService {
             throw new IllegalArgumentException("duration must be greater than 0");
         }
 
+        if (diskMetrics == null || diskMetrics.isEmpty() ) {
+            return null;
+        }
+
         // Potential issue?
         // If we collect metrics every second and collect hardware data every minute,
         // drive letters and numbers could change!
@@ -385,11 +377,15 @@ public class DiskHardwareInformationService {
 
 
 
-    @Transactional
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public java.util.List<DiskHardwareInformation>
             saveDiskInformation(java.util.List<DiskHardwareInformation> diskInformation) {
 
         java.util.ArrayList<DiskHardwareInformation> disksToSave = new java.util.ArrayList<>();
+
+        if (diskInformation == null || diskInformation.isEmpty() ) {
+            return null;
+        }
 
         for (DiskHardwareInformation diskHardwareInformation : diskInformation) {
             // Query for all disks detected
@@ -425,6 +421,10 @@ public class DiskHardwareInformationService {
                 getLatestDiskMetrics(java.util.List<DiskHardwareInformation> diskDevices) {
         List<SystemDiskMetric> diskMetrics = new java.util.ArrayList<>();
 
+        if (diskDevices == null || diskDevices.isEmpty() ) {
+            return null;
+        }
+
         for (DiskHardwareInformation diskHardwareInformation : diskDevices) {
             SystemDiskMetric diskMetric
                     = diskMetricRepository.getNewestByDiskId(diskHardwareInformation.getId());
@@ -434,6 +434,34 @@ public class DiskHardwareInformationService {
         }
 
         return diskMetrics;
+    }
+
+    /**
+     * Returns all disks with their latest metrics
+     * This is useful for dashboards that only need the most recent metric for each disk
+     *
+     * @return Map of disk objects to their latest metric
+     */
+    public java.util.Map<DiskHardwareInformation, SystemDiskMetric> getAllDisksWithLatestMetrics() {
+        // Get all disks
+        java.util.List<DiskHardwareInformation> disks = diskHardwareInformationRepository.findAll();
+
+        // Initialize result map
+        java.util.Map<DiskHardwareInformation, SystemDiskMetric> disksWithLatestMetrics = new java.util.HashMap<>();
+
+        // For each disk, get its latest metric
+        for (DiskHardwareInformation disk : disks) {
+            // Find the latest metric for this disk
+            SystemDiskMetric metric = diskMetricRepository.findNewestByDiskId(
+                    disk.getId());
+
+            // Add to result map if metrics exist
+            if (metric != null) {
+                disksWithLatestMetrics.put(disk, metric);
+            }
+        }
+
+        return disksWithLatestMetrics;
     }
 
     // Other service methods as needed

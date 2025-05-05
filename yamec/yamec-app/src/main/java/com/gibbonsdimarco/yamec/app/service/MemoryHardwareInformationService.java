@@ -43,7 +43,7 @@ public class MemoryHardwareInformationService {
             throw new IllegalArgumentException("Duration must be greater than 0");
         }
 
-        else if (memoryMetrics == null) {
+        if (memoryMetrics == null || memoryMetrics.isEmpty()) {
             return null;
         }
 
@@ -231,6 +231,10 @@ public class MemoryHardwareInformationService {
             throw new IllegalArgumentException("duration must be greater than 0");
         }
 
+        if (memoryMetrics == null || memoryMetrics.isEmpty()) {
+            return null;
+        }
+
 //        // The collection to be sent to the database to complete the rest of the transaction
         java.util.List<SystemMemoryMetric> validMetrics
                 = aggregateMemoryMetrics(memoryMetrics, startTime, duration, "HIGH");
@@ -243,8 +247,12 @@ public class MemoryHardwareInformationService {
 
 
 
-    @Transactional
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public MemoryHardwareInformation saveMemoryInformation(MemoryHardwareInformation memoryInformation) {
+
+        if (memoryInformation == null) {
+            return null;
+        }
 
         MemoryHardwareInformation matchingConfiguration
                 = memoryHardwareInformationRepository.findMatchingMemoryHardwareInformation(memoryInformation);
@@ -255,6 +263,7 @@ public class MemoryHardwareInformationService {
 
     }
 
+    @Transactional
     public java.util.List<MemoryHardwareInformation> getStoredMemoryInformation() {
         return memoryHardwareInformationRepository.findAll(
                 org.springframework.data.domain.PageRequest.of(0, 255,
@@ -263,6 +272,7 @@ public class MemoryHardwareInformationService {
                 .getContent();
     }
 
+    @Transactional
     public java.util.List<MemoryHardwareInformation> getStoredMemoryInformation(int pageNumber) {
         return memoryHardwareInformationRepository.findAll(
                         org.springframework.data.domain.PageRequest.of(pageNumber, 255,
@@ -274,6 +284,10 @@ public class MemoryHardwareInformationService {
 
     public List<SystemMemoryMetric>
                 getLatestMemoryMetrics(List<MemoryHardwareInformation> memoryDevices) {
+        if (memoryDevices == null || memoryDevices.isEmpty()) {
+            return null;
+        }
+
         List<SystemMemoryMetric> memoryMetrics = new ArrayList<>();
 
         for (MemoryHardwareInformation memoryHardwareInformation : memoryDevices) {
@@ -285,6 +299,16 @@ public class MemoryHardwareInformationService {
         }
 
         return memoryMetrics;
+    }
+
+    /**
+     * Returns the latest metric
+     * This is useful for dashboards that only need the most recent metric for memory
+     *
+     * @return The latest SystemMemoryMetric
+     */
+    public SystemMemoryMetric getLatestMetric() {
+        return memoryMetricRepository.getNewest();
     }
 
     // Other service methods as needed

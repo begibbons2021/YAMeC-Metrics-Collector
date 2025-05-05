@@ -1,15 +1,28 @@
 // YAMeC Dashboard JavaScript
 
+// Get progress bar color based on percentage
+function getProgressBarColor(percentage) {
+    if (percentage < 35) {
+        return 'var(--secondary-color)'; // Green
+    } else if (percentage < 60) {
+        return 'var(--warning-color)';   // Yellow
+    } else if (percentage < 80) {
+        return 'var(--orange-color)';    // Orange
+    } else {
+        return 'var(--danger-color)';    // Red
+    }
+}
+
 // Format bytes to human-readable format
 function formatBytes(bytes, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
-    
+
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-    
+
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
+
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
@@ -22,35 +35,141 @@ function formatPercentage(value) {
 function updateDashboard(metrics) {
     // CPU Usage
     document.getElementById('cpu-usage').textContent = formatPercentage(metrics.cpuUsage);
-    document.getElementById('cpu-progress').style.width = metrics.cpuUsage + '%';
-    
+    const cpuProgressBar = document.getElementById('cpu-progress');
+    cpuProgressBar.style.width = metrics.cpuUsage + '%';
+    cpuProgressBar.style.backgroundColor = getProgressBarColor(metrics.cpuUsage);
+
     // Memory Usage
     const memoryUsagePercent = (metrics.usedMemory / metrics.totalMemory) * 100;
     document.getElementById('memory-usage').textContent = formatPercentage(memoryUsagePercent);
-    document.getElementById('memory-progress').style.width = memoryUsagePercent + '%';
-    
+    const memoryProgressBar = document.getElementById('memory-progress');
+    memoryProgressBar.style.width = memoryUsagePercent + '%';
+    memoryProgressBar.style.backgroundColor = getProgressBarColor(memoryUsagePercent);
+
     // Memory Details
     document.getElementById('total-memory').textContent = formatBytes(metrics.totalMemory);
     document.getElementById('used-memory').textContent = formatBytes(metrics.usedMemory);
     document.getElementById('free-memory').textContent = formatBytes(metrics.freeMemory);
-    
-    // Disk Usage (if available)
-    if (metrics.diskTotal > 0) {
-        const diskUsagePercent = (metrics.diskUsed / metrics.diskTotal) * 100;
-        document.getElementById('disk-usage').textContent = formatPercentage(diskUsagePercent);
-        document.getElementById('disk-progress').style.width = diskUsagePercent + '%';
-        
-        document.getElementById('total-disk').textContent = formatBytes(metrics.diskTotal);
-        document.getElementById('used-disk').textContent = formatBytes(metrics.diskUsed);
-        document.getElementById('free-disk').textContent = formatBytes(metrics.diskFree);
+
+    // Clear existing disk cards
+    const dashboardElement = document.querySelector('.dashboard');
+    const existingDiskCards = document.querySelectorAll('.card .card-header h2.card-title');
+    existingDiskCards.forEach(titleElement => {
+        if (titleElement.textContent.includes('Disk')) {
+            const cardElement = titleElement.closest('.card');
+            if (cardElement) {
+                cardElement.remove();
+            }
+        }
+    });
+
+    // Add disk cards
+    if (metrics.disks && metrics.disks.length > 0) {
+        // Sort disks by diskNumber for consistent display
+        metrics.disks.sort((a, b) => a.diskNumber - b.diskNumber);
+        metrics.disks.forEach(disk => {
+            const diskCard = document.createElement('div');
+            diskCard.className = 'card';
+
+            const diskUsagePercent = disk.avgDiskUsage;
+
+            diskCard.innerHTML = `
+                <div class="card-header">
+                    <h2 class="card-title">${disk.friendlyName} (Disk ${disk.diskNumber})</h2>
+                    <i class="fas fa-hdd card-icon"></i>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Disk Type</div>
+                    <div class="metric-value">${disk.diskType}</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Capacity</div>
+                    <div class="metric-value">${formatBytes(disk.diskCapacity)}</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Average Usage</div>
+                    <div class="metric-value">${formatPercentage(diskUsagePercent)}</div>
+                    <div class="progress-container">
+                        <div class="progress-bar progress-disk" style="width: ${diskUsagePercent}%; background-color: ${getProgressBarColor(diskUsagePercent)}"></div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Average Read Speed</div>
+                    <div class="metric-value">${formatBytes(disk.avgBytesReadPerSecond)}/s</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Average Write Speed</div>
+                    <div class="metric-value">${formatBytes(disk.avgBytesWrittenPerSecond)}/s</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Average Time to Transfer</div>
+                    <div class="metric-value">${disk.avgTimeToTransfer.toFixed(2)} ms</div>
+                </div>
+            `;
+
+            // Find the memory card to insert after
+            const memoryCard = Array.from(document.querySelectorAll('.card')).find(card => {
+                const title = card.querySelector('.card-title');
+                return title && title.textContent.includes('Memory');
+            });
+
+            if (memoryCard) {
+                memoryCard.after(diskCard);
+            } else {
+                // If no memory card found, append to dashboard
+                dashboardElement.appendChild(diskCard);
+            }
+        });
     }
-    
-    // Network Usage (if available)
-    if (metrics.networkSent > 0 || metrics.networkReceived > 0) {
-        document.getElementById('network-sent').textContent = formatBytes(metrics.networkSent);
-        document.getElementById('network-received').textContent = formatBytes(metrics.networkReceived);
+
+    // Clear existing NIC cards
+    const existingNicCards = document.querySelectorAll('.card .card-header h2.card-title');
+    existingNicCards.forEach(titleElement => {
+        if (titleElement.textContent.includes('Network Interface') || 
+            (titleElement.closest('.card').querySelector('.fas.fa-network-wired') !== null)) {
+            const cardElement = titleElement.closest('.card');
+            if (cardElement) {
+                cardElement.remove();
+            }
+        }
+    });
+
+    // Add NIC cards
+    if (metrics.nics && metrics.nics.length > 0) {
+        // Sort NICs by friendlyName for consistent display
+        metrics.nics.sort((a, b) => a.friendlyName.localeCompare(b.friendlyName));
+        metrics.nics.forEach(nic => {
+            const nicCard = document.createElement('div');
+            nicCard.className = 'card';
+
+            nicCard.innerHTML = `
+                <div class="card-header">
+                    <h2 class="card-title">${nic.friendlyName}</h2>
+                    <i class="fas fa-network-wired card-icon"></i>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Label</div>
+                    <div class="metric-value">${nic.label}</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">NIC Type</div>
+                    <div class="metric-value">${nic.nicType}</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Average Data Sent</div>
+                    <div class="metric-value">${formatBytes(nic.avgNetworkSent)}</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Average Data Received</div>
+                    <div class="metric-value">${formatBytes(nic.avgNetworkReceived)}</div>
+                </div>
+            `;
+
+            // Append to dashboard
+            dashboardElement.appendChild(nicCard);
+        });
     }
-    
+
     // Update timestamp
     document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
 }
@@ -71,7 +190,7 @@ function fetchMetrics() {
 document.addEventListener('DOMContentLoaded', function() {
     // Initial fetch
     fetchMetrics();
-    
+
     // Set up periodic updates (every second)
     setInterval(fetchMetrics, 1000);
 }); 

@@ -1,9 +1,6 @@
 package com.gibbonsdimarco.yamec.app.service;
 
-import com.gibbonsdimarco.yamec.app.data.CpuHardwareInformation;
-import com.gibbonsdimarco.yamec.app.data.NicHardwareInformation;
-import com.gibbonsdimarco.yamec.app.data.SystemCpuMetric;
-import com.gibbonsdimarco.yamec.app.data.SystemNicMetric;
+import com.gibbonsdimarco.yamec.app.data.*;
 import com.gibbonsdimarco.yamec.app.repository.GranularityRepository;
 import com.gibbonsdimarco.yamec.app.repository.NicHardwareInformationRepository;
 import com.gibbonsdimarco.yamec.app.repository.SystemNicMetricRepository;
@@ -41,9 +38,10 @@ public class NicHardwareInformationService {
             throw new IllegalArgumentException("Duration must be greater than 0");
         }
 
-        else if (nicMetrics == null) {
+        if (nicMetrics == null || nicMetrics.isEmpty() ) {
             return null;
         }
+
 
         long startTimeAsLong = startTime.getTime();
 
@@ -243,6 +241,12 @@ public class NicHardwareInformationService {
             throw new IllegalArgumentException("duration must be greater than 0");
         }
 
+
+        if (currentNics == null || currentNics.isEmpty() ) {
+            return null;
+        }
+
+
         // Go through all NIC metrics and find which hardware device (of those passed by parameter)
         // they are associated with (if any)
         for (SystemNicMetric metric : nicMetrics) {
@@ -285,11 +289,15 @@ public class NicHardwareInformationService {
 
     @Transactional
     public java.util.List<NicHardwareInformation>
-            saveNicInformation(java.util.List<NicHardwareInformation> nicInformation) {
+            saveNicInformation(java.util.List<NicHardwareInformation> nicDevices) {
+
+        if (nicDevices == null || nicDevices.isEmpty() ) {
+            return null;
+        }
 
         java.util.ArrayList<NicHardwareInformation> nicsToSave = new java.util.ArrayList<>();
 
-        for (NicHardwareInformation nicHardwareInformation : nicInformation) {
+        for (NicHardwareInformation nicHardwareInformation : nicDevices) {
             // Query for all disks detected
             NicHardwareInformation matchingConfiguration
                     = nicHardwareInformationRepository.findByUniqueId(nicHardwareInformation.getUniqueId());
@@ -321,6 +329,11 @@ public class NicHardwareInformationService {
 
     public List<SystemNicMetric>
                 getLatestNicMetrics(List<NicHardwareInformation> nicDevices) {
+
+        if (nicDevices == null || nicDevices.isEmpty() ) {
+            return null;
+        }
+
         List<SystemNicMetric> nicMetrics = new ArrayList<>();
 
         for (NicHardwareInformation nicHardwareInformation : nicDevices) {
@@ -332,6 +345,34 @@ public class NicHardwareInformationService {
         }
 
         return nicMetrics;
+    }
+
+    /**
+     * Returns all NICs with their latest metrics
+     * This is useful for dashboards that only need the most recent metric for each NIC
+     *
+     * @return Map of NIC objects to their latest metric
+     */
+    public java.util.Map<NicHardwareInformation, SystemNicMetric> getAllNicsWithLatestMetrics() {
+        // Get all NICs
+        java.util.List<NicHardwareInformation> nics = nicHardwareInformationRepository.findAll();
+
+        // Initialize result map
+        java.util.Map<NicHardwareInformation, SystemNicMetric> nicsWithLatestMetrics = new java.util.HashMap<>();
+
+        // For each NIC, get its latest metric
+        for (NicHardwareInformation nic : nics) {
+            // Find the latest metric for this nic
+            SystemNicMetric metric = nicMetricRepository.findNewestByNicId(
+                    nic.getId());
+
+            // Add to result map if metrics exist
+            if (metric != null) {
+                nicsWithLatestMetrics.put(nic, metric);
+            }
+        }
+
+        return nicsWithLatestMetrics;
     }
 
     // Other service methods as needed

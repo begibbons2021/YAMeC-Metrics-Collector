@@ -34,5 +34,4 @@ public interface MemoryHardwareInformationRepository extends JpaRepository<Memor
     );
 
 
-
 } 

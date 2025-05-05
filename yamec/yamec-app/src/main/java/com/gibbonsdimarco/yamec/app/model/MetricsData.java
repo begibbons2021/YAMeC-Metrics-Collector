@@ -1,38 +1,22 @@
 package com.gibbonsdimarco.yamec.app.model;
 
+import java.util.ArrayList;
+
 public class MetricsData {
     private double cpuUsage;
     private long totalMemory;
     private long freeMemory;
     private long usedMemory;
-    private long diskTotal;
-    private long diskFree;
-    private long diskUsed;
-    private long networkSent;
-    private long networkReceived;
+    private ArrayList<DiskData> disks;
+    private ArrayList<NicData> nics;
 
     public MetricsData() {
         this.cpuUsage = 0;
         this.totalMemory = 0;
         this.freeMemory = 0;
         this.usedMemory = 0;
-        this.diskTotal = 0;
-        this.diskFree = 0;
-        this.diskUsed = 0;
-        this.networkSent = 0;
-        this.networkReceived = 0;
-    }
-
-    public MetricsData(double cpuUsage, long totalMemory, long freeMemory, long usedMemory, long diskTotal, long diskFree, long diskUsed, long networkSent, long networkReceived) {
-        this.cpuUsage = cpuUsage;
-        this.totalMemory = totalMemory;
-        this.freeMemory = freeMemory;
-        this.usedMemory = usedMemory;
-        this.diskTotal = diskTotal;
-        this.diskFree = diskFree;
-        this.diskUsed = diskUsed;
-        this.networkSent = networkSent;
-        this.networkReceived = networkReceived;
+        this.disks = new ArrayList<>();
+        this.nics = new ArrayList<>();
     }
 
     public double getCpuUsage() {
@@ -67,43 +51,27 @@ public class MetricsData {
         this.usedMemory = usedMemory;
     }
 
-    public long getDiskTotal() {
-        return diskTotal;
+    public void addDisk(DiskData disk) {
+        this.disks.add(disk);
     }
 
-    public void setDiskTotal(long diskTotal) {
-        this.diskTotal = diskTotal;
+    public ArrayList<DiskData> getDisks() {
+        return disks;
     }
 
-    public long getDiskFree() {
-        return diskFree;
+    public void setDisks(ArrayList<DiskData> disks) {
+        this.disks = disks;
     }
 
-    public void setDiskFree(long diskFree) {
-        this.diskFree = diskFree;
+    public void addNic(NicData nic) {
+        this.nics.add(nic);
     }
 
-    public long getDiskUsed() {
-        return diskUsed;
+    public ArrayList<NicData> getNics() {
+        return nics;
     }
 
-    public void setDiskUsed(long diskUsed) {
-        this.diskUsed = diskUsed;
-    }
-
-    public long getNetworkSent() {
-        return networkSent;
-    }
-
-    public void setNetworkSent(long networkSent) {
-        this.networkSent = networkSent;
-    }
-
-    public long getNetworkReceived() {
-        return networkReceived;
-    }
-
-    public void setNetworkReceived(long networkReceived) {
-        this.networkReceived = networkReceived;
+    public void setNics(ArrayList<NicData> nics) {
+        this.nics = nics;
     }
 }

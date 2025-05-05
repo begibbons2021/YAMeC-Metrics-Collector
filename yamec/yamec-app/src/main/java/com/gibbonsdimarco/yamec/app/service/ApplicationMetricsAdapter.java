@@ -44,6 +44,9 @@ public class ApplicationMetricsAdapter {
             // Skip entries without metrics
             if (metric == null) continue;
 
+            // Skip the "Idle" application
+            if (app.getApplicationName().equals("Idle")) continue;
+
             ApplicationMetricsData appData = new ApplicationMetricsData();
             appData.setId(app.getId());
             appData.setApplicationName(app.getApplicationName());
