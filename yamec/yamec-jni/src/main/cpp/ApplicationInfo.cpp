@@ -184,10 +184,6 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
 
     }
 
-
-
-
-
     return 0;
 
 }

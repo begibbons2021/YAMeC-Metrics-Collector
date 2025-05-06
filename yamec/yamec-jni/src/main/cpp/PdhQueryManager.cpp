@@ -59,12 +59,10 @@ size_t PdhQueryManager::getInstances(const std::string& objectName, std::vector<
     }
 
     // Convert Object Name retrieved to a wide string
-    auto objectNamePtr = objectName.c_str();
-    auto objectNameLength = objectName.length();
-    auto objectNameAsWchar = new wchar_t[objectNameLength + 1];
+    auto objectNameAsWchar = new wchar_t[objectName.length() + 1];
     size_t convertedChars = 0;
-    mbstowcs_s(&convertedChars, objectNameAsWchar, objectNameLength + 1, objectNamePtr,
-        objectNameLength);
+    mbstowcs_s(&convertedChars, objectNameAsWchar, objectName.length() + 1, objectName.c_str(),
+        objectName.length());
 
 
     // Then fill the buffer of counter and instance characters
@@ -434,23 +432,3 @@ bool PdhQueryManager::getCounterValues(const PDH_HCOUNTER counter,
     return true;
 }
 
-
-// size_t PdhQueryManager::getCounterArray(const PDH_HCOUNTER counter, double *values[]) const
-// {
-//     if (!m_initialized)
-//     {
-//         std::cerr << "Query not initialized." << std::endl;
-//         return false;
-//     }
-//
-//     PDH_FMT_COUNTERVALUE counterValues[];
-//     PDH_STATUS status = PdhGetFormattedCounterArray(counter, PDH_FMT_DOUBLE, nullptr, &counterValue);
-//     if (status)
-//     {
-//         std::cerr << "Failed to get formatted counter value." << std::endl;
-//         return false;
-//     }
-//
-//
-//     return true;
-// }
