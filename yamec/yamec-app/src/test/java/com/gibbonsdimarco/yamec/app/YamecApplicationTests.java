@@ -637,9 +637,9 @@ class YamecApplicationTests {
                     }
 
                     System.err.printf("\t%s\n", diskMetric.getDeviceName());
-                    System.err.printf("\t\tUsage: %f%%\n", diskMetric.getAvgUtilization());
-                    System.err.printf("\t\tRead Bandwidth: %s bytes/sec\n", diskMetric.getAvgReadBandwidth());
-                    System.err.printf("\t\tWrite Bandwidth: %s bytes/sec\n", diskMetric.getAvgWriteBandwidth());
+                    System.err.printf("\t\tUsage: %f%% \n", diskMetric.getAvgUtilization());
+                    System.err.printf("\t\tRead Bandwidth: %s bytes/sec \n", diskMetric.getAvgReadBandwidth());
+                    System.err.printf("\t\tWrite Bandwidth: %s bytes/sec \n", diskMetric.getAvgWriteBandwidth());
                     System.err.printf("\t\tAverage Transfer Rate: %f sec/transfer\n", diskMetric.getAvgTimeToTransfer());
                 }
             }

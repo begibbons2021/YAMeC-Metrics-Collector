@@ -68,6 +68,24 @@ void Logger::log(Level level, const std::string& message, const std::exception& 
     env->DeleteLocalRef(exceptionClass);
 }
 
+void Logger::log(Level level, const std::string& message, const jthrowable e) {
+    ensureInitialized();
+
+    jstring jMessage = env->NewStringUTF(message.c_str());
+
+    // Create a Java exception object
+    // jclass exceptionClass = env->FindClass("java/lang/RuntimeException");
+    // jmethodID constructor = env->GetMethodID(exceptionClass, "<init>", "(Ljava/lang/String;)V");
+    // jstring exceptionMessage = env->NewStringUTF(e.what());
+    // jobject exception = env->NewObject(exceptionClass, constructor, exceptionMessage);
+
+    env->CallVoidMethod(javaLogger, errorWithExceptionMethod, jMessage, e);
+
+    env->DeleteLocalRef(jMessage);
+    // env->DeleteLocalRef(e);
+    // env->DeleteLocalRef(exceptionClass);
+}
+
 void Logger::ensureInitialized() {
     if (!env || !javaLogger) {
         throw std::runtime_error("Logger not initialized. Call Logger::init first.");

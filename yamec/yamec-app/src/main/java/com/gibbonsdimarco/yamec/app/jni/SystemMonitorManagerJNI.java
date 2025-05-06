@@ -304,7 +304,7 @@ public class SystemMonitorManagerJNI implements AutoCloseable {
 
     public ArrayList<NicHardwareInformation> getNicHardwareInformation() {
         if (closed) {
-            logger.warn("Attempting to call SystemMonitorManagerJNI#geNicHardwareInformation() when closed");
+            logger.warn("Attempting to call SystemMonitorManagerJNI#getNicHardwareInformation() when closed");
             return null;
         }
 

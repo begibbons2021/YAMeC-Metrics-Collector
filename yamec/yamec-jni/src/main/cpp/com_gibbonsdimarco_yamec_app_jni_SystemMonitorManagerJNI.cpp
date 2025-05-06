@@ -20,7 +20,6 @@ int convertFromWideStrToStr(std::string &dest, const std::wstring &src)
     int utf8Length = WideCharToMultiByte(CP_UTF8, 0, src.c_str(), -1, nullptr, 0, nullptr, nullptr);
 
     if (utf8Length == 0) {
-        std::wcerr << "Conversion of " << src << " to UTF-8 failed!" << std::endl;
         return -1;
     }
 
@@ -30,7 +29,6 @@ int convertFromWideStrToStr(std::string &dest, const std::wstring &src)
     utf8Length = WideCharToMultiByte(CP_UTF8, 0, src.c_str(), -1, utf8String.data(), utf8Length, nullptr, nullptr);
 
     if (utf8Length == 0) {
-        std::wcerr << "Conversion of " << src << " to UTF-8 failed!" << std::endl;
         return -1;
     }
 
@@ -58,22 +56,34 @@ JNIEXPORT jlong JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManag
 
     // Allocate memory for new SystemMonitorManager and initialize
     auto *monitor = new SystemMonitorManager;
-    if (const int status = monitor->initialize(); -92 == status)
+    try
     {
-        // Special case: SystemMonitorManager is initialized, but initial counter retrieval fails
-        Logger::log(Logger::Level::ERR, std::string("SystemMonitorManager ",
-                                                            "- Initial counter data retrieval failed"));
+        if (const int status = monitor->initialize(); -92 == status)
+        {
+            // Special case: SystemMonitorManager is initialized, but initial counter retrieval fails
+            Logger::log(Logger::Level::WARN, std::string("System Monitor Native ",
+                                                                "- Initial counter data retrieval failed"));
+        }
+        else if (0 != status)
+        {
+            Logger::log(Logger::Level::ERR, "System Monitor Native - Initialization failed with error code: "
+                                                            + std::to_string(status));
+
+            // If initialization fails, clear memory
+            delete monitor;
+            return -1; // Failed
+        }
     }
-    else if (0 != status)
+    catch (std::exception &e)
     {
-        // If initialization fails, clear memory
+        const std::string message("System Monitor Native - Initialization failed failed because an exception "
+                                    + std::string("occurred: "));
+        Logger::log(Logger::Level::ERR, message, e);
+
         delete monitor;
-
-        Logger::log(Logger::Level::ERR, "System Monitor Manager - Could not be initialized.");
-        Logger::log(Logger::Level::ERR, "Error Code: " + std::to_string(status));
-
-        return -1; // Failed
+        return -1;
     }
+
 
     // Successful initialization, return the pointer address
     Logger::log(Logger::Level::INFO, "SystemMonitorManager - Initialized");
@@ -89,16 +99,16 @@ JNIEXPORT jint JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManage
     {
         if (const int status = monitor->collectMetricsData(); status != 0)
         {
-            Logger::log(Logger::Level::ERR, "SystemMonitorManager - Counter data could not be collected. "
-                                                + std::string("(Error Code: ") + std::to_string(status)
-                                                + std::string(")"));
+            Logger::log(Logger::Level::ERR, std::string("System Monitor Native - Counter data collection ")
+                                                                    + std::string("failed with error code: ")
+                                                                    + std::to_string(status));
             switch (status)
             {
                 case -1:
                     Logger::log(Logger::Level::ERR, "PdhQueryManager was not properly initialized.");
                     break;
                 case -2:
-                    Logger::log(Logger::Level::ERR, "Counter data retrieval failed.");
+                    Logger::log(Logger::Level::ERR, "The metrics could not be retrieved.");
                     break;
                 default:
                     Logger::log(Logger::Level::ERR, "An unknown error occurred with the counter data retrieval");
@@ -113,8 +123,8 @@ JNIEXPORT jint JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorManage
     }
     catch (const std::exception &e)
     {
-        Logger::log(Logger::Level::ERR, std::string("SystemMonitorManager - An exception occurred while ",
-                                                "attempting to collect counter data: "), e);
+        Logger::log(Logger::Level::ERR, std::string("System Monitor Native - Counter data collection failed "
+                                                + std::string("because an exception occurred: ")), e);
         return 1;
     }
 }
@@ -127,9 +137,26 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
-    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemCpuMetric");
-    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>",
+    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemCpuMetric");
+
+    if (systemMetricClass == nullptr)
+    {
+        const std::string message("System Monitor Native - CPU Metric Retrieval failed because the "
+                                    + std::string("metric class could not be found. "));
+        Logger::log(Logger::Level::ERR, message);
+        return env->NewGlobalRef(nullptr);
+    }
+
+    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>",
                                                             "(Ljava/lang/String;D)V");
+
+    if (systemMetricConstructor == nullptr)
+    {
+        const std::string message("System Monitor Native - CPU Metric Retrieval failed because the "
+                                    + std::string("metric constructor could not be found. "));
+        Logger::log(Logger::Level::ERR, message);
+        return env->NewGlobalRef(nullptr);
+    }
 
 
     // Create buffers to hold the other information temporarily
@@ -137,21 +164,51 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     const std::string deviceName = CpuInfo::getBrandString();
     double usageBuffer;
 
-    // Attempt to fill buffers
-    if (const int status = monitor->getCpuUsage(&usageBuffer); 0 != status)
+    try
     {
-        // Retrieval of counters failed, so return null
-        const std::string message("SystemMonitorManager - CPU Metric retrieval failed with error code: "
-                                    + std::to_string(status));
-        Logger::log(Logger::Level::ERR, message);
+        // Attempt to fill buffers
+        if (const int status = monitor->getCpuUsage(&usageBuffer); 0 != status)
+        {
+            // Retrieval of counters failed, so return null
+            const std::string message("System Monitor Native - CPU Metric retrieval failed with error code: "
+                                        + std::to_string(status));
+            Logger::log(Logger::Level::ERR, message);
+            return env->NewGlobalRef(nullptr);
+        }
+    }
+    catch (std::exception &e)
+    {
+        const std::string message("System Monitor Native - CPU Metric retrieval failed because an exception "
+                                    + std::string("occurred: "));
+        Logger::log(Logger::Level::ERR, message, e);
         return env->NewGlobalRef(nullptr);
     }
 
+
     // Put data into Java objects
-    const jobject systemMetricObject = env->NewObject(systemMetricClass,
+    jobject systemMetricObject = env->NewObject(systemMetricClass,
                                                 systemMetricConstructor,
                                                 env->NewStringUTF(deviceName.c_str()),
                                                 usageBuffer);
+
+
+    if (jthrowable exception = env->ExceptionOccurred(); exception != nullptr)
+    {
+        env->ExceptionClear();
+
+        // jclass exceptionClass = env->FindClass("java/lang/Exception");
+        // jmethodID exceptionMessageMethod = env->GetMethodID(exceptionClass, "getMessage",
+        //     "()Ljava/lang/String;");
+        //
+        // const auto exceptionMsg(reinterpret_cast<jstring>(env->CallObjectMethod(exception, exceptionMessageMethod)));
+        // const std::string exceptionMessage = env->GetStringUTFChars(exceptionMsg, nullptr);
+
+        const std::string message("System Monitor Native - CPU Metric Retrieval failed due to a "
+                                            + std::string("Java Exception: "));
+        Logger::log(Logger::Level::ERR, message, exception);
+
+        return env->NewGlobalRef(nullptr);
+    }
 
     return systemMetricObject;
 
@@ -164,10 +221,26 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
-    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/CpuHardwareInformation");
-    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>",
+    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/CpuHardwareInformation");
+
+    if (systemMetricClass == nullptr)
+    {
+        const std::string message("System Monitor Native - CPU Hardware Information retrieval failed because the "
+                                    + std::string("data object class could not be found. "));
+        Logger::log(Logger::Level::ERR, message);
+        return env->NewGlobalRef(nullptr);
+    }
+
+    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>",
                                                             "(Ljava/lang/String;JJLjava/lang/String;JJJJZ)V");
 
+    if (systemMetricConstructor == nullptr)
+    {
+        const std::string message("System Monitor Native - CPU Metric Retrieval failed because the "
+                                    + std::string("data object constructor could not be found. "));
+        Logger::log(Logger::Level::ERR, message);
+        return env->NewGlobalRef(nullptr);
+    }
 
     // Create buffers to hold the other information temporarily
     // Information data buffers
@@ -195,10 +268,9 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                                                                 &supportsVirtualization);
                                                                 0 != status)
         {
-            std::string message("SystemMonitorManager - CPU Hardware Information retrieval failed with error code: ");
-            message.append(std::to_string(status));
+            std::string message("SystemMonitorManager - CPU Hardware Information retrieval failed with error code: "
+                                    + std::to_string(status));
             Logger::log(Logger::Level::ERR, message);
-            // Retrieval of counters failed, so return null
             return env->NewGlobalRef(nullptr);
         }
     }
@@ -225,9 +297,8 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     if (const int success = convertFromWideStrToStr(architectureAsBSTR, architecture);
         0 != success)
     {
-        const std::string message("CPU Hardware information retrieval failed because the ",
-            "CPU architecture string could not be converted to a standard width string.");
-
+        const std::string message("CPU Hardware information retrieval failed because the "
+                    + std::string("CPU architecture string could not be converted to a standard width string."));
         Logger::log(Logger::Level::ERR, message);
         return env->NewGlobalRef(nullptr);
     }
@@ -258,6 +329,25 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         return env->NewGlobalRef(nullptr);
     }
 
+
+    if (jthrowable exception = env->ExceptionOccurred(); exception != nullptr)
+    {
+        env->ExceptionClear();
+
+        // jclass exceptionClass = env->FindClass("java/lang/Exception");
+        // jmethodID exceptionMessageMethod = env->GetMethodID(exceptionClass, "getMessage",
+        //     "()Ljava/lang/String;");
+        //
+        // const auto exceptionMsg(reinterpret_cast<jstring>(env->CallObjectMethod(exception, exceptionMessageMethod)));
+        // const std::string exceptionMessage = env->GetStringUTFChars(exceptionMsg, nullptr);
+
+        const std::string message("System Monitor Native - CPU Hardware Information retrieval failed due to a "
+                                            + std::string("Java Exception: "));
+        Logger::log(Logger::Level::ERR, message, exception);
+
+        return env->NewGlobalRef(nullptr);
+    }
+
     return systemMetricObject;
 
 }
@@ -269,8 +359,17 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
-    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemGpuMetric");
-    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(Ljava/lang/String;D)V");
+    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemGpuMetric");
+
+    if (systemMetricClass == nullptr)
+    {
+        const std::string message("System Monitor Native - GPU Metric retrieval failed because the "
+                                    + std::string("metric class could not be found. "));
+        Logger::log(Logger::Level::ERR, message);
+        return env->NewGlobalRef(nullptr);
+    }
+
+    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(Ljava/lang/String;D)V");
 
 
     // Create buffers to hold the other information temporarily
@@ -278,19 +377,44 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     const std::string deviceName = "_Total";
     double usageBuffer;
 
-    // Attempt to fill buffers
-    if (const int status = monitor->getGpuUsage(&usageBuffer); 0 != status)
+    try
     {
-        // Retrieval of counters failed, so return null
+        // Attempt to fill buffers
+        if (const int status = monitor->getGpuUsage(&usageBuffer); 0 != status)
+        {
+            const std::string message("System Monitor Native - GPU Metric retrieval failed with error code: "
+                                        + std::to_string(status));
+            Logger::log(Logger::Level::ERR, message);
+
+            // Retrieval of counters failed, so return null
+            return env->NewGlobalRef(nullptr);
+        }
+    }
+    catch (std::exception &e)
+    {
+        const std::string message("System Monitor Native - GPU Metric retrieval failed because an exception "
+                                    + std::string("occurred: "));
+        Logger::log(Logger::Level::ERR, message, e);
         return env->NewGlobalRef(nullptr);
     }
 
+
     // Put data into Java objects
-    const jobject systemMetricObject = env->NewObject(systemMetricClass,
+    jobject systemMetricObject = env->NewObject(systemMetricClass,
                                                 systemMetricConstructor,
                                                 env->NewStringUTF(deviceName.c_str()),
                                                 usageBuffer);
 
+
+    if (jthrowable exception = env->ExceptionOccurred(); exception != nullptr)
+    {
+        env->ExceptionClear();
+
+        const std::string message("System Monitor Native - GPU Metric retrieval failed due to a "
+                                            + std::string("Java Exception: "));
+        Logger::log(Logger::Level::ERR, message, exception);
+        return env->NewGlobalRef(nullptr);
+    }
 
     return systemMetricObject;
 
@@ -302,7 +426,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
-    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemMemoryMetric");
+    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemMemoryMetric");
 
     if (systemMetricClass == nullptr)
     {
@@ -312,7 +436,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         return env->NewGlobalRef(nullptr);
     }
     // long long, long long, double, bool, bool
-    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(JJDZZ)V");
+    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(JJDZZ)V");
 
     if (systemMetricConstructor == nullptr)
     {
@@ -373,7 +497,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     const unsigned long long physicalMemoryUsedBytes = (physicalMemoryTotalKiB*1024) - physicalMemoryAvailable;
 
     // Put data into Java objects
-    const jobject systemMetricObject = env->NewObject(systemMetricClass,
+    jobject systemMetricObject = env->NewObject(systemMetricClass,
                                                 systemMetricConstructor,
                                                 static_cast<jlong>(physicalMemoryUsedBytes),
                                                 static_cast<jlong>(virtualMemoryCommitted),
@@ -381,21 +505,20 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                                                 static_cast<jboolean>(isPhysicalMemoryAvailableUnsigned),
                                                 static_cast<jboolean>(isVirtualMemoryCommittedUnsigned));
 
-    if (const jthrowable exception = env->ExceptionOccurred(); exception != nullptr)
+    if (jthrowable exception = env->ExceptionOccurred(); exception != nullptr)
     {
         env->ExceptionClear();
 
-        const jclass exceptionClass = env->FindClass("java/lang/Exception");
-        const jmethodID exceptionMessageMethod = env->GetMethodID(exceptionClass, "getMessage",
-            "()Ljava/lang/String;");
-
-        const auto exceptionMsg(reinterpret_cast<jstring>(env->CallObjectMethod(exception, exceptionMessageMethod)));
-        const std::string exceptionMessage = env->GetStringUTFChars(exceptionMsg, nullptr);
+        // const jclass exceptionClass = env->FindClass("java/lang/Exception");
+        // const jmethodID exceptionMessageMethod = env->GetMethodID(exceptionClass, "getMessage",
+        //     "()Ljava/lang/String;");
+        //
+        // const auto exceptionMsg(reinterpret_cast<jstring>(env->CallObjectMethod(exception, exceptionMessageMethod)));
+        // const std::string exceptionMessage = env->GetStringUTFChars(exceptionMsg, nullptr);
 
         const std::string message("System Monitor Native - Memory Metric Retrieval failed due to a "
                                             + std::string("Java Exception: "));
-        Logger::log(Logger::Level::ERR, message);
-        Logger::log(Logger::Level::ERR, exceptionMessage);
+        Logger::log(Logger::Level::ERR, message, exception);
 
         return env->NewGlobalRef(nullptr);
     }
@@ -411,7 +534,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
-    const jclass arrayListClass = env->FindClass("java/util/ArrayList");
+    jclass arrayListClass = env->FindClass("java/util/ArrayList");
 
     if (arrayListClass == nullptr)
     {
@@ -421,7 +544,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         return env->NewGlobalRef(nullptr);
     }
 
-    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemDiskMetric");
+    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/SystemDiskMetric");
 
 
     if (systemMetricClass == nullptr)
@@ -432,11 +555,11 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         return env->NewGlobalRef(nullptr);
     }
 
-    const jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
+    jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
     // Java does Generic type checks at compile time but not runtime, so we add objects of type Object
-    const jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
+    jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
     // Ljava/lang/string; double, long long, long long, double, bool, bool
-    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(Ljava/lang/String;DJJDZZ)V");
+    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(Ljava/lang/String;DJJDZZ)V");
 
     // Create buffers to hold the disk instance names and disk instance count
     std::vector<std::wstring> diskInstanceNames;
@@ -488,11 +611,10 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     }
     catch (std::exception &e)
     {
-        const std::string message("System Monitor Native - Disk Metric Retrieval failed",
-                                    " due to an exception: ");
+        const std::string message("System Monitor Native - Disk Metric Retrieval failed"
+                                    + std::string(" due to an exception: "));
         Logger::log(Logger::Level::ERR, message, e);
 
-        // If the monitor's pointer is incorrect or some error occurs in retrieval
         return env->NewGlobalRef(nullptr); // An error occurs when retrieving data
     }
 
@@ -500,7 +622,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     // Put data into Java objects
 
     // Create ArrayList of size diskInstanceCount
-    const jobject diskInstanceArrayList = env->NewObject(arrayListClass,
+    jobject diskInstanceArrayList = env->NewObject(arrayListClass,
                                                     arrayListConstructor,
                                                     static_cast<jlong>(diskInstanceCount));
 
@@ -511,7 +633,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         std::string utf8String;
 
         // Conversion failure fail-safe: Just return null
-        if (int utf8Length = convertFromWideStrToStr(utf8String, diskInstanceNames.at(i)); utf8Length != 0)
+        if (int status = convertFromWideStrToStr(utf8String, diskInstanceNames.at(i)); status != 0)
         {
             const std::string message("System Monitor Native - Disk Metric retrieval failed because the "
                             + std::string("disk name could not be converted to a standard width string."));
@@ -548,6 +670,17 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 
     }
 
+
+    if (jthrowable exception = env->ExceptionOccurred(); exception != nullptr)
+    {
+        env->ExceptionClear();
+
+        const std::string message("System Monitor Native - Disk Metric retrieval failed due to a "
+                                            + std::string("Java Exception: "));
+        Logger::log(Logger::Level::ERR, message, exception);
+        return env->NewGlobalRef(nullptr);
+    }
+
     // Return created ArrayList
     return diskInstanceArrayList;
 
@@ -582,23 +715,20 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         return env->NewGlobalRef(nullptr);
     }
 
-    const jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
+    jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
     // Java does Generic type checks at compile time but not runtime, so we add objects of type Object
-    const jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
+    jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
     // Ljava/lang/string; long long, long long, long long, bool, bool, bool
-    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(Ljava/lang/String;JJJZZZ)V");
+    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(Ljava/lang/String;JJJZZZ)V");
 
 
-
-
-
-    if (systemMetricConstructor == nullptr)
-    {
-        const std::string message("System Monitor Native - NIC Metric Retrieval failed because the ",
-                                    "metric constructor could not be found. ");
-        Logger::log(Logger::Level::ERR, message);
-        return env->NewGlobalRef(nullptr);
-    }
+    // if (systemMetricConstructor == nullptr)
+    // {
+    //     const std::string message("System Monitor Native - NIC Metric Retrieval failed because the ",
+    //                                 "metric constructor could not be found. ");
+    //     Logger::log(Logger::Level::ERR, message);
+    //     return env->NewGlobalRef(nullptr);
+    // }
 
     // Create buffers to hold the NIC instance names and NIC instance count
     std::vector<std::wstring> nicInstanceNames;
@@ -610,7 +740,9 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     }
     catch (std::exception &e)
     {
-        // If the monitor's pointer is incorrect or some error occurs in retrieval
+        const std::string message("System Monitor Native - NIC Metric retrieval failed because an exception "
+                                    + std::string("occurred while retrieving NIC devices: "));
+        Logger::log(Logger::Level::ERR, message, e);
         return env->NewGlobalRef(nullptr); // An error occurs when retrieving data
     }
 
@@ -618,7 +750,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     if (nicInstanceCount == 0)
     {
         const std::string message("System Monitor Native - No NIC Metrics to Retrieve");
-        Logger::log(Logger::Level::INFO, message);
+        Logger::log(Logger::Level::WARN, message);
         return env->NewGlobalRef(nullptr);
     }
 
@@ -643,7 +775,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     // Put data into Java objects
 
     // Create ArrayList of size nicInstanceCount
-    const jobject nicInstanceArrayList = env->NewObject(arrayListClass,
+    jobject nicInstanceArrayList = env->NewObject(arrayListClass,
                                                     arrayListConstructor,
                                                     static_cast<jlong>(nicInstanceCount));
 
@@ -653,7 +785,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         std::string utf8String;
 
         // Conversion failure fail-safe: Just return null
-        if (int utf8Length = convertFromWideStrToStr(utf8String, nicInstanceNames.at(i)); utf8Length != 0)
+        if (int status = convertFromWideStrToStr(utf8String, nicInstanceNames.at(i)); status != 0)
         {
             const std::string message("System Monitor Native - NIC Metric retrieval failed because the "
                             + std::string("NIC name could not be converted to a standard width string."));
@@ -669,7 +801,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 
         // Allocate Java SystemNicMetric object
         // Ljava/lang/String; long long, long long, long long, bool, bool, bool
-        const jobject nicInstanceObject = env->NewObject(systemMetricClass,
+        jobject nicInstanceObject = env->NewObject(systemMetricClass,
                                                         systemMetricConstructor,
                                                         env->NewStringUTF(utf8String.c_str()),
                                                         static_cast<jlong>(nicInstancesBandwidth[i]),
@@ -690,23 +822,24 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
             return env->NewGlobalRef(nullptr);
         }
 
+        env->DeleteLocalRef(nicInstanceObject);
+
     }
 
-    if (const jthrowable exception = env->ExceptionOccurred(); exception != nullptr)
+    if (jthrowable exception = env->ExceptionOccurred(); exception != nullptr)
     {
         env->ExceptionClear();
 
-        const jclass exceptionClass = env->FindClass("java/lang/Exception");
-        const jmethodID exceptionMessageMethod = env->GetMethodID(exceptionClass, "getMessage",
-            "()Ljava/lang/String;");
-
-        const auto exceptionMsg(reinterpret_cast<jstring>(env->CallObjectMethod(exception, exceptionMessageMethod)));
-        const std::string exceptionMessage = env->GetStringUTFChars(exceptionMsg, nullptr);
+        // const jclass exceptionClass = env->FindClass("java/lang/Exception");
+        // const jmethodID exceptionMessageMethod = env->GetMethodID(exceptionClass, "getMessage",
+        //     "()Ljava/lang/String;");
+        //
+        // const auto exceptionMsg(reinterpret_cast<jstring>(env->CallObjectMethod(exception, exceptionMessageMethod)));
+        // const std::string exceptionMessage = env->GetStringUTFChars(exceptionMsg, nullptr);
 
         const std::string message("System Monitor Native - NIC Metric Retrieval failed due to a ",
                                             "Java Exception: ");
-        Logger::log(Logger::Level::ERR, message);
-        Logger::log(Logger::Level::ERR, exceptionMessage);
+        Logger::log(Logger::Level::ERR, message, exception);
 
         return env->NewGlobalRef(nullptr);
     }
@@ -726,13 +859,32 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
-    const jclass arrayListClass = env->FindClass("java/util/ArrayList");
-    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/ProcessMetric");
-    const jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
+    jclass arrayListClass = env->FindClass("java/util/ArrayList");
+
+    if (arrayListClass == nullptr)
+    {
+        const std::string message("System Monitor Native - Application Metric retrieval failed because an "
+                                    + std::string("internal class could not be found. "));
+        Logger::log(Logger::Level::ERR, message);
+
+        return env->NewGlobalRef(nullptr);
+    }
+
+    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/ProcessMetric");
+
+    if (systemMetricClass == nullptr)
+    {
+        const std::string message("System Monitor Native - Application Metric retrieval failed because the "
+                                    + std::string("metric class could not be found. "));
+        Logger::log(Logger::Level::ERR, message);
+        return env->NewGlobalRef(nullptr);
+    }
+
+    jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
     // Java does Generic type checks at compile time but not runtime, so we add objects of type Object
-    const jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
+    jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
     // String;int;double;long long;long long
-    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>",
+    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>",
                                         "(Ljava/lang/String;IDJJ)V");
 
     // Create buffers to hold the disk information temporarily
@@ -778,8 +930,8 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         // Convert the friendlyName to UTF8
         std::string processNameAsUTF8Str;
 
-        if (const int utf8Length = convertFromWideStrToStr(processNameAsUTF8Str, processNames.at(i));
-            utf8Length < 0)
+        if (const int status = convertFromWideStrToStr(processNameAsUTF8Str, processNames.at(i));
+            status < 0)
         {
             return env->NewGlobalRef(nullptr);
         }
@@ -818,23 +970,18 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
             return env->NewGlobalRef(nullptr);
         }
 
+        // Clear reference to the process metric which has been added to the return list
+        env->DeleteLocalRef(processMetricObject);
+
     }
 
-     if (const jthrowable exception = env->ExceptionOccurred(); exception != nullptr)
+     if (jthrowable exception = env->ExceptionOccurred(); exception != nullptr)
         {
             env->ExceptionClear();
 
-            const jclass exceptionClass = env->FindClass("java/lang/Exception");
-            const jmethodID exceptionMessageMethod = env->GetMethodID(exceptionClass, "getMessage",
-                "()Ljava/lang/String;");
-
-            const auto exceptionMsg(reinterpret_cast<jstring>(env->CallObjectMethod(exception, exceptionMessageMethod)));
-            const std::string exceptionMessage = env->GetStringUTFChars(exceptionMsg, nullptr);
-
             const std::string message("System Monitor Native - Application Metric Retrieval failed due to a "
                                                 + std::string("Java Exception: "));
-            Logger::log(Logger::Level::ERR, message);
-            Logger::log(Logger::Level::ERR, exceptionMessage);
+            Logger::log(Logger::Level::ERR, message, exception);
 
             return env->NewGlobalRef(nullptr);
         }
@@ -849,19 +996,9 @@ JNIEXPORT jboolean JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMa
                             (JNIEnv *env, jobject obj, const jlong monitorPtr)
 {
 
-    // In case an invalid pointer is passed by parameter, contain in a try-catch
-    try
-    {
-        const SystemMonitorManager *monitor = reinterpret_cast<SystemMonitorManager*>(monitorPtr);
-        delete monitor; // Free memory
-    }
-    catch (std::exception &e)
-    {
-        const std::string message("SystemMonitorManager - Release failed due to an exception: ");
-        Logger::log(Logger::Level::ERR, message);
-        Logger::log(Logger::Level::ERR, e.what());
-        return false; // Memory wasn't freed
-    }
+    // Even if this is an invalid pointer, it should still be fine
+    const SystemMonitorManager *monitor = reinterpret_cast<SystemMonitorManager*>(monitorPtr);
+    delete monitor; // Free memory
 
     return true; // Memory is successfully freed
 
@@ -874,46 +1011,42 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
-    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/MemoryHardwareInformation");
-    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(JJJJZZ)V");
+    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/MemoryHardwareInformation");
+
+    if (systemMetricClass == nullptr)
+    {
+        const std::string message("System Monitor Native - Hardware Memory Information retrieval failed because the "
+                                    + std::string("metric class could not be found. "));
+        Logger::log(Logger::Level::ERR, message);
+        return env->NewGlobalRef(nullptr);
+    }
+
+    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>", "(JJJJZZ)V");
+
+
+    // Create buffers to hold the other information temporarily
+    // Metrics Buffers (CPU Usage only has one!)
+    unsigned long long speed;
+    unsigned long long capacity;
+    unsigned int slotsUsed;
+    unsigned int slotsTotal;
+    constexpr bool speedIsUnsigned    = true;
+    constexpr bool capacityIsUnsigned = true;
 
     try
     {
-        // Create buffers to hold the other information temporarily
-        // Metrics Buffers (CPU Usage only has one!)
-        unsigned long long speed;
-        unsigned long long capacity;
-        unsigned int slotsUsed;
-        unsigned int slotsTotal;
-        constexpr bool speedIsUnsigned    = true;
-        constexpr bool capacityIsUnsigned = true;
-
-
         // Attempt to fill buffers
         if (const int status = monitor->getHardwareMemoryInformation(&speed,
                                                         &capacity,
                                                         &slotsUsed,
                                                         &slotsTotal); 0 != status)
         {
-            std::string message("SystemMonitorManager - Memory Hardware Information retrieval failed with error code: "
+            const std::string message("SystemMonitorManager - Memory Hardware Information retrieval failed with error code: "
                                     + std::to_string(status));
             Logger::log(Logger::Level::ERR, message);
             // Retrieval of counters failed, so return null
             return env->NewGlobalRef(nullptr);
         }
-
-        // Put data into Java objects
-        const jobject systemMetricObject = env->NewObject(systemMetricClass,
-                                                    systemMetricConstructor,
-                                                    static_cast<jlong>(capacity),
-                                                    static_cast<jlong>(speed),
-                                                    static_cast<jlong>(slotsUsed),
-                                                    static_cast<jlong>(slotsTotal),
-                                                    static_cast<jboolean>(capacityIsUnsigned),
-                                                    static_cast<jboolean>(speedIsUnsigned));
-
-        return systemMetricObject;
-
     }
     catch (std::exception &e)
     {
@@ -923,6 +1056,30 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 
         return env->NewGlobalRef(nullptr); // An error occurs when retrieving data
     }
+
+    // Put data into Java objects
+    jobject systemMetricObject = env->NewObject(systemMetricClass,
+                                                systemMetricConstructor,
+                                                static_cast<jlong>(capacity),
+                                                static_cast<jlong>(speed),
+                                                static_cast<jlong>(slotsUsed),
+                                                static_cast<jlong>(slotsTotal),
+                                                static_cast<jboolean>(capacityIsUnsigned),
+                                                static_cast<jboolean>(speedIsUnsigned));
+
+    if (jthrowable exception = env->ExceptionOccurred(); exception != nullptr)
+    {
+        env->ExceptionClear();
+
+        const std::string message("System Monitor Native - Memory Hardware Information retrieval failed due to a "
+                                            + std::string("Java Exception: "));
+        Logger::log(Logger::Level::ERR, message, exception);
+
+        return env->NewGlobalRef(nullptr);
+    }
+
+    return systemMetricObject;
+
 
 }
 
@@ -935,13 +1092,31 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
-    const jclass arrayListClass = env->FindClass("java/util/ArrayList");
-    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/DiskHardwareInformation");
-    const jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
+    jclass arrayListClass = env->FindClass("java/util/ArrayList");
+
+    if (arrayListClass == nullptr)
+    {
+        const std::string message("System Monitor Native - Hardware Disk Information retrieval failed because an "
+                                    + std::string("internal class could not be found. "));
+        Logger::log(Logger::Level::ERR, message);
+        return env->NewGlobalRef(nullptr);
+    }
+
+    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/DiskHardwareInformation");
+
+    if (systemMetricClass == nullptr)
+    {
+        const std::string message("System Monitor Native - Hardware Disk Information retrieval failed because the "
+                                    + std::string("metric class could not be found. "));
+        Logger::log(Logger::Level::ERR, message);
+        return env->NewGlobalRef(nullptr);
+    }
+
+    jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
     // Java does Generic type checks at compile time but not runtime, so we add objects of type Object
-    const jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
+    jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
     // String;String;long long;long long;long long;boolean;ArrayList
-    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>",
+    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>",
                                         "(Ljava/lang/String;Ljava/lang/String;JJJZLjava/util/ArrayList;)V");
 
     // Create buffers to hold the disk information temporarily
@@ -963,8 +1138,8 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                                                                     &diskPartitionNameToDiskNumberMaps);
                                                 0 != status)
         {
-            std::string message("SystemMonitorManager - Disk Hardware Information retrieval failed with error code: ");
-            message.append(std::to_string(status));
+            std::string message("System Monitor Native - Disk Hardware Information retrieval failed with error code: "
+                                + std::to_string(status));
             Logger::log(Logger::Level::ERR, message);
             // Retrieval of counters failed, so return null
             return env->NewGlobalRef(nullptr);
@@ -972,7 +1147,8 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     }
     catch (std::exception &e)
     {
-        const std::string message("SystemMonitorManager - Disk Hardware Information Retrieval failed due to an exception: ");
+        const std::string message("System Monitor Native - Disk Hardware Information Retrieval failed because an"
+                                    + std::string(" exception occurred: "));
         Logger::log(Logger::Level::ERR, message, e);
         return env->NewGlobalRef(nullptr);
     }
@@ -991,15 +1167,18 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         for (const std::pair<std::wstring, unsigned int> partition : diskPartitionNameToDiskNumberMaps)
         {
             // Compare disk numbers to add to appropriate ArrayLists
-            if (partition.second == diskNumbers[i])
+            if (partition.second == diskNumbers.at(i))
             {
                 // Get partition name
                 std::string partitionNameAsUTF8Str;
 
-                if (int utf8Length = convertFromWideStrToStr(partitionNameAsUTF8Str, partition.first);
-                                utf8Length < 0)
+                if (int status = convertFromWideStrToStr(partitionNameAsUTF8Str, partition.first);
+                                status != 0)
                 {
                     // Error converting partition name string
+                    const std::string message("System Monitor Native - Disk Hardware Information retrieval failed because a "
+                            + std::string("disk partition could not be converted to a standard width string."));
+                    Logger::log(Logger::Level::ERR, message);
                     return env->NewGlobalRef(nullptr);
                 }
 
@@ -1009,22 +1188,25 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                     continue;
                 }
 
+                auto partitionName_jobject = reinterpret_cast<jobject>(env->NewStringUTF(partitionNameAsUTF8Str.c_str()));
+
                 // If not successfully added to array list, we can't proceed
                 if (const jboolean success =
                     env->CallBooleanMethod(arrayList, arrayListAddMethod,
-                                            reinterpret_cast<jobject>
-                                            (env->NewStringUTF(partitionNameAsUTF8Str.c_str())));
+                                            partitionName_jobject);
                                             !success)
                 {
-                    const std::string message("SystemMonitorManager - Disk Hardware Retrieval failed because a list of "
-                                                + std::string("disk partitions could not be retrieved."));
+                    const std::string message("SystemMonitorManager - Disk Hardware Retrieval failed because a "
+                                                + std::string("disk's list of partitions could not be added to."));
                     Logger::log(Logger::Level::ERR, message);
                     return env->NewGlobalRef(nullptr);
                 }
             }
+
         }
 
         diskPartitionLists.emplace_back(arrayList);
+
     }
 
     // Create an ArrayList to return all object instances in
@@ -1032,33 +1214,44 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 
     for (size_t i = 0; i < diskFriendlyNames.size(); ++i)
     {
+        jobject partitionList = diskPartitionLists.at(i);
+
         // Convert the friendlyName to UTF8
         std::string friendlyNameAsUTF8Str;
 
-        if (int utf8Length = convertFromWideStrToStr(friendlyNameAsUTF8Str, diskFriendlyNames.at(i));
-            utf8Length < 0)
+        if (int status = convertFromWideStrToStr(friendlyNameAsUTF8Str, diskFriendlyNames.at(i));
+            status != 0)
         {
 
+            const std::string message("System Monitor Native - Disk Hardware Information retrieval failed because the "
+                                        + std::string("disk name could not be converted to a standard width string."));
+            Logger::log(Logger::Level::ERR, message);
             return env->NewGlobalRef(nullptr);
         }
 
         // Skip this drive if the friendly name is not a valid string
-        if (friendlyNameAsUTF8Str.size() == 0)
+        if (friendlyNameAsUTF8Str.empty())
         {
+            env->DeleteLocalRef(partitionList);
             continue;
         }
 
         // Convert the uniqueId to UTF8
         std::string uniqueIdAsUTF8Str;
 
-        if (int utf8Length = convertFromWideStrToStr(uniqueIdAsUTF8Str, diskUniqueIds.at(i)); utf8Length < 0)
+        if (int status = convertFromWideStrToStr(uniqueIdAsUTF8Str, diskUniqueIds.at(i)); status != 0)
         {
+            const std::string message("System Monitor Native - Disk Hardware Information retrieval failed because the "
+                                        + std::string("unique ID could not be converted to a standard width string."));
+
+            Logger::log(Logger::Level::ERR, message);
             return env->NewGlobalRef(nullptr);
         }
 
         // Skip this drive if the unique ID is not a valid string
-        if (uniqueIdAsUTF8Str.size() == 0)
+        if (uniqueIdAsUTF8Str.empty())
         {
+            env->DeleteLocalRef(partitionList);
             continue;
         }
 
@@ -1066,12 +1259,11 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         unsigned long long capacity = diskCapacities.at(i);
         unsigned int diskNumber = diskNumbers.at(i);
         constexpr bool diskCapacityIsUnsigned = true;
-        jobject partitionList = diskPartitionLists.at(i);
 
 
         // Allocate Java DiskHardwareInformation object
         // String;String;long long;long long;long long;boolean;ArrayList
-        const jobject diskHardwareInformationObject = env->NewObject(systemMetricClass,
+        jobject diskHardwareInformationObject = env->NewObject(systemMetricClass,
                                                         systemMetricConstructor,
                                                         env->NewStringUTF(friendlyNameAsUTF8Str.c_str()),
                                                         env->NewStringUTF(uniqueIdAsUTF8Str.c_str()),
@@ -1082,14 +1274,30 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                                                         partitionList);
 
         // Try to add the object to the ArrayList
-
         if (const jboolean success = env->CallBooleanMethod(diskHardwareInformationArrayList,
                                         arrayListAddMethod,
                                         diskHardwareInformationObject); !success)
         {
+            const std::string message("System Monitor Native - Disk Hardware Information retrieval failed because a "
+                                        + std::string("disk could not be added to the returned values. "));
+            Logger::log(Logger::Level::ERR, message);
             return env->NewGlobalRef(nullptr);
         }
 
+        // Clear references from the scope since their data is now copied to the ArrayList
+        env->DeleteLocalRef(partitionList);
+        env->DeleteLocalRef(diskHardwareInformationObject);
+    }
+
+    if (jthrowable exception = env->ExceptionOccurred(); exception != nullptr)
+    {
+        env->ExceptionClear();
+
+        const std::string message("System Monitor Native - Disk Hardware Information failed due to a "
+                                            + std::string("Java Exception: "));
+        Logger::log(Logger::Level::ERR, message, exception);
+
+        return env->NewGlobalRef(nullptr);
     }
 
     // Return created ArrayList
@@ -1103,13 +1311,31 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     const auto *monitor = reinterpret_cast<SystemMonitorManager *>(monitorPtr); // Access the SystemMonitorManager
 
     // Java Classes & Methods Used
-    const jclass arrayListClass = env->FindClass("java/util/ArrayList");
-    const jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/NicHardwareInformation");
-    const jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
+    jclass arrayListClass = env->FindClass("java/util/ArrayList");
+
+    if (arrayListClass == nullptr)
+    {
+        const std::string message("System Monitor Native - Hardware NIC Information retrieval failed because an "
+                                    + std::string("internal class could not be found. "));
+        Logger::log(Logger::Level::ERR, message);
+        return env->NewGlobalRef(nullptr);
+    }
+
+    jclass systemMetricClass = env->FindClass("com/gibbonsdimarco/yamec/app/data/NicHardwareInformation");
+
+    if (systemMetricClass == nullptr)
+    {
+        const std::string message("System Monitor Native - Hardware NIC Information retrieval failed because the "
+                                    + std::string("metric class could not be found. "));
+        Logger::log(Logger::Level::ERR, message);
+        return env->NewGlobalRef(nullptr);
+    }
+
+    jmethodID arrayListConstructor = env->GetMethodID(arrayListClass, "<init>", "()V");
     // Java does Generic type checks at compile time but not runtime, so we add objects of type Object
-    const jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
+    jmethodID arrayListAddMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
     // String;String;long long;long long;long long;boolean;ArrayList
-    const jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>",
+    jmethodID systemMetricConstructor = env->GetMethodID(systemMetricClass, "<init>",
                                         "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;J)V");
 
     // Create buffers to hold the disk information temporarily
@@ -1126,8 +1352,8 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                                                                     &nicUniqueIds,
                                                                     &nicTypes); 0 != status)
         {
-            std::string message("SystemMonitorManager - NIC Hardware Information retrieval failed with error code: ");
-            message.append(std::to_string(status));
+            std::string message("System Monitor Native - NIC Hardware Information retrieval failed with error code: "
+                                    + std::to_string(status));
             Logger::log(Logger::Level::ERR, message);
             // Retrieval of counters failed, so return null
             return env->NewGlobalRef(nullptr);
@@ -1135,7 +1361,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     }
     catch (std::exception &e)
     {
-        const std::string message("SystemMonitorManager - NIC Hardware Retrieval failed due to an exception: ");
+        const std::string message("System Monitor Native - NIC Hardware Retrieval failed due to an exception: ");
         Logger::log(Logger::Level::ERR, message, e);
         return env->NewGlobalRef(nullptr);
     }
@@ -1152,15 +1378,17 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         // Convert the friendlyName to UTF8
         std::string friendlyNameAsUTF8Str;
 
-        if (const int utf8Length = convertFromWideStrToStr(friendlyNameAsUTF8Str, nicFriendlyNames.at(i));
-            utf8Length < 0)
+        if (const int status = convertFromWideStrToStr(friendlyNameAsUTF8Str, nicFriendlyNames.at(i));
+            status != 0)
         {
-
+            const std::string message("System Monitor Native - Hardware NIC Information retrieval failed because a "
+                            + std::string("NIC name could not be converted to a standard width string. "));
+            Logger::log(Logger::Level::ERR, message);
             return env->NewGlobalRef(nullptr);
         }
 
-        // Skip this drive if the friendly name is not a valid string
-        if (friendlyNameAsUTF8Str.size() == 0)
+        // Skip this NIC if the friendly name is not a valid string
+        if (friendlyNameAsUTF8Str.empty())
         {
             continue;
         }
@@ -1168,21 +1396,33 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         // Convert the uniqueId to UTF8
         std::string uniqueIdAsUTF8Str;
 
-        if (const int utf8Length = convertFromWideStrToStr(uniqueIdAsUTF8Str, nicUniqueIds.at(i)); utf8Length < 0)
+        if (const int status = convertFromWideStrToStr(uniqueIdAsUTF8Str, nicUniqueIds.at(i)); status != 0)
         {
+            const std::string message("System Monitor Native - Hardware NIC Information retrieval failed because a "
+                            + std::string("NIC unique ID could not be converted to a standard width string. "));
+            Logger::log(Logger::Level::ERR, message);
             return env->NewGlobalRef(nullptr);
         }
 
-        // Convert the uniqueId to UTF8
+        // Skip this NIC if the Unique ID is not a valid string
+        if (uniqueIdAsUTF8Str.empty())
+        {
+            continue;
+        }
+
+        // Convert the label to UTF8
         std::string labelAsUTF8Str;
 
-        if (const int utf8Length = convertFromWideStrToStr(labelAsUTF8Str, nicLabels.at(i)); utf8Length < 0)
+        if (const int status = convertFromWideStrToStr(labelAsUTF8Str, nicLabels.at(i)); status < 0)
         {
+            const std::string message("System Monitor Native - Hardware NIC Information retrieval failed because a "
+                            + std::string("NIC label could not be converted to a standard width string. "));
+            Logger::log(Logger::Level::ERR, message);
             return env->NewGlobalRef(nullptr);
         }
 
-        // Skip this drive if the unique ID is not a valid string
-        if (labelAsUTF8Str.size() == 0)
+        // Skip this NIC if the label is not a valid string
+        if (labelAsUTF8Str.empty())
         {
             continue;
         }
@@ -1191,7 +1431,7 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 
         // Allocate Java DiskHardwareInformation object
         // String;String;String;long long
-        const jobject nicHardwareInformationObject = env->NewObject(systemMetricClass,
+        jobject nicHardwareInformationObject = env->NewObject(systemMetricClass,
                                                         systemMetricConstructor,
                                                         env->NewStringUTF(friendlyNameAsUTF8Str.c_str()),
                                                         env->NewStringUTF(labelAsUTF8Str.c_str()),
@@ -1203,13 +1443,27 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
                                                             arrayListAddMethod,
                                                             nicHardwareInformationObject); !success)
         {
-            const std::string message("SystemMonitorManager - Disk Hardware Retrieval failed because a list of ",
-                                                            "disk partitions could not be retrieved.");
+            const std::string message("System Monitor Native - Disk Hardware Information retrieval failed because ",
+                                                            "a list of disk partitions could not be retrieved.");
             Logger::log(Logger::Level::ERR, message);
             return env->NewGlobalRef(nullptr);
         }
 
+        // Clear the memory of the NIC object since it's added to the return array
+        env->DeleteLocalRef(nicHardwareInformationObject);
     }
+
+    if (jthrowable exception = env->ExceptionOccurred(); exception != nullptr)
+    {
+        env->ExceptionClear();
+
+        const std::string message("System Monitor Native - Disk Hardware Information retrieval failed due to a "
+                                            + std::string("Java Exception: "));
+        Logger::log(Logger::Level::ERR, message, exception);
+
+        return env->NewGlobalRef(nullptr);
+    }
+
 
     // Return created ArrayList
     return nicHardwareInformationArrayList;

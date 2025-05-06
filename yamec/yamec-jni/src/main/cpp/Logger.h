@@ -27,6 +27,8 @@ public:
     static void log(Level level, const std::string& message);
     static void log(Level level, const std::string& message, const std::exception& e);
 
+    static void log(Level level, const std::string &message, jthrowable e);
+
 private:
     static JNIEnv* env;
     static jobject javaLogger;
