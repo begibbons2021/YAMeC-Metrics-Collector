@@ -23,6 +23,8 @@ public class ApplicationMetricsAdapter {
         this.applicationDataService = applicationDataService;
     }
 
+
+
     /**
      * Converts the real application data to the format expected by the views
      * @return List of application metrics data sorted by CPU usage (highest first)
