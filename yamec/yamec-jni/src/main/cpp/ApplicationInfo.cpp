@@ -60,45 +60,67 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
                                         std::vector<long long> *physicalMemoryUsed,
                                         std::vector<long long> *virtualMemoryUsed) const
 {
-// TODO: Update to handle these as unsigned values
     if (!m_pdhManager)
     {
         std::cerr << "PDH manager not initialized" << std::endl;
         return -1;
     }
 
-    // Collect CPU usage data
-    std::vector<std::wstring> processNamesAndIds;
-    std::vector<double> cpuUsagesTemp;
-    if (!m_pdhManager->getCounterValues(m_processCpuTimeCounter, &processNamesAndIds, &cpuUsagesTemp))
+    std::unordered_map<std::wstring, double> processCpuUsageMap;
+    try
     {
-        return -3;
+        if (!m_pdhManager->getCounterValues(m_processCpuTimeCounter, &processCpuUsageMap))
+        {
+            return -3;
+        }
     }
+    catch (std::exception &e)
+    {
+        throw std::runtime_error("Application Info - CPU Usage - " + std::string(e.what()));
+    }
+
 
     // Collect Physical Memory usage
-    std::vector<long long> physicalMemoryUsageTemp;
-    if (!m_pdhManager->getCounterValues(m_processWorkingSetSizeCounter, &processNamesAndIds, &physicalMemoryUsageTemp))
+    std::unordered_map<std::wstring, long long> processPhysicalMemoryMap;
+    try
     {
-        return -4;
+        if (!m_pdhManager->getCounterValues(m_processWorkingSetSizeCounter, &processPhysicalMemoryMap))
+        {
+            return -4;
+        }
     }
+    catch (std::exception &e)
+    {
+        throw std::runtime_error("Application Info - Physical Memory Use -" + std::string(e.what()));
+    }
+
+
 
     // Collect Virtual Memory usage
-    std::vector<long long> virtualMemoryUsageTemp;
-    if (!m_pdhManager->getCounterValues(m_processPageSizeCounter, &processNamesAndIds, &virtualMemoryUsageTemp))
+    std::unordered_map<std::wstring, int> processVirtualMemoryMap;
+    try
     {
-        return -5;
+        if (!m_pdhManager->getCounterValues(m_processPageSizeCounter, &processVirtualMemoryMap))
+        {
+            return -5;
+        }
+    }
+    catch (std::exception &e)
+    {
+        throw std::runtime_error("Application Info - Virtual Memory Use -" + std::string(e.what()));
     }
 
-    // After collecting all data vectors and before clearing storage buffers
-    // Check if all collected vectors have the same size
-    if (processNamesAndIds.size() != cpuUsagesTemp.size() ||
-        processNamesAndIds.size() != physicalMemoryUsageTemp.size() ||
-        processNamesAndIds.size() != virtualMemoryUsageTemp.size())
-    {
-        std::cerr << "Vector size mismatch in counter data" << std::endl;
-        return -6;
-    }
 
+    //
+    // // After collecting all data vectors and before clearing storage buffers
+    // // Check if all collected vectors have the same size
+    // if (processNamesAndIds.size() != cpuUsagesTemp.size() ||
+    //     processNamesAndIds.size() != physicalMemoryUsageTemp.size() ||
+    //     processNamesAndIds.size() != virtualMemoryUsageTemp.size())
+    // {
+    //     std::cerr << "Vector size mismatch in counter data" << std::endl;
+    //     return -6;
+    // }
 
     // Clear storage buffers
     if (processNames != nullptr)
@@ -126,22 +148,41 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
         virtualMemoryUsed->clear();
     }
 
-    // Transfer data to the output buffers
-    for (size_t i = 0; i < processNamesAndIds.size(); ++i)
+    // Temporarily store full process names in this vector
+    std::vector<std::wstring> processNamesAndIds;
+
+
+    if (processCpuUsageMap.empty())
+    {
+        return 0;
+    }
+
+    for (const auto&[processNameAndId, usage] : processCpuUsageMap)
     {
         // Don't return the total counters
-        if (processNamesAndIds.at(i) == L"_Total")
+        if (processNameAndId == L"_Total")
         {
             continue;
         }
 
-        double cpuUsage = cpuUsagesTemp.at(i);
-        long long physicalMemory = physicalMemoryUsageTemp.at(i);
-        long long virtualMemory = virtualMemoryUsageTemp.at(i);
+        // Get metrics for processes which have all metrics available
+        if (processPhysicalMemoryMap.contains(processNameAndId)
+            && processVirtualMemoryMap.contains(processNameAndId))
+        {
+            processNamesAndIds.emplace_back(processNameAndId);
+        }
+    }
+
+    // Transfer data to the output buffers
+    for (const auto &processNameAndId : processNamesAndIds)
+    {
+        double cpuUsage = processCpuUsageMap.at(processNameAndId);
+        long long physicalMemory = processPhysicalMemoryMap.at(processNameAndId);
+        long long virtualMemory = processVirtualMemoryMap.at(processNameAndId);
 
         // Convert the ProcessNameAndIds value to two separate values
         // Find the point where the process name and ID are separated
-        const std::wstring::size_type delimiterLoc = processNamesAndIds.at(i).find(L':');
+        const std::wstring::size_type delimiterLoc = processNameAndId.find(L':');
         // This should never, ever fail since we're skipping _Total; but it probably will
         if (delimiterLoc == std::wstring::npos)
         {
@@ -149,8 +190,8 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
         }
 
         // Separate process name and ID
-        std::wstring processName = processNamesAndIds.at(i).substr(0, delimiterLoc);
-        std::wstring processIdAsStr = processNamesAndIds.at(i).substr(delimiterLoc + 1);
+        std::wstring processName = processNameAndId.substr(0, delimiterLoc);
+        std::wstring processIdAsStr = processNameAndId.substr(delimiterLoc + 1);
 
         // Convert the process ID to an integer
         int processIdAsInt = std::stoi(processIdAsStr);

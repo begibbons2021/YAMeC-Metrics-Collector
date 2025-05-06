@@ -19,6 +19,7 @@
 #include <vector>
 #include <pdh.h>
 #include <string>
+#include <unordered_map>
 
 
 class YAMEC_API PdhQueryManager
@@ -51,8 +52,14 @@ public:
     bool getCounterValues(PDH_HCOUNTER counter,
         std::vector<std::wstring> *instanceNames, std::vector<int> *instanceValues) const;
 
+    bool getCounterValues(PDH_HCOUNTER counter, std::unordered_map<std::wstring, double> *instanceValues) const;
+
+    bool getCounterValues(PDH_HCOUNTER counter, std::unordered_map<std::wstring, long long> *instanceValues) const;
+
+    bool getCounterValues(PDH_HCOUNTER counter, std::unordered_map<std::wstring, int> *instanceValues) const;
+
     bool getCounterValues(PDH_HCOUNTER counter,
-        std::vector<std::wstring> *instanceNames, std::vector<double> *instanceValues) const;
+                          std::vector<std::wstring> *instanceNames, std::vector<double> *instanceValues) const;
 
 private:
     PDH_HQUERY m_query;
