@@ -388,12 +388,16 @@ public class DiskHardwareInformationService {
         }
 
         for (DiskHardwareInformation diskHardwareInformation : diskInformation) {
-            // Query for all disks detected
+            // Query for all disks detected based on the unique ID
             DiskHardwareInformation matchingConfiguration
                     = diskHardwareInformationRepository.findByUniqueId(diskHardwareInformation.getUniqueId());
 
             // Update pre-existing disks and add new ones to the database
-            disksToSave.add(Objects.requireNonNullElse(matchingConfiguration, diskHardwareInformation));
+            if (matchingConfiguration != null) {
+                // Set the ID of this object so that the existing data on this Disk updates
+                diskHardwareInformation.setId(matchingConfiguration.getId());
+            }
+            disksToSave.add(diskHardwareInformation);
         }
 
         // Save all changes to the database
