@@ -1,7 +1,6 @@
 package com.gibbonsdimarco.yamec.app.service;
 
 import com.gibbonsdimarco.yamec.app.data.*;
-import com.gibbonsdimarco.yamec.app.repository.CpuHardwareInformationRepository;
 import com.gibbonsdimarco.yamec.app.repository.GranularityRepository;
 import com.gibbonsdimarco.yamec.app.repository.MemoryHardwareInformationRepository;
 import com.gibbonsdimarco.yamec.app.repository.SystemMemoryMetricRepository;
@@ -239,7 +238,7 @@ public class MemoryHardwareInformationService {
         java.util.List<SystemMemoryMetric> validMetrics
                 = aggregateMemoryMetrics(memoryMetrics, startTime, duration, "HIGH");
 
-        // Commit Application Metrics and return entities with the committed IDs
+        // Commit Memory Metrics and return entities with the committed IDs
         return memoryMetricRepository.saveAllAndFlush(validMetrics);
 
     }
