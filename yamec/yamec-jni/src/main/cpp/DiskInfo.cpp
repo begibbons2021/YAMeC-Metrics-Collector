@@ -276,7 +276,7 @@ int DiskInfo::getAllCounters(std::vector<std::wstring> *diskInstanceNames,
     }
     catch (std::exception &e)
     {
-        throw std::runtime_error("Disk Info - Usage - " + std::string(e.what()));
+        throw std::runtime_error(" Disk Info - Usage - " + std::string(e.what()));
     }
 
 
@@ -291,7 +291,7 @@ int DiskInfo::getAllCounters(std::vector<std::wstring> *diskInstanceNames,
     }
     catch (std::exception &e)
     {
-        throw std::runtime_error("Application Info - Disk Bytes Read/sec -" + std::string(e.what()));
+        throw std::runtime_error(" Disk Info - Disk Bytes Read/sec -" + std::string(e.what()));
     }
 
 
@@ -306,7 +306,7 @@ int DiskInfo::getAllCounters(std::vector<std::wstring> *diskInstanceNames,
     }
     catch (std::exception &e)
     {
-        throw std::runtime_error("Application Info - Disk Bytes Written/sec -" + std::string(e.what()));
+        throw std::runtime_error(" Disk Info - Disk Bytes Written/sec -" + std::string(e.what()));
     }
 
 
@@ -321,7 +321,7 @@ int DiskInfo::getAllCounters(std::vector<std::wstring> *diskInstanceNames,
     }
     catch (std::exception &e)
     {
-        throw std::runtime_error("Disk Info - Avg. Time to Transfer - " + std::string(e.what()));
+        throw std::runtime_error(" Disk Info - Avg. Time to Transfer - " + std::string(e.what()));
     }
 
 
