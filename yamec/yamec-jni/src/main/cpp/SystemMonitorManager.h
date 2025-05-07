@@ -74,6 +74,16 @@ public:
                                       std::vector<unsigned long long> *diskInstancesWriteBandwidth,
                                       std::vector<double> *diskInstancesAvgTimeToTransfer) const;
 
+    [[nodiscard]] int getDiskCounters(std::vector<std::wstring> *diskInstanceNames,
+                                        std::vector<double> *diskInstancesUsage,
+                                        std::vector<unsigned long long> *diskInstancesReadBandwidth,
+                                        std::vector<unsigned long long> *diskInstancesWriteBandwidth,
+                                        std::vector<double> *diskInstancesAvgTimeToTransfer) const;
+
+    int getAllDiskCounters(std::vector<std::wstring> *diskInstanceNames, std::vector<double> *diskInstancesUsage,
+                           std::vector<unsigned long long> *diskInstancesReadBandwidth,
+                           std::vector<unsigned long long> *diskInstancesWriteBandwidth,
+                           std::vector<double> *diskInstancesAvgTimeToTransfer) const;
 
 
     [[nodiscard]] size_t getNicInstances(std::vector<std::wstring> *instanceNames) const;

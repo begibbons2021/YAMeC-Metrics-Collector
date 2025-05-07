@@ -96,6 +96,41 @@ TEST_F(SystemMonitorManagerTest, GetDiskDataTest) {
     }
 }
 
+// Test disk instances and counters
+TEST_F(SystemMonitorManagerTest, GetAllDisksDataTest) {
+    // Test disk counters
+
+    std::vector<std::wstring> instanceNames;
+    std::vector<double> diskUsage;
+    std::vector<unsigned long long> diskReadBandwidth;
+    std::vector<unsigned long long> diskWriteBandwidth;
+    std::vector<double> diskAvgTimeToTransfer;
+
+    int result = manager.getDiskCounters(&instanceNames,
+                                            &diskUsage,
+                                            &diskReadBandwidth,
+                                            &diskWriteBandwidth,
+                                            &diskAvgTimeToTransfer);
+
+    const size_t numInstances = instanceNames.size();
+
+    EXPECT_GT(numInstances, 0U) << "System should have at least one disk";
+    EXPECT_EQ(result, 0) << "Failed to get disk counters";
+    EXPECT_EQ(diskUsage.size(), numInstances) << "Disk usage vector size doesn't match instance count";
+    EXPECT_EQ(diskReadBandwidth.size(), numInstances) << "Disk read bandwidth vector size doesn't match instance count";
+    EXPECT_EQ(diskWriteBandwidth.size(), numInstances) << "Disk write bandwidth vector size doesn't match instance count";
+    EXPECT_EQ(diskAvgTimeToTransfer.size(), numInstances) << "Disk time to transfer vector size doesn't match instance count";
+
+    // Validate each disk's data
+    for (size_t i = 0; i < numInstances; ++i) {
+        EXPECT_GE(diskUsage[i], 0.0) << "Disk usage cannot be negative";
+        EXPECT_LE(diskUsage[i], 100.0) << "Disk usage cannot exceed 100%";
+        EXPECT_GE(diskReadBandwidth[i], 0ULL) << "Read bandwidth cannot be negative";
+        EXPECT_GE(diskWriteBandwidth[i], 0ULL) << "Write bandwidth cannot be negative";
+        EXPECT_GE(diskAvgTimeToTransfer[i], 0.0) << "Average transfer time cannot be negative";
+    }
+}
+
 // Test NIC instances and counters
 TEST_F(SystemMonitorManagerTest, GetNicDataTest) {
     std::vector<std::wstring> instanceNames;

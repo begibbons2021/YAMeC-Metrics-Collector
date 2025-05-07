@@ -563,27 +563,29 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
 
     // Create buffers to hold the disk instance names and disk instance count
     std::vector<std::wstring> diskInstanceNames;
-    size_t diskInstanceCount;
 
-    try
-    {
-        diskInstanceCount = monitor->getDiskInstances(&diskInstanceNames);
-    }
-    catch (std::exception &e)
-    {
-        const std::string message("System Monitor Native - Disk Metric Retrieval failed",
-                                            " due to an exception: ");
-        Logger::log(Logger::Level::ERR, message, e);
-        return env->NewGlobalRef(nullptr); // An error occurs when retrieving data
-    }
-
-    // No disks are being tracked with program counters (how???)
-    if (diskInstanceCount == 0)
-    {
-        const std::string message("System Monitor Native - No Disk Metrics to Retrieve");
-        Logger::log(Logger::Level::WARN, message);
-        return env->NewGlobalRef(nullptr);
-    }
+    //
+    // size_t diskInstanceCount;
+    //
+    // try
+    // {
+    //     diskInstanceCount = monitor->getDiskInstances(&diskInstanceNames);
+    // }
+    // catch (std::exception &e)
+    // {
+    //     const std::string message("System Monitor Native - Disk Metric Retrieval failed",
+    //                                         " due to an exception: ");
+    //     Logger::log(Logger::Level::ERR, message, e);
+    //     return env->NewGlobalRef(nullptr); // An error occurs when retrieving data
+    // }
+    //
+    // // No disks are being tracked with program counters (how???)
+    // if (diskInstanceCount == 0)
+    // {
+    //     const std::string message("System Monitor Native - No Disk Metrics to Retrieve");
+    //     Logger::log(Logger::Level::WARN, message);
+    //     return env->NewGlobalRef(nullptr);
+    // }
 
     // Create buffers to hold the other information temporarily
     std::vector<double> diskInstancesUsage;
@@ -593,10 +595,12 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     constexpr bool isReadBandwidthUnsigned = true;
     constexpr bool isWriteBandwidthUnsigned = true;
 
+    // Get all disk metrics for all devices
     try
     {
         // Attempt to fill buffers
-        if (const int status = monitor->getDiskCounters(&diskInstancesUsage,
+        if (const int status = monitor->getDiskCounters(&diskInstanceNames,
+                                                &diskInstancesUsage,
                                                 &diskInstancesReadBandwidth,
                                                 &diskInstancesWriteBandwidth,
                                                 &diskInstancesAvgTimeToTransfer);
@@ -618,16 +622,23 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
         return env->NewGlobalRef(nullptr); // An error occurs when retrieving data
     }
 
+    if (diskInstanceNames.empty())
+    {
+        const std::string message("System Monitor Native - No Disk Metrics to Retrieve");
+        Logger::log(Logger::Level::WARN, message);
+        return env->NewGlobalRef(nullptr);
+    }
+
 
     // Put data into Java objects
 
     // Create ArrayList of size diskInstanceCount
     jobject diskInstanceArrayList = env->NewObject(arrayListClass,
                                                     arrayListConstructor,
-                                                    static_cast<jlong>(diskInstanceCount));
+                                                    static_cast<jlong>(diskInstanceNames.size()));
 
     // Append each SystemDiskMetric to the end of the ArrayList
-    for (size_t i = 0; i < diskInstanceCount; i++)
+    for (size_t i = 0; i < diskInstanceNames.size(); i++)
     {
 
         std::string utf8String;

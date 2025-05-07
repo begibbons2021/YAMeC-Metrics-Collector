@@ -28,6 +28,48 @@ bool DiskInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManag
 
     m_wmiManager = wmiManager;
 
+    // Initialize multi-instance performance counters
+
+    PDH_HCOUNTER diskTimeCounterTemp;
+    if (!m_pdhManager->addCounter(L"\\PhysicalDisk(*)\\% Disk Time", &diskTimeCounterTemp))
+    {
+        std::wcerr << "Failed to add All Disks Usage counters " << std::endl;
+        return false;
+    }
+
+    m_allDisksUsageCounter = diskTimeCounterTemp;
+
+    PDH_HCOUNTER diskReadBandwidthCounterTemp;
+    if (!m_pdhManager->addCounter(L"\\PhysicalDisk(*)\\Disk Read Bytes/sec", &diskReadBandwidthCounterTemp))
+    {
+        std::wcerr << "Failed to add All Disks Read Bandwidth counters " << std::endl;
+        return false;
+    }
+
+    m_allDisksReadBandwidthCounter = diskReadBandwidthCounterTemp;
+
+    PDH_HCOUNTER diskWriteBandwidthCounterTemp;
+    if (!m_pdhManager->addCounter(L"\\PhysicalDisk(*)\\Disk Write Bytes/sec", &diskWriteBandwidthCounterTemp))
+    {
+        std::wcerr << "Failed to add All Disks Write Bandwidth counters " << std::endl;
+        return false;
+    }
+
+    m_allDisksWriteBandwidthCounter = diskWriteBandwidthCounterTemp;
+
+
+    PDH_HCOUNTER diskTimeToTransferCounterTemp;
+    if (!m_pdhManager->addCounter(L"\\PhysicalDisk(*)\\Disk Write Bytes/sec", &diskTimeToTransferCounterTemp))
+    {
+        std::wcerr << "Failed to add All Disks Time to Transfer counters " << std::endl;
+        return false;
+    }
+
+    m_allDisksTimeToTransferCounter = diskTimeToTransferCounterTemp;
+
+
+    // Initialize single-instance performance counters
+
     if (initInstances() == 0)
     {
         return false;
@@ -210,6 +252,173 @@ int DiskInfo::getAllCounters(std::vector<double> *diskUsageValues,
     return 0;
 
 }
+
+int DiskInfo::getAllCounters(std::vector<std::wstring> *diskInstanceNames,
+                                std::vector<double> *diskUsageValues,
+                                std::vector<unsigned long long> *diskReadBandwidthValues,
+                                std::vector<unsigned long long> *diskWriteBandwidthValues,
+                                std::vector<double> *diskTimeToTransferValues) const
+{
+    if (!m_pdhManager)
+    {
+        std::cerr << "PDH manager not initialized" << std::endl;
+        return -1;
+    }
+
+    // Collect Disk Usage
+    std::unordered_map<std::wstring, double> diskUsageMap;
+    try
+    {
+        if (!m_pdhManager->getCounterValues(m_allDisksUsageCounter, &diskUsageMap))
+        {
+            return -3;
+        }
+    }
+    catch (std::exception &e)
+    {
+        throw std::runtime_error("Disk Info - Usage - " + std::string(e.what()));
+    }
+
+
+    // Collect Bytes Read usage
+    std::unordered_map<std::wstring, unsigned long long> diskReadBandwidthMap;
+    try
+    {
+        if (!m_pdhManager->getCounterValues(m_allDisksReadBandwidthCounter, &diskReadBandwidthMap))
+        {
+            return -4;
+        }
+    }
+    catch (std::exception &e)
+    {
+        throw std::runtime_error("Application Info - Disk Bytes Read/sec -" + std::string(e.what()));
+    }
+
+
+    // Collect Bytes Written usage
+    std::unordered_map<std::wstring, unsigned long long> diskWriteBandwidthMap;
+    try
+    {
+        if (!m_pdhManager->getCounterValues(m_allDisksWriteBandwidthCounter, &diskWriteBandwidthMap))
+        {
+            return -5;
+        }
+    }
+    catch (std::exception &e)
+    {
+        throw std::runtime_error("Application Info - Disk Bytes Written/sec -" + std::string(e.what()));
+    }
+
+
+    // Collect Disk Time to Transfer
+    std::unordered_map<std::wstring, double> diskTimeToTransferMap;
+    try
+    {
+        if (!m_pdhManager->getCounterValues(m_allDisksUsageCounter, &diskTimeToTransferMap))
+        {
+            return -6;
+        }
+    }
+    catch (std::exception &e)
+    {
+        throw std::runtime_error("Disk Info - Avg. Time to Transfer - " + std::string(e.what()));
+    }
+
+
+
+    // Clear storage buffers
+    if (diskInstanceNames != nullptr)
+    {
+        diskInstanceNames->clear();
+    }
+
+    if (diskUsageValues != nullptr)
+    {
+        diskUsageValues->clear();
+    }
+
+    if (diskReadBandwidthValues != nullptr)
+    {
+        diskReadBandwidthValues->clear();
+    }
+
+    if (diskWriteBandwidthValues != nullptr)
+    {
+        diskWriteBandwidthValues->clear();
+    }
+
+    if (diskTimeToTransferValues != nullptr)
+    {
+        diskTimeToTransferValues->clear();
+    }
+
+    if (diskUsageMap.empty())
+    {
+        return 0;
+    }
+
+    std::vector<std::wstring> diskInstancesTemp;
+
+    for (const auto&[diskName, usage] : diskUsageMap)
+    {
+        // Don't return the total counters
+        // if (processNameAndId == L"_Total")
+        // {
+        //     continue;
+        // }
+
+        // Get metrics for processes which have all metrics available
+        if (diskReadBandwidthMap.contains(diskName)
+            && diskWriteBandwidthMap.contains(diskName)
+            && diskTimeToTransferMap.contains(diskName))
+        {
+
+            diskInstancesTemp.emplace_back(diskName);
+        }
+    }
+
+    // Transfer data to the output buffers
+    for (const auto &diskName : diskInstancesTemp)
+    {
+        double usage = diskUsageMap.at(diskName);
+        unsigned long long readBandwidth = diskReadBandwidthMap.at(diskName);
+        unsigned long long writeBandwidth = diskWriteBandwidthMap.at(diskName);
+        double timeToTransfer = diskTimeToTransferMap.at(diskName);
+
+        if (diskInstanceNames != nullptr)
+        {
+            diskInstanceNames->emplace_back(diskName);
+        }
+
+        if (diskUsageValues != nullptr)
+        {
+            diskUsageValues->emplace_back(usage);
+
+        }
+
+        if (diskReadBandwidthValues != nullptr)
+        {
+            diskReadBandwidthValues->emplace_back(readBandwidth);
+        }
+
+        if (diskWriteBandwidthValues != nullptr)
+        {
+            diskWriteBandwidthValues->emplace_back(writeBandwidth);
+
+        }
+
+        if (diskTimeToTransferValues != nullptr)
+        {
+            diskTimeToTransferValues->emplace_back(timeToTransfer);
+        }
+
+    }
+
+    return 0;
+
+}
+
+
 
 int DiskInfo::getDiskInformation(std::vector<std::wstring> *hardwareNames,
                                             std::vector<std::wstring> *uniqueIds,

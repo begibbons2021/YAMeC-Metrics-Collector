@@ -158,6 +158,29 @@ int SystemMonitorManager::getDiskCounters(std::vector<double> *diskInstancesUsag
                                         diskInstancesAvgTimeToTransfer);
 }
 
+int SystemMonitorManager::getDiskCounters(std::vector<std::wstring> *diskInstanceNames,
+                                          std::vector<double> *diskInstancesUsage,
+                                          std::vector<unsigned long long> *diskInstancesReadBandwidth,
+                                          std::vector<unsigned long long> *diskInstancesWriteBandwidth,
+                                          std::vector<double> *diskInstancesAvgTimeToTransfer) const
+{
+    if (!m_initialized
+        || !diskInstanceNames
+        || !diskInstancesUsage
+        || !diskInstancesReadBandwidth
+        || !diskInstancesWriteBandwidth
+        || !diskInstancesAvgTimeToTransfer)
+    {
+        return -1;
+    }
+
+    return m_diskInfo.getAllCounters(diskInstanceNames,
+                                        diskInstancesUsage,
+                                        diskInstancesReadBandwidth,
+                                        diskInstancesWriteBandwidth,
+                                        diskInstancesAvgTimeToTransfer);
+}
+
 size_t SystemMonitorManager::getNicInstances(std::vector<std::wstring> *instanceNames) const
 {
     if (!m_initialized)

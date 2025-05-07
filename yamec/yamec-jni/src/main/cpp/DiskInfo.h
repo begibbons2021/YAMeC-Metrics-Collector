@@ -40,6 +40,11 @@ class YAMEC_API DiskInfo
                                      std::vector<unsigned long long> *diskWriteBandwidthValues,
                                      std::vector<double> *diskTimeToTransferValues) const;
 
+    int getAllCounters(std::vector<std::wstring> *diskInstanceNames, std::vector<double> *diskUsageValues,
+                       std::vector<unsigned long long> *diskReadBandwidthValues,
+                       std::vector<unsigned long long> *diskWriteBandwidthValues,
+                       std::vector<double> *diskTimeToTransferValues) const;
+
     /**
      * Retrieves all information regarding connected hard disk drives on the system, including:
      * <br>
@@ -84,6 +89,11 @@ class YAMEC_API DiskInfo
     std::vector<PDH_HCOUNTER> m_diskWriteBandwidthCounters;
     std::vector<PDH_HCOUNTER> m_diskUsagePercentCounters;
     std::vector<PDH_HCOUNTER> m_diskTimeToTransferCounters;
+
+    PDH_HCOUNTER m_allDisksReadBandwidthCounter;
+    PDH_HCOUNTER m_allDisksWriteBandwidthCounter;
+    PDH_HCOUNTER m_allDisksUsageCounter;
+    PDH_HCOUNTER m_allDisksTimeToTransferCounter;
 
     PdhQueryManager *m_pdhManager;
     WmiQueryManager *m_wmiManager;

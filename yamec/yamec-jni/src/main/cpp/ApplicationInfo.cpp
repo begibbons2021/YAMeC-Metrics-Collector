@@ -110,18 +110,6 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
         throw std::runtime_error("Application Info - Virtual Memory Use -" + std::string(e.what()));
     }
 
-
-    //
-    // // After collecting all data vectors and before clearing storage buffers
-    // // Check if all collected vectors have the same size
-    // if (processNamesAndIds.size() != cpuUsagesTemp.size() ||
-    //     processNamesAndIds.size() != physicalMemoryUsageTemp.size() ||
-    //     processNamesAndIds.size() != virtualMemoryUsageTemp.size())
-    // {
-    //     std::cerr << "Vector size mismatch in counter data" << std::endl;
-    //     return -6;
-    // }
-
     // Clear storage buffers
     if (processNames != nullptr)
     {
