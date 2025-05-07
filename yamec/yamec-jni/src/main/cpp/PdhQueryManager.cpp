@@ -568,6 +568,74 @@ bool PdhQueryManager::getCounterValues(const PDH_HCOUNTER counter,
     return true;
 }
 
+
+bool PdhQueryManager::getCounterValues(const PDH_HCOUNTER counter,
+                                        std::unordered_map<std::wstring, unsigned long long> *instanceValues) const
+{
+    if (!m_initialized)
+    {
+        throw std::runtime_error("PdhQueryManager counter values were requested before initialization");
+    }
+
+    if (instanceValues == nullptr)
+    {
+        return false;
+    }
+
+    // Query for buffer sizes for counter item data
+    PDH_FMT_COUNTERVALUE_ITEM *counterItems  = nullptr;
+    DWORD numItems = 0;
+    DWORD bufferLength = 0;
+    if (const PDH_STATUS status = PdhGetFormattedCounterArray(counter, PDH_FMT_LARGE,
+                                        &bufferLength, &numItems, counterItems);
+                                        status != PDH_MORE_DATA)
+    {
+        throw std::runtime_error("The formatted counter array could not be retrieved");
+    }
+
+    // Allocate a buffer for objects returned
+    counterItems = static_cast<PDH_FMT_COUNTERVALUE_ITEM *>(malloc(bufferLength));
+
+    if (!counterItems)
+    {
+        free(counterItems);
+        return false;
+    }
+
+    // Fill the buffer
+    if (const PDH_STATUS status = PdhGetFormattedCounterArray(counter, PDH_FMT_LARGE,
+                                    &bufferLength, &numItems, counterItems);
+                                    status != ERROR_SUCCESS)
+    {
+        free(counterItems);
+        counterItems = nullptr;
+        bufferLength = numItems = 0;
+        throw std::runtime_error("The formatted counter array could not be retrieved");
+    }
+
+    instanceValues->clear();
+
+    // Copy all data to a map
+    for (DWORD i = 0; i < numItems; ++i)
+    {
+        std::string nameAsStr = counterItems[i].szName;
+        // Convert to wide string
+        std::wstring name(nameAsStr.begin(), nameAsStr.end());
+
+        unsigned long long value = counterItems[i].FmtValue.largeValue;
+
+        // Add to map
+        instanceValues->emplace(name, value);
+    }
+
+    // Clean up memory
+    free(counterItems);
+    counterItems = nullptr;
+    bufferLength = numItems = 0;
+
+    return true;
+}
+
 bool PdhQueryManager::getCounterValues(const PDH_HCOUNTER counter,
                                         std::unordered_map<std::wstring, int> *instanceValues) const
 {
@@ -634,3 +702,72 @@ bool PdhQueryManager::getCounterValues(const PDH_HCOUNTER counter,
 
     return true;
 }
+
+bool PdhQueryManager::getCounterValues(const PDH_HCOUNTER counter,
+                                        std::unordered_map<std::wstring, unsigned int> *instanceValues) const
+{
+    if (!m_initialized)
+    {
+        throw std::runtime_error("PdhQueryManager counter values were requested before initialization");
+    }
+
+    if (instanceValues == nullptr)
+    {
+        return false;
+    }
+
+    // Query for buffer sizes for counter item data
+    PDH_FMT_COUNTERVALUE_ITEM *counterItems  = nullptr;
+    DWORD numItems = 0;
+    DWORD bufferLength = 0;
+    if (const PDH_STATUS status = PdhGetFormattedCounterArray(counter, PDH_FMT_LONG,
+                                        &bufferLength, &numItems, counterItems);
+                                        status != PDH_MORE_DATA)
+    {
+        throw std::runtime_error("The formatted counter array could not be retrieved");
+    }
+
+    // Allocate a buffer for objects returned
+    counterItems = static_cast<PDH_FMT_COUNTERVALUE_ITEM *>(malloc(bufferLength));
+
+    if (!counterItems)
+    {
+        free(counterItems);
+        return false;
+    }
+
+    // Fill the buffer
+    if (const PDH_STATUS status = PdhGetFormattedCounterArray(counter, PDH_FMT_LONG,
+                                    &bufferLength, &numItems, counterItems);
+                                    status != ERROR_SUCCESS)
+    {
+        free(counterItems);
+        counterItems = nullptr;
+        bufferLength = numItems = 0;
+        throw std::runtime_error("The formatted counter array could not be retrieved");
+    }
+
+    instanceValues->clear();
+
+    // Copy all data to a map
+    for (DWORD i = 0; i < numItems; ++i)
+    {
+        std::string nameAsStr = counterItems[i].szName;
+        // Convert to wide string
+        std::wstring name(nameAsStr.begin(), nameAsStr.end());
+
+        unsigned int value = counterItems[i].FmtValue.longValue;
+
+        // Add to map
+        instanceValues->emplace(name, value);
+    }
+
+    // Clean up memory
+    free(counterItems);
+    counterItems = nullptr;
+    bufferLength = numItems = 0;
+
+    return true;
+}
+
+

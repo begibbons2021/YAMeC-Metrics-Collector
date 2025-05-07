@@ -56,7 +56,11 @@ public:
 
     bool getCounterValues(PDH_HCOUNTER counter, std::unordered_map<std::wstring, long long> *instanceValues) const;
 
+    bool getCounterValues(PDH_HCOUNTER counter, std::unordered_map<std::wstring, unsigned long long> *instanceValues) const;
+
     bool getCounterValues(PDH_HCOUNTER counter, std::unordered_map<std::wstring, int> *instanceValues) const;
+
+    bool getCounterValues(PDH_HCOUNTER counter, std::unordered_map<std::wstring, unsigned int> *instanceValues) const;
 
     bool getCounterValues(PDH_HCOUNTER counter,
                           std::vector<std::wstring> *instanceNames, std::vector<double> *instanceValues) const;
