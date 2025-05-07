@@ -302,8 +302,12 @@ public class NicHardwareInformationService {
             NicHardwareInformation matchingConfiguration
                     = nicHardwareInformationRepository.findByUniqueId(nicHardwareInformation.getUniqueId());
 
-            // Update pre-existing disks and add new ones to the database
-            nicsToSave.add(Objects.requireNonNullElse(matchingConfiguration, nicHardwareInformation));
+            // Update pre-existing NICs and add new ones to the database
+            if (matchingConfiguration != null) {
+                // Set the ID of this object so that the existing data on this NIC updates
+                nicHardwareInformation.setId(matchingConfiguration.getId());
+            }
+            nicsToSave.add(nicHardwareInformation);
         }
 
         // Save all changes to the database
