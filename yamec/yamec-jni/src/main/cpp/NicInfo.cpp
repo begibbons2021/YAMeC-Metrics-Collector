@@ -28,6 +28,38 @@ bool NicInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManage
 
     m_wmiManager = wmiManager;
 
+    // All NICs Operating Bandwidth counter
+    PDH_HCOUNTER nicBandwidthCounterTemp;
+    if (!m_pdhManager->addCounter(L"\\Network Interface(*)\\Current Bandwidth", &nicBandwidthCounterTemp))
+    {
+        std::wcerr << "Failed to add All Disks Read Bandwidth counters " << std::endl;
+        return false;
+    }
+
+    m_allNicsBandwidthBytesCounter = nicBandwidthCounterTemp;
+
+    // All NICs Send Bytes counter
+    PDH_HCOUNTER nicSendBandwidthCounterTemp;
+    if (!m_pdhManager->addCounter(L"\\Network Interface(*)\\Bytes Sent/sec", &nicSendBandwidthCounterTemp))
+    {
+        std::wcerr << "Failed to add All Disks Write Bandwidth counters " << std::endl;
+        return false;
+    }
+
+    m_allNicsSendBytesCounter = nicSendBandwidthCounterTemp;
+
+    // All NICs Receive Bytes counter
+    PDH_HCOUNTER nicReceiveBandwidthCounterTemp;
+    if (!m_pdhManager->addCounter(L"\\Network Interface(*)\\Bytes Received/sec", &nicReceiveBandwidthCounterTemp))
+    {
+        std::wcerr << "Failed to add All Disks Usage counters " << std::endl;
+        return false;
+    }
+
+    m_allNicsRecvBytesCounter = nicReceiveBandwidthCounterTemp;
+
+
+
     if (initInstances() == 0)
     {
         return false;
@@ -177,6 +209,143 @@ int NicInfo::getAllCounters(std::vector<unsigned long long> *nicBandwidthBpsValu
     return 0;
 
 }
+
+
+int NicInfo::getAllCounters(std::vector<std::wstring> *nicInstanceNames,
+                                std::vector<unsigned long long> *nicOperatingBandwidthValues,
+                                std::vector<unsigned long long> *nicSendBytesValues,
+                                std::vector<unsigned long long> *nicRecvBytesValues) const
+{
+    if (!m_pdhManager)
+    {
+        std::cerr << "PDH manager not initialized" << std::endl;
+        return -1;
+    }
+
+    // Collect Operating Bandwidth
+    std::unordered_map<std::wstring, unsigned long long> nicOperatingBandwidthMap;
+    try
+    {
+        if (!m_pdhManager->getCounterValues(m_allNicsBandwidthBytesCounter, &nicOperatingBandwidthMap))
+        {
+            return -3;
+        }
+    }
+    catch (std::exception &e)
+    {
+        throw std::runtime_error(" NIC Info - Operating Bandwidth - " + std::string(e.what()));
+    }
+
+
+    // Collect Bytes Sent/sec
+    std::unordered_map<std::wstring, unsigned long long> nicBytesSentMap;
+    try
+    {
+        if (!m_pdhManager->getCounterValues(m_allNicsSendBytesCounter, &nicBytesSentMap))
+        {
+            return -4;
+        }
+    }
+    catch (std::exception &e)
+    {
+        throw std::runtime_error(" NIC Info - Bytes Sent/sec -" + std::string(e.what()));
+    }
+
+
+    // Collect Bytes Received/sec
+    std::unordered_map<std::wstring, unsigned long long> nicBytesRecvMap;
+    try
+    {
+        if (!m_pdhManager->getCounterValues(m_allNicsRecvBytesCounter, &nicBytesRecvMap))
+        {
+            return -5;
+        }
+    }
+    catch (std::exception &e)
+    {
+        throw std::runtime_error(" NIC Info - Bytes Received/sec -" + std::string(e.what()));
+    }
+
+
+    // Clear storage buffers
+    if (nicInstanceNames != nullptr)
+    {
+        nicInstanceNames->clear();
+    }
+
+    if (nicOperatingBandwidthValues != nullptr)
+    {
+        nicOperatingBandwidthValues->clear();
+    }
+
+    if (nicSendBytesValues != nullptr)
+    {
+        nicSendBytesValues->clear();
+    }
+
+    if (nicRecvBytesValues != nullptr)
+    {
+        nicRecvBytesValues->clear();
+    }
+
+    if (nicOperatingBandwidthMap.empty())
+    {
+        return 0;
+    }
+
+    std::vector<std::wstring> nicInstancesTemp;
+
+    for (const auto&[nicName, operatingBandwidth] : nicOperatingBandwidthMap)
+    {
+        // Don't return the total counters
+        // if (processNameAndId == L"_Total")
+        // {
+        //     continue;
+        // }
+
+        // Get metrics for processes which have all metrics available
+        if (nicBytesSentMap.contains(nicName)
+            && nicBytesRecvMap.contains(nicName))
+        {
+            nicInstancesTemp.emplace_back(nicName);
+        }
+    }
+
+    // Transfer data to the output buffers
+    for (const auto &nicName : nicInstancesTemp)
+    {
+        unsigned long long operatingBandwidth = nicOperatingBandwidthMap.at(nicName);
+        unsigned long long sendBandwidth = nicBytesSentMap.at(nicName);
+        unsigned long long receiveBandwidth = nicBytesRecvMap.at(nicName);
+
+        if (nicInstanceNames != nullptr)
+        {
+            nicInstanceNames->emplace_back(nicName);
+        }
+
+        if (nicOperatingBandwidthValues != nullptr)
+        {
+            nicOperatingBandwidthValues->emplace_back(operatingBandwidth);
+        }
+
+        if (nicSendBytesValues != nullptr)
+        {
+            nicSendBytesValues->emplace_back(sendBandwidth);
+        }
+
+        if (nicRecvBytesValues != nullptr)
+        {
+            nicRecvBytesValues->emplace_back(receiveBandwidth);
+
+        }
+
+    }
+
+    return 0;
+
+}
+
+
 
 
 int NicInfo::getNicInformation(std::vector<std::wstring> *hardwareNames,

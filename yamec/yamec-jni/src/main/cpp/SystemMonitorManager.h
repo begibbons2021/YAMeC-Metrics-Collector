@@ -92,6 +92,11 @@ public:
                                      std::vector<unsigned long long> *nicInstancesSendBytes,
                                      std::vector<unsigned long long> *nicInstancesRecvBytes) const;
 
+    int getNicCounters(std::vector<std::wstring> *nicInstanceNames,
+                       std::vector<unsigned long long> *nicInstancesBandwidth,
+                       std::vector<unsigned long long> *nicInstancesSendBytes,
+                       std::vector<unsigned long long> *nicInstancesRecvBytes) const;
+
     [[nodiscard]] bool isInitialized() const { return m_initialized; }
 
     /**

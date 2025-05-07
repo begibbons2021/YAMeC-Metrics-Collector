@@ -39,6 +39,11 @@ class YAMEC_API NicInfo
                                      std::vector<unsigned long long> *nicSendBytesValues,
                                      std::vector<unsigned long long> *nicRecvBytesValues) const;
 
+    int getAllCounters(std::vector<std::wstring> *nicInstanceNames,
+                       std::vector<unsigned long long> *nicOperatingBandwidthValues,
+                       std::vector<unsigned long long> *nicSendBytesValues,
+                       std::vector<unsigned long long> *nicRecvBytesValues) const;
+
     /**
      * Retrieves information regarding the NIC hardware devices available on the system via a WMI query
      *
@@ -69,6 +74,10 @@ class YAMEC_API NicInfo
     std::vector<PDH_HCOUNTER> m_nicRecvBytesCounters;
     std::vector<PDH_HCOUNTER> m_nicSendBytesCounters;
     std::vector<PDH_HCOUNTER> m_nicBandwidthBpsCounters;
+
+    PDH_HCOUNTER m_allNicsRecvBytesCounter;
+    PDH_HCOUNTER m_allNicsSendBytesCounter;
+    PDH_HCOUNTER m_allNicsBandwidthBytesCounter;
 
     PdhQueryManager *m_pdhManager;
     WmiQueryManager *m_wmiManager;
