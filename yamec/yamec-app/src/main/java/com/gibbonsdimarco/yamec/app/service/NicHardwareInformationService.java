@@ -285,8 +285,6 @@ public class NicHardwareInformationService {
     }
 
 
-
-
     @Transactional
     public java.util.List<NicHardwareInformation>
             saveNicInformation(java.util.List<NicHardwareInformation> nicDevices) {

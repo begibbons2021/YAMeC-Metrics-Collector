@@ -97,7 +97,7 @@ TEST_F(SystemMonitorManagerTest, GetDiskDataTest) {
 }
 
 // Test disk instances and counters
-TEST_F(SystemMonitorManagerTest, GetAllDisksDataTest) {
+TEST_F(SystemMonitorManagerTest, GetDisksDataWildcardTest) {
     // Test disk counters
 
     std::vector<std::wstring> instanceNames;
@@ -114,8 +114,8 @@ TEST_F(SystemMonitorManagerTest, GetAllDisksDataTest) {
 
     const size_t numInstances = instanceNames.size();
 
-    EXPECT_GT(numInstances, 0U) << "System should have at least one disk";
     EXPECT_EQ(result, 0) << "Failed to get disk counters";
+    EXPECT_GT(numInstances, 0U) << "System should have at least one disk";
     EXPECT_EQ(diskUsage.size(), numInstances) << "Disk usage vector size doesn't match instance count";
     EXPECT_EQ(diskReadBandwidth.size(), numInstances) << "Disk read bandwidth vector size doesn't match instance count";
     EXPECT_EQ(diskWriteBandwidth.size(), numInstances) << "Disk write bandwidth vector size doesn't match instance count";
@@ -148,6 +148,36 @@ TEST_F(SystemMonitorManagerTest, GetNicDataTest) {
 
     EXPECT_EQ(result, 0) << "Failed to get NIC counters";
     EXPECT_EQ(nicBandwidth.size(), numInstances) << "NIC bandwidth vector size doesn't match instance count";
+
+    // Validate each NIC's data
+    for (size_t i = 0; i < numInstances; ++i) {
+        EXPECT_GE(nicBandwidth[i], 0ULL) << "Bandwidth cannot be negative";
+        EXPECT_GE(nicSendBytes[i], 0ULL) << "Send bytes cannot be negative";
+        EXPECT_GE(nicRecvBytes[i], 0ULL) << "Receive bytes cannot be negative";
+    }
+}
+
+// Test NIC instances and counters
+TEST_F(SystemMonitorManagerTest, GetNicDataWildcardTest) {
+
+    // Test NIC counters
+    std::vector<std::wstring> instanceNames;
+    std::vector<unsigned long long> nicBandwidth;
+    std::vector<unsigned long long> nicSendBytes;
+    std::vector<unsigned long long> nicRecvBytes;
+
+    int result = manager.getNicCounters(&instanceNames,
+                                        &nicBandwidth,
+                                        &nicSendBytes,
+                                        &nicRecvBytes);
+
+    const size_t numInstances = instanceNames.size();
+
+    EXPECT_EQ(result, 0) << "Failed to get NIC counters";
+    EXPECT_GT(numInstances, 0U) << "System should have at least one network interface";
+    EXPECT_EQ(nicBandwidth.size(), numInstances) << "NIC operating bandwidth vector size doesn't match instance count";
+    EXPECT_EQ(nicSendBytes.size(), numInstances) << "NIC send bytes vector size doesn't match instance count";
+    EXPECT_EQ(nicRecvBytes.size(), numInstances) << "NIC receive bytes vector size doesn't match instance count";
 
     // Validate each NIC's data
     for (size_t i = 0; i < numInstances; ++i) {

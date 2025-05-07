@@ -742,30 +742,8 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     // }
 
     // Create buffers to hold the NIC instance names and NIC instance count
-    std::vector<std::wstring> nicInstanceNames;
-    size_t nicInstanceCount;
-
-    try
-    {
-        nicInstanceCount = monitor->getNicInstances(&nicInstanceNames);
-    }
-    catch (std::exception &e)
-    {
-        const std::string message("System Monitor Native - NIC Metric retrieval failed because an exception "
-                                    + std::string("occurred while retrieving NIC devices: "));
-        Logger::log(Logger::Level::ERR, message, e);
-        return env->NewGlobalRef(nullptr); // An error occurs when retrieving data
-    }
-
-    // No NIC devices are being tracked with program counters (this time it's actually fair)
-    if (nicInstanceCount == 0)
-    {
-        const std::string message("System Monitor Native - No NIC Metrics to Retrieve");
-        Logger::log(Logger::Level::WARN, message);
-        return env->NewGlobalRef(nullptr);
-    }
-
     // Create buffers to hold the other information temporarily
+    std::vector<std::wstring> nicInstanceNames;
     std::vector<unsigned long long> nicInstancesBandwidth;
     std::vector<unsigned long long> nicInstancesBytesSent;
     std::vector<unsigned long long> nicInstancesBytesReceived;
@@ -773,13 +751,38 @@ JNIEXPORT jobject JNICALL Java_com_gibbonsdimarco_yamec_app_jni_SystemMonitorMan
     constexpr bool isBytesSentUnsigned = true;
     constexpr bool isBytesReceivedUnsigned = true;
 
-    // Attempt to fill buffers
-    if (const int status = monitor->getNicCounters(&nicInstancesBandwidth,
-                                            &nicInstancesBytesSent,
-                                            &nicInstancesBytesReceived);
-                                            0 != status)
+    try
     {
-        // Retrieval of counters failed, so return null
+        // Attempt to fill buffers
+        if (const int status = monitor->getNicCounters(&nicInstanceNames,
+                                                        &nicInstancesBandwidth,
+                                                        &nicInstancesBytesSent,
+                                                        &nicInstancesBytesReceived);
+                                                0 != status)
+        {
+            // Retrieval of counters failed, so return null
+            const std::string message("System Monitor Native - NIC Metric Retrieval failed with error code: "
+                                + std::to_string(status));
+            Logger::log(Logger::Level::ERR, message);
+            return env->NewGlobalRef(nullptr);
+        }
+    }
+    catch (std::exception &e)
+    {
+        const std::string message("System Monitor Native - NIC Metric Retrieval failed"
+                            + std::string(" due to an exception: "));
+        Logger::log(Logger::Level::ERR, message, e);
+
+        return env->NewGlobalRef(nullptr); // An error occurs when retrieving data
+    }
+
+    const size_t nicInstanceCount = nicInstanceNames.size();
+
+    // No NIC devices are being tracked with program counters (this time it's actually fair)
+    if (nicInstanceCount == 0)
+    {
+        const std::string message("System Monitor Native - No NIC Metrics to Retrieve");
+        Logger::log(Logger::Level::WARN, message);
         return env->NewGlobalRef(nullptr);
     }
 

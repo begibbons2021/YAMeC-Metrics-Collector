@@ -205,8 +205,26 @@ int SystemMonitorManager::getNicCounters(std::vector<unsigned long long> *nicIns
     }
 
     return m_nicInfo.getAllCounters(nicInstancesBandwidth, nicInstancesSendBytes, nicInstancesRecvBytes);
+}
 
+int SystemMonitorManager::getNicCounters(std::vector<std::wstring> *nicInstanceNames,
+                                         std::vector<unsigned long long> *nicInstancesBandwidth,
+                                         std::vector<unsigned long long> *nicInstancesSendBytes,
+                                         std::vector<unsigned long long> *nicInstancesRecvBytes) const
+{
+    if (!m_initialized
+        || !nicInstanceNames
+        || !nicInstancesBandwidth
+        || !nicInstancesSendBytes
+        || !nicInstancesRecvBytes)
+    {
+        return -1;
+    }
 
+    return m_nicInfo.getAllCounters(nicInstanceNames,
+                                    nicInstancesBandwidth,
+                                    nicInstancesSendBytes,
+                                    nicInstancesRecvBytes);
 }
 
 int SystemMonitorManager::getApplicationCounters(std::vector<std::wstring> *processNames,
