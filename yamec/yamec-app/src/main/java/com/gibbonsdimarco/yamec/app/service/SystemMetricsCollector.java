@@ -62,44 +62,48 @@ public class SystemMetricsCollector {
                 return;
             }
 
-            // Get hardware information once during initialization
-            cpuInfo = monitor.getCpuHardwareInformation();
-            memoryInfo = monitor.getMemoryHardwareInformation();
-            diskInfo = monitor.getDiskHardwareInformation();
-            nicInfo = monitor.getNicHardwareInformation();
-
-            // Save the hardware information to the database
-            if (cpuInfo != null) {
-                logger.info("CPU Hardware Information: {}", cpuInfo);
-                cpuInfo = cpuHardwareService.saveCpuInformation(cpuInfo);
-            }
-
-            if (memoryInfo != null) {
-                logger.info("Memory Hardware Information: {}", memoryInfo);
-                memoryInfo = memoryHardwareService.saveMemoryInformation(memoryInfo);
-            }
-
-            if (diskInfo != null && !diskInfo.isEmpty()) {
-                logger.info("Disk Hardware Information:");
-                for (DiskHardwareInformation disk : diskInfo) {
-                    logger.info(disk.toString());
-                }
-
-                diskInfo = diskHardwareService.saveDiskInformation(diskInfo);
-            }
-
-            if (nicInfo != null && !nicInfo.isEmpty()) {
-                logger.info("NIC Hardware Information:");
-                for (NicHardwareInformation nicDevice : nicInfo) {
-                    logger.info(nicDevice.toString());
-                }
-
-                nicInfo = nicHardwareService.saveNicInformation(nicInfo);
-            }
+            updateHardwareInformation();
 
 
         } catch (Exception e) {
             logger.error("Failed to initialize SystemMetricsCollector", e);
+        }
+    }
+
+    public void updateHardwareInformation() {
+        // Get hardware information once during initialization
+        cpuInfo = monitor.getCpuHardwareInformation();
+        memoryInfo = monitor.getMemoryHardwareInformation();
+        diskInfo = monitor.getDiskHardwareInformation();
+        nicInfo = monitor.getNicHardwareInformation();
+
+        // Save the hardware information to the database
+        if (cpuInfo != null) {
+            logger.info("CPU Hardware Information: {}", cpuInfo);
+            cpuInfo = cpuHardwareService.saveCpuInformation(cpuInfo);
+        }
+
+        if (memoryInfo != null) {
+            logger.info("Memory Hardware Information: {}", memoryInfo);
+            memoryInfo = memoryHardwareService.saveMemoryInformation(memoryInfo);
+        }
+
+        if (diskInfo != null && !diskInfo.isEmpty()) {
+            logger.info("Disk Hardware Information:");
+            for (DiskHardwareInformation disk : diskInfo) {
+                logger.info(disk.toString());
+            }
+
+            diskInfo = diskHardwareService.saveDiskInformation(diskInfo);
+        }
+
+        if (nicInfo != null && !nicInfo.isEmpty()) {
+            logger.info("NIC Hardware Information:");
+            for (NicHardwareInformation nicDevice : nicInfo) {
+                logger.info(nicDevice.toString());
+            }
+
+            nicInfo = nicHardwareService.saveNicInformation(nicInfo);
         }
     }
 
