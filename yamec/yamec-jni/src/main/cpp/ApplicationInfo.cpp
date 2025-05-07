@@ -76,7 +76,7 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
     }
     catch (std::exception &e)
     {
-        throw std::runtime_error("Application Info - CPU Usage - " + std::string(e.what()));
+        throw std::runtime_error(" Application Info - CPU Usage - " + std::string(e.what()));
     }
 
 
@@ -91,7 +91,7 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
     }
     catch (std::exception &e)
     {
-        throw std::runtime_error("Application Info - Physical Memory Use -" + std::string(e.what()));
+        throw std::runtime_error(" Application Info - Physical Memory Use -" + std::string(e.what()));
     }
 
 
@@ -107,7 +107,7 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
     }
     catch (std::exception &e)
     {
-        throw std::runtime_error("Application Info - Virtual Memory Use -" + std::string(e.what()));
+        throw std::runtime_error(" Application Info - Virtual Memory Use -" + std::string(e.what()));
     }
 
     // Clear storage buffers
