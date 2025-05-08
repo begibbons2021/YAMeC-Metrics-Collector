@@ -59,7 +59,7 @@ bool DiskInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManag
 
 
     PDH_HCOUNTER diskTimeToTransferCounterTemp;
-    if (!m_pdhManager->addCounter(L"\\PhysicalDisk(*)\\Disk Write Bytes/sec", &diskTimeToTransferCounterTemp))
+    if (!m_pdhManager->addCounter(L"\\PhysicalDisk(*)\\Avg. Disk sec/Transfer", &diskTimeToTransferCounterTemp))
     {
         std::wcerr << "Failed to add All Disks Time to Transfer counters " << std::endl;
         return false;
@@ -314,7 +314,7 @@ int DiskInfo::getAllCounters(std::vector<std::wstring> *diskInstanceNames,
     std::unordered_map<std::wstring, double> diskTimeToTransferMap;
     try
     {
-        if (!m_pdhManager->getCounterValues(m_allDisksUsageCounter, &diskTimeToTransferMap))
+        if (!m_pdhManager->getCounterValues(m_allDisksTimeToTransferCounter, &diskTimeToTransferMap))
         {
             return -6;
         }
