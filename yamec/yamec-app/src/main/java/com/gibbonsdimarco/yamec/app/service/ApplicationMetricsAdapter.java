@@ -3,12 +3,12 @@ package com.gibbonsdimarco.yamec.app.service;
 import com.gibbonsdimarco.yamec.app.data.Application;
 import com.gibbonsdimarco.yamec.app.data.ApplicationMetric;
 import com.gibbonsdimarco.yamec.app.model.ApplicationMetricsData;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  * Adapter service that converts JPA entities to data objects for the view layer
@@ -85,6 +85,104 @@ public class ApplicationMetricsAdapter {
         }
 
         return result;
+    }
+
+    /**
+     * Returns all Application metrics data per application aggregated over the timespan specified by the
+     * startTime and endTime parameters in a JSON-ready object format
+     * @param startTime The <code>Timestamp</code> which application data to be returned starts
+     * @param endTime The <code>Timestamp</code> which application data to be returned ends
+     * @return An <code>ApplicationMetricsDataList</code> containing the collection of applications and their
+     *          metrics data
+     */
+    @Transactional
+    public ApplicationMetricsData.ApplicationMetricsDataList getHistoricalApplicationMetrics(Timestamp startTime,
+                                                                                             Timestamp endTime) {
+        HashMap<Application, List<ApplicationMetric>> applicationMetricsMap = new HashMap<>();
+
+        List<ApplicationMetric> validMetrics = applicationDataService.getStoredApplicationMetrics(startTime, endTime);
+
+        // Move metrics to hash map
+        for (ApplicationMetric metric : validMetrics) {
+            if (!applicationMetricsMap.containsKey(metric.getApplication())) {
+                applicationMetricsMap.put(metric.getApplication(), new ArrayList<>());
+            }
+            applicationMetricsMap.get(metric.getApplication()).add(metric);
+        }
+
+        ApplicationMetricsData.ApplicationMetricsDataList result = new ApplicationMetricsData.ApplicationMetricsDataList();
+
+
+        for (Application application : applicationMetricsMap.keySet()) {
+            // Aggregate data for the application over the timespan selected
+
+            int numApplications = applicationMetricsMap.get(application).size();
+            // Create buffers for application data collected for an application over the timespan
+            double totalCpuUsage = 0;
+            double maxCpuUsage = 0.0;
+            double minCpuUsage = Double.MAX_VALUE;
+
+            long totalPhysicalMemoryUsed = 0;
+            long maxPhysicalMemoryUsed = Long.MIN_VALUE;
+            long minPhysicalMemoryUsed = Long.MAX_VALUE;
+
+            long totalVirtualMemoryUsed = 0;
+            long maxVirtualMemoryUsed = Long.MIN_VALUE;
+            long minVirtualMemoryUsed = Long.MAX_VALUE;
+
+            for (ApplicationMetric metric : applicationMetricsMap.get(application)) {
+                totalCpuUsage += metric.getAvgCpuUsage();
+                totalPhysicalMemoryUsed += metric.getAvgPhysicalMemoryUsed();
+                totalVirtualMemoryUsed += metric.getAvgVirtualMemoryUsed();
+
+                if (metric.getMaxCpuUsage() > maxCpuUsage) {
+                    maxCpuUsage = metric.getMaxCpuUsage();
+                }
+
+                if (metric.getMinCpuUsage() < minCpuUsage) {
+                    minCpuUsage = metric.getMinCpuUsage();
+                }
+
+                if (metric.getMaxPhysicalMemoryUsed() > maxPhysicalMemoryUsed) {
+                    maxPhysicalMemoryUsed = metric.getMaxPhysicalMemoryUsed();
+                }
+
+                if (metric.getMinPhysicalMemoryUsed() < minPhysicalMemoryUsed) {
+                    minPhysicalMemoryUsed = metric.getMinPhysicalMemoryUsed();
+                }
+
+                if (metric.getMaxVirtualMemoryUsed() > maxVirtualMemoryUsed) {
+                    maxVirtualMemoryUsed = metric.getMaxVirtualMemoryUsed();
+                }
+
+                if (metric.getMinVirtualMemoryUsed() < minVirtualMemoryUsed) {
+                    minVirtualMemoryUsed = metric.getMinVirtualMemoryUsed();
+                }
+            }
+
+            // Set up entry in ApplicationMetricsDataList for this Application
+            ApplicationMetricsData appData = new ApplicationMetricsData();
+
+            appData.setId(application.getId());
+            appData.setApplicationName(application.getApplicationName());
+            appData.setAvgCpuUsage(totalCpuUsage / (double)numApplications);
+            appData.setAvgPhysicalMemoryUsed((long)Math.ceil(totalPhysicalMemoryUsed / (double)numApplications));
+            appData.setAvgVirtualMemoryUsed((long)Math.ceil(totalVirtualMemoryUsed / (double)numApplications));
+            appData.setMaxCpuUsage(maxCpuUsage);
+            appData.setMaxPhysicalMemoryUsed(maxPhysicalMemoryUsed);
+            appData.setMaxVirtualMemoryUsed(maxVirtualMemoryUsed);
+            appData.setMinCpuUsage(minCpuUsage);
+            appData.setMinPhysicalMemoryUsed(minPhysicalMemoryUsed);
+            appData.setMinVirtualMemoryUsed(minVirtualMemoryUsed);
+
+            // Add to return list
+            result.addApplication(appData);
+
+        }
+        // All ApplicationMetrics are aggregated and ready to return
+
+        return result;
+
     }
 
     /**

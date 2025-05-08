@@ -89,6 +89,35 @@ public class MetricsController {
 
     }
 
+    @GetMapping("/api/archive/application")
+    @ResponseBody
+    public ApplicationMetricsData.ApplicationMetricsDataList
+        getHistoricalApplicationData(@RequestParam(name="startTime", required = false) Long startTime,
+                                     @RequestParam(name="endTime", required = false) Long endTime) {
+
+        if (startTime == null && endTime == null) {
+            Timestamp now = Timestamp.from(Instant.now());
+            Timestamp fiveMinutesAgo = Timestamp.from(Instant.now().minusSeconds(300));
+
+            return applicationMetricsAdapter.getHistoricalApplicationMetrics(fiveMinutesAgo, now);
+        }
+        else if (startTime != null && endTime != null) {
+            return applicationMetricsAdapter.getHistoricalApplicationMetrics(new Timestamp(startTime),
+                                                                                new Timestamp(endTime));
+        }
+        else if (startTime != null) {
+            Timestamp now = Timestamp.from(Instant.now());
+
+            return applicationMetricsAdapter.getHistoricalApplicationMetrics(new Timestamp(startTime),
+                                                                                now);
+        }
+        else {
+            return applicationMetricsAdapter.getHistoricalApplicationMetrics(Timestamp.from(Instant.EPOCH),
+                                                                                new Timestamp(endTime));
+        }
+
+    }
+
 
 //    @GetMapping("/api/metrics")
 //    @ResponseBody
