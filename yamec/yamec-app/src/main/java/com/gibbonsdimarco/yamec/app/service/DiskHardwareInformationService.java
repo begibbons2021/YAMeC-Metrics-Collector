@@ -128,7 +128,7 @@ public class DiskHardwareInformationService {
                 numValidDiskMetrics.put(diskId, 0);
 
                 utilizationTotalMap.put(diskId, new double[duration]);
-                utilizationMaxMap.put(diskId, Double.MIN_VALUE);
+                utilizationMaxMap.put(diskId, 0.0);
                 utilizationMinMap.put(diskId, Double.MAX_VALUE);
 
                 readBandwidthTotalMap.put(diskId, new long[duration]);
@@ -140,7 +140,7 @@ public class DiskHardwareInformationService {
                 writeBandwidthMinMap.put(diskId, Long.MAX_VALUE);
 
                 timeToTransferTotalMap.put(diskId, new double[duration]);
-                timeToTransferMaxMap.put(diskId, Double.MIN_VALUE);
+                timeToTransferMaxMap.put(diskId, 0.0);
                 timeToTransferMinMap.put(diskId, Double.MAX_VALUE);
 
                 readBandwidthUnsignedMap.put(diskId, false);

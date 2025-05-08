@@ -94,16 +94,16 @@ public class CpuHardwareInformationService {
             if (!recordedCpuIds.contains(cpuId)) {
                 recordedCpuIds.add(cpuId);
                 cpuUtilizationTotalMap.put(cpuId, new double[duration]);
-                cpuUtilizationMaxMap.put(cpuId, Double.MIN_VALUE);
+                cpuUtilizationMaxMap.put(cpuId, 0.0);
                 cpuUtilizationMinMap.put(cpuId, Double.MAX_VALUE);
             }
 
             // Add to running totals and extract maximums and minimums
             cpuUtilizationTotalMap.get(cpuId)[secondsSinceStartTime] = averageUtilization;
-            if (cpuUtilizationMaxMap.get(cpuId) < maxUtilization) {
+            if (maxUtilization > cpuUtilizationMaxMap.get(cpuId)) {
                 cpuUtilizationMaxMap.put(cpuId, maxUtilization);
             }
-            if (cpuUtilizationMinMap.get(cpuId) > minUtilization) {
+            if (minUtilization < cpuUtilizationMinMap.get(cpuId)) {
                 cpuUtilizationMinMap.put(cpuId, minUtilization);
             }
 

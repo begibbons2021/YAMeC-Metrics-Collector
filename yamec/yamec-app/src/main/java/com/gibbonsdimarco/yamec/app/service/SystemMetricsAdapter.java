@@ -137,6 +137,7 @@ public class SystemMetricsAdapter {
 
     /**
      * Converts the real system metrics data to the format expected by the views
+     * and aggregates all data for the timespan passed by parameter (startTime and endTime)
      * @return MetricsData object with current system metrics
      */
     @Transactional
@@ -158,7 +159,7 @@ public class SystemMetricsAdapter {
             // Will hold the sum of CPU utilization in the time specified and then get averaged
             double totalCpuUsage = 0;
 
-            double maxCpuUsage = Double.MIN_VALUE;
+            double maxCpuUsage = 0.0;
             double minCpuUsage = Double.MAX_VALUE;
 
             for (SystemCpuMetric cpuMetric : cpuMetrics) {
@@ -246,13 +247,13 @@ public class SystemMetricsAdapter {
                     disk.setPartitions(diskInfo.getPartitions());
                     disk.setDiskType(DiskHardwareInformation.getMediaTypeString(diskInfo.getMediaType()));
                     disk.setDiskCapacity(diskInfo.getCapacity());
-                    disk.setMaxDiskUsage(Double.MIN_VALUE);
+                    disk.setMaxDiskUsage(0.0);
                     disk.setMinDiskUsage(Double.MAX_VALUE);
                     disk.setMaxBytesReadPerSecond(Long.MIN_VALUE);
                     disk.setMinBytesReadPerSecond(Long.MAX_VALUE);
                     disk.setMaxBytesWrittenPerSecond(Long.MIN_VALUE);
                     disk.setMinBytesWrittenPerSecond(Long.MAX_VALUE);
-                    disk.setMaxTimeToTransfer(Double.MIN_VALUE);
+                    disk.setMaxTimeToTransfer(0.0);
                     disk.setMinTimeToTransfer(Double.MAX_VALUE);
 
                     diskDataMap.put(diskInfo.getId(), disk);
