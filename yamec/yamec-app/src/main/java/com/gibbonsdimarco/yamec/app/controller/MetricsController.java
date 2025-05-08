@@ -10,8 +10,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.UUID;
 
 @Controller
@@ -57,6 +60,35 @@ public class MetricsController {
     public MetricsData getMetricsApi() {
         return systemMetricsAdapter.getCurrentMetrics();
     }
+
+    @GetMapping("/api/archive")
+    @ResponseBody
+    public MetricsData getHistoricalData(@RequestParam(name="startTime", required = false) Long startTime,
+                                         @RequestParam(name="endTime", required = false) Long endTime) {
+
+        if (startTime == null && endTime == null) {
+            Timestamp now = Timestamp.from(Instant.now());
+            Timestamp fiveMinutesAgo = Timestamp.from(Instant.now().minusSeconds(300));
+
+            return systemMetricsAdapter.getHistoricalMetrics(fiveMinutesAgo, now);
+        }
+        else if (startTime != null && endTime != null) {
+            return systemMetricsAdapter.getHistoricalMetrics(new Timestamp(startTime),
+                    new Timestamp(endTime));
+        }
+        else if (startTime != null) {
+            Timestamp now = Timestamp.from(Instant.now());
+
+            return systemMetricsAdapter.getHistoricalMetrics(new Timestamp(startTime),
+                                                                now);
+        }
+        else {
+            return systemMetricsAdapter.getHistoricalMetrics(Timestamp.from(Instant.EPOCH),
+                                                                new Timestamp(endTime));
+        }
+
+    }
+
 
 //    @GetMapping("/api/metrics")
 //    @ResponseBody

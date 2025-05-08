@@ -6,6 +6,8 @@ import com.gibbonsdimarco.yamec.app.repository.NicHardwareInformationRepository;
 import com.gibbonsdimarco.yamec.app.repository.SystemNicMetricRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -375,6 +377,19 @@ public class NicHardwareInformationService {
         }
 
         return nicsWithLatestMetrics;
+    }
+
+    public java.util.List<SystemNicMetric> getStoredNicMetrics(Timestamp startTime, Timestamp endTime) {
+        return nicMetricRepository.findAllByTimestampBetween(
+                startTime, endTime);
+    }
+
+    public java.util.List<SystemNicMetric> getStoredNicMetrics(Timestamp startTime, Timestamp endTime, int pageNumber) {
+        return nicMetricRepository.findAllByTimestampBetween(
+                startTime, endTime,
+                PageRequest.of(pageNumber, 255,
+                        Sort.by(Sort.Direction.DESC, "timestamp"))
+        );
     }
 
     // Other service methods as needed

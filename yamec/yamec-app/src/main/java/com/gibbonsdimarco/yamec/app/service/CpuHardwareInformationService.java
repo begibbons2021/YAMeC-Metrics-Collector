@@ -8,8 +8,11 @@ import com.gibbonsdimarco.yamec.app.repository.SystemCpuMetricRepository;
 import jakarta.transaction.Transactional;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -191,8 +194,6 @@ public class CpuHardwareInformationService {
 
     }
 
-
-
     public java.util.List<CpuHardwareInformation> getStoredCpuInformation() {
         return cpuRepository.findAll(
                 org.springframework.data.domain.PageRequest.of(0, 255,
@@ -208,6 +209,7 @@ public class CpuHardwareInformationService {
                                         "id")))
                 .getContent();
     }
+
 
     public java.util.List<SystemCpuMetric>
                 getLatestCpuMetrics(java.util.List<CpuHardwareInformation> cpuDevices) {
@@ -230,6 +232,20 @@ public class CpuHardwareInformationService {
 
     public SystemCpuMetric getLatestMetric() {
         return systemCpuMetricRepository.getNewest();
+    }
+
+
+    public java.util.List<SystemCpuMetric> getStoredCpuMetrics(Timestamp startTime, Timestamp endTime) {
+        return systemCpuMetricRepository.findAllByTimestampBetween(
+                startTime, endTime);
+    }
+
+    public java.util.List<SystemCpuMetric> getStoredCpuMetrics(Timestamp startTime, Timestamp endTime, int pageNumber) {
+        return systemCpuMetricRepository.findAllByTimestampBetween(
+                startTime, endTime,
+                    PageRequest.of(pageNumber, 255,
+                                                            Sort.by(Sort.Direction.DESC, "timestamp"))
+        );
     }
 
 

@@ -8,6 +8,8 @@ import com.gibbonsdimarco.yamec.app.repository.ApplicationRepository;
 import jakarta.transaction.Transactional;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -338,5 +340,18 @@ public class ApplicationDataService {
         }
 
         return applicationsWithLatestMetrics;
+    }
+
+    public java.util.List<ApplicationMetric> getStoredApplicationMetrics(Timestamp startTime, Timestamp endTime) {
+        return applicationMetricRepository.findAllByTimestampBetween(
+                startTime, endTime);
+    }
+
+    public java.util.List<ApplicationMetric> getStoredApplicationMetrics(Timestamp startTime, Timestamp endTime, int pageNumber) {
+        return applicationMetricRepository.findAllByTimestampBetween(
+                startTime, endTime,
+                PageRequest.of(pageNumber, 255,
+                        Sort.by(Sort.Direction.DESC, "timestamp"))
+        );
     }
 }

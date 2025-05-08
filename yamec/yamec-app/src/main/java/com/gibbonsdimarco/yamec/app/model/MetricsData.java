@@ -4,9 +4,16 @@ import java.util.ArrayList;
 
 public class MetricsData {
     private double cpuUsage;
+    private double maxCpuUsage;
+    private double minCpuUsage;
     private long totalMemory;
     private long freeMemory;
     private long usedMemory;
+    private long maxPhysicalMemory;
+    private long minPhysicalMemory;
+    private long virtualMemory;
+    private long maxVirtualMemory;
+    private long minVirtualMemory;
     private ArrayList<DiskData> disks;
     private ArrayList<NicData> nics;
 
@@ -73,5 +80,61 @@ public class MetricsData {
 
     public void setNics(ArrayList<NicData> nics) {
         this.nics = nics;
+    }
+
+    public double getMaxCpuUsage() {
+        return maxCpuUsage;
+    }
+
+    public void setMaxCpuUsage(double maxCpuUsage) {
+        this.maxCpuUsage = maxCpuUsage;
+    }
+
+    public double getMinCpuUsage() {
+        return minCpuUsage;
+    }
+
+    public void setMinCpuUsage(double minCpuUsage) {
+        this.minCpuUsage = minCpuUsage;
+    }
+
+    public long getMaxPhysicalMemory() {
+        return maxPhysicalMemory;
+    }
+
+    public void setMaxPhysicalMemory(long maxPhysicalMemory) {
+        this.maxPhysicalMemory = maxPhysicalMemory;
+    }
+
+    public long getMinPhysicalMemory() {
+        return minPhysicalMemory;
+    }
+
+    public void setMinPhysicalMemory(long minPhysicalMemory) {
+        this.minPhysicalMemory = minPhysicalMemory;
+    }
+
+    public long getVirtualMemory() {
+        return virtualMemory;
+    }
+
+    public void setVirtualMemory(long virtualMemory) {
+        this.virtualMemory = virtualMemory;
+    }
+
+    public long getMaxVirtualMemory() {
+        return maxVirtualMemory;
+    }
+
+    public void setMaxVirtualMemory(long maxVirtualMemory) {
+        this.maxVirtualMemory = maxVirtualMemory;
+    }
+
+    public long getMinVirtualMemory() {
+        return minVirtualMemory;
+    }
+
+    public void setMinVirtualMemory(long minVirtualMemory) {
+        this.minVirtualMemory = minVirtualMemory;
     }
 }
