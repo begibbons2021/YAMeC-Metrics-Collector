@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Application Dashboard | YAMeC</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Navigation tabs styles */
+        .nav-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ddd;
+        }
+        .nav-tab {
+            padding: 10px 20px;
+            margin-right: 5px;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            background-color: #f8f9fa;
+            color: #495057;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .nav-tab:hover {
+            background-color: #e9ecef;
+        }
+        .nav-tab.active {
+            background-color: #fff;
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            font-weight: bold;
+        }
+        
+        /* Application list styles */
+        .app-list {
+            margin-bottom: 30px;
+            max-height: 60vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #ddd #fff;
+        }
+        .app-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .app-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        .app-item.active {
+            border-left: 4px solid #3498db;
+        }
+        .app-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .app-metrics {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .archive-apps {
+            display: flex;
+            align-items: center;
+        }
+
+        .archive-hardware {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            min-width: 100%;
+            max-height: 20%;
+            min-height: 20%;
+            height: 20%;
+            scroll-behavior: smooth;
+            overflow-x: auto;
+            overflow-y: hidden;
+
+        }
+
+        .archive-apps-table {
+            text-align: center;
+            justify-content: center;
+            min-width: 100%;
+
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+        }
+
+        .archive-apps-table thead {
+
+        }
+
+        .archive-apps-table tbody {
+
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #header {
+            /*position: absolute;*/
+            /*top: 0;*/
+            /*left: 0;*/
+            /*right: 0;*/
+        }
+
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #footer {
+            /*position: absolute;*/
+            /*bottom: 0;*/
+            /*left: 0;*/
+            /*right: 0;*/
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="header">
+            <header>
+                <h1>YAMeC Application Dashboard</h1>
+                <p class="subtitle">Real-time application metrics monitoring</p>
+            </header>
+
+            <!-- Navigation Tabs -->
+            <div class="nav-tabs">
+                <a href="/" class="nav-tab">System Dashboard</a>
+                <a href="/applications" class="nav-tab">Application Dashboard</a>
+                <a href="/archive" class="nav-tab active">Metrics History</a>
+            </div>
+        </div>
+
+        <div class="dashboard">
+
+            <div class="archive-apps">
+                <table class="archive-apps-table">
+                    <thead>
+                    <tr>
+                        <th class="archive-apps-table-left">Application</th>
+                        <th>Min/Avg./Max CPU Time</th>
+                        <th>Min/Avg./Max Physical Memory Use</th>
+                        <th>Min/Avg./Max Virtual Memory Use</th>
+                    </tr>
+                    </thead>
+                    <tbody id="app-list">
+                    <tr th:each="app : ${appMetrics.applications}" th:id="${app.id}">
+                        <th th:text="${app.applicationName}">Application Name</th>
+                        <td th:text="${#numbers.formatDecimal(app.minCpuUsage, 1, 1)} + '% / '
+                                        + ${#numbers.formatDecimal(app.avgCpuUsage, 1, 1)} + '% / '
+                                        + ${#numbers.formatDecimal(app.maxCpuUsage, 1, 1)} + '%'">0% / 0% / 0%</td>
+                        <td th:text="${#numbers.formatDecimal(app.minPhysicalMemoryUsed / (1024 * 1024), 1, 0) + ' MB / '}
+                                        + ${#numbers.formatDecimal(app.avgPhysicalMemoryUsed / (1024 * 1024), 1, 0) + ' MB / '}
+                                        + ${#numbers.formatDecimal(app.maxPhysicalMemoryUsed / (1024 * 1024), 1, 0) + ' MB'}">0 MB / 0 MB / 0 MB</td>
+                        <td th:text="${#numbers.formatDecimal(app.minVirtualMemoryUsed / (1024 * 1024), 1, 0) + ' MB / '}
+                                        + ${#numbers.formatDecimal(app.avgVirtualMemoryUsed / (1024 * 1024), 1, 0) + ' MB / '}
+                                        + ${#numbers.formatDecimal(app.maxVirtualMemoryUsed / (1024 * 1024), 1, 0) + ' MB'}">0 MB / 0 MB / 0 MB</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="archive-hardware">
+                <!-- CPU Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">CPU Usage</h2>
+                        <i class="fas fa-microchip card-icon"></i>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Current Usage</div>
+                        <div class="metric-value" id="cpu-usage" th:text="${#numbers.formatDecimal(systemMetrics.cpuUsage, 1, 1) + '%'}">0%</div>
+                        <div class="progress-container">
+                            <div class="progress-bar progress-cpu" id="cpu-progress" th:style="'width: ' + ${systemMetrics.cpuUsage} + '%'"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Memory Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Memory Usage</h2>
+                        <i class="fas fa-memory card-icon"></i>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Current Usage</div>
+                        <div class="metric-value" id="memory-usage" th:text="${#numbers.formatDecimal((systemMetrics.usedMemory / systemMetrics.totalMemory) * 100, 1, 1) + '%'}">0%</div>
+                        <div class="progress-container">
+                            <div class="progress-bar progress-memory" id="memory-progress" th:style="'width: ' + ${(systemMetrics.usedMemory / systemMetrics.totalMemory) * 100} + '%'"></div>
+                        </div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Total Memory</div>
+                        <div class="metric-value" id="total-memory" th:text="${#numbers.formatDecimal(systemMetrics.totalMemory / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Used Memory</div>
+                        <div class="metric-value" id="used-memory" th:text="${#numbers.formatDecimal(systemMetrics.usedMemory / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Free Memory</div>
+                        <div class="metric-value" id="free-memory" th:text="${#numbers.formatDecimal(systemMetrics.freeMemory / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                    </div>
+                </div>
+
+                <!-- Disk Cards -->
+                <div class="card" th:each="disk : ${systemMetrics.disks}">
+                    <div class="card-header">
+                        <h2 class="card-title" th:text="${disk.friendlyName + ' (Disk ' + disk.diskNumber + ')'}">Disk Name</h2>
+                        <i class="fas fa-hdd card-icon"></i>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Disk Type</div>
+                        <div class="metric-value" th:text="${disk.diskType}">Unknown</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Capacity</div>
+                        <div class="metric-value" th:text="${#numbers.formatDecimal(disk.diskCapacity / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Average Usage</div>
+                        <div class="metric-value" th:text="${#numbers.formatDecimal(disk.avgDiskUsage, 1, 1) + '%'}">0%</div>
+                        <div class="progress-container">
+                            <div class="progress-bar progress-disk" th:style="'width: ' + ${disk.avgDiskUsage} + '%'"></div>
+                        </div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Average Read Speed</div>
+                        <div class="metric-value" th:text="${#numbers.formatDecimal(disk.avgBytesReadPerSecond / (1024 * 1024), 1, 2) + ' MB/s'}">0 MB/s</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Average Write Speed</div>
+                        <div class="metric-value" th:text="${#numbers.formatDecimal(disk.avgBytesWrittenPerSecond / (1024 * 1024), 1, 2) + ' MB/s'}">0 MB/s</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Average Time to Transfer</div>
+                        <div class="metric-value" th:text="${#numbers.formatDecimal(disk.avgTimeToTransfer, 1, 2) + ' ms'}">0 ms</div>
+                    </div>
+                </div>
+
+                <!-- Network Cards -->
+                <div class="card" th:each="nic : ${systemMetrics.nics}">
+                    <div class="card-header">
+                        <h2 class="card-title" th:text="${nic.friendlyName}">Network Interface</h2>
+                        <i class="fas fa-network-wired card-icon"></i>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Label</div>
+                        <div class="metric-value" th:text="${nic.label}">Unknown</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">NIC Type</div>
+                        <div class="metric-value" th:text="${nic.nicType}">Unknown</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Average Data Sent</div>
+                        <div class="metric-value" th:text="${#numbers.formatDecimal(nic.avgNetworkSent / (1024 * 1024), 1, 2) + ' MB'}">0 MB</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Average Data Received</div>
+                        <div class="metric-value" th:text="${#numbers.formatDecimal(nic.avgNetworkReceived / (1024 * 1024), 1, 2) + ' MB'}">0 MB</div>
+                    </div>
+                </div>
+            </div>
+
+<!--            &lt;!&ndash; Application List Card &ndash;&gt;-->
+<!--            <div class="card">-->
+<!--                <div class="card-header">-->
+<!--                    <h2 class="card-title">Applications</h2>-->
+<!--                    <i class="fas fa-laptop card-icon"></i>-->
+<!--                </div>-->
+<!--                <div class="app-list" id="app-list">-->
+<!--                    &lt;!&ndash; Application items will be populated by JavaScript &ndash;&gt;-->
+<!--                    <div th:each="app : ${appMetrics.applications}" class="app-item" th:data-id="${app.id}">-->
+<!--                        <div class="app-name" th:text="${app.applicationName}">Application Name</div>-->
+<!--                        <div class="app-metrics">-->
+<!--                            <span>CPU: <span th:text="${#numbers.formatDecimal(app.avgCpuUsage, 1, 1) + '%'}">0%</span></span>-->
+<!--                            <span>Memory: <span th:text="${#numbers.formatDecimal(app.avgPhysicalMemoryUsed / (1024 * 1024), 1, 0) + ' MB'}">0 MB</span></span>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            -->
+<!--            &lt;!&ndash; CPU Usage Card &ndash;&gt;-->
+<!--            <div class="card">-->
+<!--                <div class="card-header">-->
+<!--                    <h2 class="card-title">CPU Usage</h2>-->
+<!--                    <i class="fas fa-microchip card-icon"></i>-->
+<!--                </div>-->
+<!--                <div class="metric">-->
+<!--                    <div class="metric-label">Average Usage</div>-->
+<!--                    <div class="metric-value" id="app-cpu-avg">0%</div>-->
+<!--                </div>-->
+<!--                <div class="metric">-->
+<!--                    <div class="metric-label">Maximum Usage</div>-->
+<!--                    <div class="metric-value" id="app-cpu-max">0%</div>-->
+<!--                </div>-->
+<!--                <div class="metric">-->
+<!--                    <div class="metric-label">Minimum Usage</div>-->
+<!--                    <div class="metric-value" id="app-cpu-min">0%</div>-->
+<!--                </div>-->
+<!--                <div class="progress-container">-->
+<!--                    <div class="progress-bar progress-cpu" id="app-cpu-progress"></div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            -->
+<!--            &lt;!&ndash; Memory Usage Card &ndash;&gt;-->
+<!--            <div class="card">-->
+<!--                <div class="card-header">-->
+<!--                    <h2 class="card-title">Memory Usage</h2>-->
+<!--                    <i class="fas fa-memory card-icon"></i>-->
+<!--                </div>-->
+<!--                <div class="metric">-->
+<!--                    <div class="metric-label">Physical Memory (Average)</div>-->
+<!--                    <div class="metric-value" id="app-physical-memory-avg">0 MB</div>-->
+<!--                </div>-->
+<!--                <div class="metric">-->
+<!--                    <div class="metric-label">Physical Memory (Maximum)</div>-->
+<!--                    <div class="metric-value" id="app-physical-memory-max">0 MB</div>-->
+<!--                </div>-->
+<!--                <div class="metric">-->
+<!--                    <div class="metric-label">Physical Memory (Minimum)</div>-->
+<!--                    <div class="metric-value" id="app-physical-memory-min">0 MB</div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            -->
+<!--            &lt;!&ndash; Virtual Memory Card &ndash;&gt;-->
+<!--            <div class="card">-->
+<!--                <div class="card-header">-->
+<!--                    <h2 class="card-title">Virtual Memory</h2>-->
+<!--                    <i class="fas fa-hdd card-icon"></i>-->
+<!--                </div>-->
+<!--                <div class="metric">-->
+<!--                    <div class="metric-label">Virtual Memory (Average)</div>-->
+<!--                    <div class="metric-value" id="app-virtual-memory-avg">0 MB</div>-->
+<!--                </div>-->
+<!--                <div class="metric">-->
+<!--                    <div class="metric-label">Virtual Memory (Maximum)</div>-->
+<!--                    <div class="metric-value" id="app-virtual-memory-max">0 MB</div>-->
+<!--                </div>-->
+<!--                <div class="metric">-->
+<!--                    <div class="metric-label">Virtual Memory (Minimum)</div>-->
+<!--                    <div class="metric-value" id="app-virtual-memory-min">0 MB</div>-->
+<!--                </div>-->
+<!--            </div>-->
+        </div>
+        
+        <div class="footer">
+            <p>Last updated: <span id="last-updated" th:text="${#dates.format(#dates.createNow(), 'HH:mm:ss')}">00:00:00</span></p>
+            <p>YAMeC - Yet Another Metrics Collector</p>
+        </div>
+    </div>
+    
+<!--    <script th:src="@{/js/application-dashboard.js}"></script>-->
+<!--    <script th:src="@{/js/dashboard.js}"></script>-->
+    <script th:src="@{/js/archive.js}"></script>
+    <script th:src="@{/js/utility.js}"></script>
+</body>
+</html>

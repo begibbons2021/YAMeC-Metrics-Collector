@@ -55,6 +55,15 @@ public class MetricsController {
         return "applications";
     }
 
+    @GetMapping("/archive")
+    public String getArchiveMetricsPage(Model model,
+                                        @RequestParam(name="startTime", required = false) Long startTime,
+                                        @RequestParam(name="endTime", required = false) Long endTime) {
+        model.addAttribute("appMetrics", getHistoricalApplicationData(startTime, endTime));
+        model.addAttribute("systemMetrics", getHistoricalData(startTime, endTime));
+        return "archive";
+    }
+
     @GetMapping("/api/metrics")
     @ResponseBody
     public MetricsData getMetricsApi() {
