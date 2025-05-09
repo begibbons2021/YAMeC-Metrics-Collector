@@ -1,35 +1,35 @@
 // YAMeC Dashboard JavaScript
 
-// Get progress bar color based on percentage
-function getProgressBarColor(percentage) {
-    if (percentage < 35) {
-        return 'var(--secondary-color)'; // Green
-    } else if (percentage < 60) {
-        return 'var(--warning-color)';   // Yellow
-    } else if (percentage < 80) {
-        return 'var(--orange-color)';    // Orange
-    } else {
-        return 'var(--danger-color)';    // Red
-    }
-}
+// // Get progress bar color based on percentage
+// function getProgressBarColor(percentage) {
+//     if (percentage < 35) {
+//         return 'var(--secondary-color)'; // Green
+//     } else if (percentage < 60) {
+//         return 'var(--warning-color)';   // Yellow
+//     } else if (percentage < 80) {
+//         return 'var(--orange-color)';    // Orange
+//     } else {
+//         return 'var(--danger-color)';    // Red
+//     }
+// }
 
-// Format bytes to human-readable format
-function formatBytes(bytes, decimals = 2) {
-    if (bytes === 0) return '0 Bytes';
-
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-}
-
-// Format percentage
-function formatPercentage(value) {
-    return value.toFixed(1) + '%';
-}
+// // Format bytes to human-readable format
+// function formatBytes(bytes, decimals = 2) {
+//     if (bytes === 0) return '0 Bytes';
+//
+//     const k = 1024;
+//     const dm = decimals < 0 ? 0 : decimals;
+//     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+//
+//     const i = Math.floor(Math.log(bytes) / Math.log(k));
+//
+//     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+// }
+//
+// // Format percentage
+// function formatPercentage(value) {
+//     return value.toFixed(1) + '%';
+// }
 
 // Update the dashboard with new metrics data
 function updateDashboard(metrics) {
