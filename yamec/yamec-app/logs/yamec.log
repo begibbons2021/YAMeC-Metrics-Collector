@@ -438,3 +438,179 @@
 2025-05-10 15:56:54 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-05-10 15:56:54 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2025-05-10 15:56:54 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-10 16:30:06 [main] INFO  c.g.yamec.app.YamecApplicationTests - Starting YamecApplicationTests using Java 23.0.2 with PID 41736 (started by cmarc in C:\Users\cmarc\IdeaProjects\yamec\yamec\yamec-app)
+2025-05-10 16:30:06 [main] INFO  c.g.yamec.app.YamecApplicationTests - No active profile set, falling back to 1 default profile: "default"
+2025-05-10 16:30:06 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-10 16:30:06 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 76 ms. Found 13 JPA repository interfaces.
+2025-05-10 16:30:07 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-10 16:30:07 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-05-10 16:30:07 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-10 16:30:07 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-10 16:30:07 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-10 16:30:07 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@7b451bf4
+2025-05-10 16:30:07 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-10 16:30:08 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 3.49.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-10 16:30:08 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-10 16:30:08 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-10 16:30:09 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-10 16:30:10 [main] INFO  c.g.y.app.config.SystemMonitorConfig - Creating singleton instance of SystemMonitorManagerJNI
+2025-05-10 16:30:10 [pool-3-thread-1] INFO  com.github.fommil.jni.JniLoader - successfully loaded C:\Users\cmarc\AppData\Local\Temp\jniloader12040097444772825102yamecjni.dll
+2025-05-10 16:30:10 [pool-3-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Initialized
+2025-05-10 16:30:10 [pool-3-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 16:30:11 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Initializing SystemMetricsCollector
+2025-05-10 16:30:11 [main] INFO  c.g.y.a.s.SystemMetricsCollector - CPU Hardware Information: Cpu[id=null, friendlyName='AMD Ryzen 9 5950X 16-Core Processor            ', coreCount='16', logicalProcessorCount='32', l1CacheSize='1048576', l2CacheSize='8388608', l3CacheSize='67108864', virtualizationEnabled='true']
+2025-05-10 16:30:11 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Memory Hardware Information: MemoryHardwareInformation{id=null, capacity=103079215104, speed=2133, slotsUsed=4, slotsTotal=4, capacityIsUnsigned=true, speedIsUnsigned=true}
+2025-05-10 16:30:11 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Disk Hardware Information:
+2025-05-10 16:30:11 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.DiskHardwareInformation@1928930
+2025-05-10 16:30:11 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.DiskHardwareInformation@707b0b9b
+2025-05-10 16:30:12 [main] INFO  c.g.y.a.s.SystemMetricsCollector - NIC Hardware Information:
+2025-05-10 16:30:12 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.NicHardwareInformation@5f0bcadb
+2025-05-10 16:30:12 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.NicHardwareInformation@e182453
+2025-05-10 16:30:12 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-05-10 16:30:12 [main] INFO  c.g.yamec.app.YamecApplicationTests - Started YamecApplicationTests in 6.633 seconds (process running for 7.454)
+2025-05-10 16:30:12 [pool-3-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 16:30:13 [SpringApplicationShutdownHook] INFO  c.g.y.a.s.SystemMetricsCollector - SystemMetricsCollector cleanup - monitor will be closed by Spring context
+2025-05-10 16:30:13 [SpringApplicationShutdownHook] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - Successfully released native resources
+2025-05-10 16:30:13 [SpringApplicationShutdownHook] INFO  c.g.yamec.app.YamecApplication - CLEANUP - YamecApplication is shutting down...
+2025-05-10 16:30:13 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-10 16:30:13 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-10 16:30:13 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-10 16:35:33 [main] INFO  c.g.yamec.app.YamecApplicationTests - Starting YamecApplicationTests using Java 23.0.2 with PID 49856 (started by cmarc in C:\Users\cmarc\IdeaProjects\yamec\yamec\yamec-app)
+2025-05-10 16:35:33 [main] INFO  c.g.yamec.app.YamecApplicationTests - No active profile set, falling back to 1 default profile: "default"
+2025-05-10 16:35:34 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-10 16:35:34 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 77 ms. Found 13 JPA repository interfaces.
+2025-05-10 16:35:34 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-10 16:35:34 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-05-10 16:35:34 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-10 16:35:35 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-10 16:35:35 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-10 16:35:35 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@7b451bf4
+2025-05-10 16:35:35 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-10 16:35:35 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 3.49.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-10 16:35:36 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-10 16:35:36 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-10 16:35:36 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-10 16:35:37 [main] INFO  c.g.y.app.config.SystemMonitorConfig - Creating singleton instance of SystemMonitorManagerJNI
+2025-05-10 16:35:38 [pool-3-thread-1] INFO  com.github.fommil.jni.JniLoader - successfully loaded C:\Users\cmarc\AppData\Local\Temp\jniloader9913574073710386848yamecjni.dll
+2025-05-10 16:35:38 [pool-3-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Initialized
+2025-05-10 16:35:38 [pool-3-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 16:35:39 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Initializing SystemMetricsCollector
+2025-05-10 16:35:39 [main] INFO  c.g.y.a.s.SystemMetricsCollector - CPU Hardware Information: Cpu[id=null, friendlyName='AMD Ryzen 9 5950X 16-Core Processor            ', coreCount='16', logicalProcessorCount='32', l1CacheSize='1048576', l2CacheSize='8388608', l3CacheSize='67108864', virtualizationEnabled='true']
+2025-05-10 16:35:39 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Memory Hardware Information: MemoryHardwareInformation{id=null, capacity=103079215104, speed=2133, slotsUsed=4, slotsTotal=4, capacityIsUnsigned=true, speedIsUnsigned=true}
+2025-05-10 16:35:39 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Disk Hardware Information:
+2025-05-10 16:35:39 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.DiskHardwareInformation@3e6945c6
+2025-05-10 16:35:39 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.DiskHardwareInformation@16e6a643
+2025-05-10 16:35:39 [main] INFO  c.g.y.a.s.SystemMetricsCollector - NIC Hardware Information:
+2025-05-10 16:35:39 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.NicHardwareInformation@7b3b763d
+2025-05-10 16:35:39 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.NicHardwareInformation@34ceefb5
+2025-05-10 16:35:39 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-05-10 16:35:40 [main] INFO  c.g.yamec.app.YamecApplicationTests - Started YamecApplicationTests in 6.948 seconds (process running for 7.796)
+2025-05-10 16:35:40 [pool-3-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 16:35:41 [SpringApplicationShutdownHook] INFO  c.g.y.a.s.SystemMetricsCollector - SystemMetricsCollector cleanup - monitor will be closed by Spring context
+2025-05-10 16:35:41 [SpringApplicationShutdownHook] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - Successfully released native resources
+2025-05-10 16:35:41 [SpringApplicationShutdownHook] INFO  c.g.yamec.app.YamecApplication - CLEANUP - YamecApplication is shutting down...
+2025-05-10 16:35:41 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-10 16:35:41 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-10 16:35:41 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-10 16:47:52 [main] INFO  c.g.yamec.app.YamecApplicationTests - Starting YamecApplicationTests using Java 23.0.2 with PID 45516 (started by cmarc in C:\Users\cmarc\IdeaProjects\yamec\yamec\yamec-app)
+2025-05-10 16:47:52 [main] INFO  c.g.yamec.app.YamecApplicationTests - No active profile set, falling back to 1 default profile: "default"
+2025-05-10 16:47:52 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-10 16:47:53 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 78 ms. Found 13 JPA repository interfaces.
+2025-05-10 16:47:53 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-10 16:47:53 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-05-10 16:47:53 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-10 16:47:54 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-10 16:47:54 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-10 16:47:54 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@7b451bf4
+2025-05-10 16:47:54 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-10 16:47:54 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 3.49.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-10 16:47:55 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-10 16:47:55 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-10 16:47:55 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-10 16:47:56 [main] INFO  c.g.y.app.config.SystemMonitorConfig - Creating singleton instance of SystemMonitorManagerJNI
+2025-05-10 16:47:56 [pool-3-thread-1] INFO  com.github.fommil.jni.JniLoader - successfully loaded C:\Users\cmarc\AppData\Local\Temp\jniloader13827024282536814995yamecjni.dll
+2025-05-10 16:47:57 [pool-3-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Initialized
+2025-05-10 16:47:57 [pool-3-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 16:47:58 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Initializing SystemMetricsCollector
+2025-05-10 16:47:58 [main] INFO  c.g.y.a.s.SystemMetricsCollector - CPU Hardware Information: Cpu[id=null, friendlyName='AMD Ryzen 9 5950X 16-Core Processor            ', coreCount='16', logicalProcessorCount='32', l1CacheSize='1048576', l2CacheSize='8388608', l3CacheSize='67108864', virtualizationEnabled='true']
+2025-05-10 16:47:58 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Memory Hardware Information: MemoryHardwareInformation{id=null, capacity=103079215104, speed=2133, slotsUsed=4, slotsTotal=4, capacityIsUnsigned=true, speedIsUnsigned=true}
+2025-05-10 16:47:58 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Disk Hardware Information:
+2025-05-10 16:47:58 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.DiskHardwareInformation@3e6945c6
+2025-05-10 16:47:58 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.DiskHardwareInformation@16e6a643
+2025-05-10 16:47:58 [main] INFO  c.g.y.a.s.SystemMetricsCollector - NIC Hardware Information:
+2025-05-10 16:47:58 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.NicHardwareInformation@7b3b763d
+2025-05-10 16:47:58 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.NicHardwareInformation@34ceefb5
+2025-05-10 16:47:58 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-05-10 16:47:59 [main] INFO  c.g.yamec.app.YamecApplicationTests - Started YamecApplicationTests in 7.059 seconds (process running for 7.861)
+2025-05-10 16:47:59 [pool-3-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 16:47:59 [SpringApplicationShutdownHook] INFO  c.g.y.a.s.SystemMetricsCollector - SystemMetricsCollector cleanup - monitor will be closed by Spring context
+2025-05-10 16:47:59 [SpringApplicationShutdownHook] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - Successfully released native resources
+2025-05-10 16:47:59 [SpringApplicationShutdownHook] INFO  c.g.yamec.app.YamecApplication - CLEANUP - YamecApplication is shutting down...
+2025-05-10 16:47:59 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-10 16:47:59 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-10 16:47:59 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-10 16:55:50 [main] INFO  c.g.yamec.app.YamecApplicationTests - Starting YamecApplicationTests using Java 23.0.2 with PID 32096 (started by cmarc in C:\Users\cmarc\IdeaProjects\yamec\yamec\yamec-app)
+2025-05-10 16:55:50 [main] INFO  c.g.yamec.app.YamecApplicationTests - No active profile set, falling back to 1 default profile: "default"
+2025-05-10 16:55:51 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-10 16:55:51 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 77 ms. Found 13 JPA repository interfaces.
+2025-05-10 16:55:51 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-10 16:55:51 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-05-10 16:55:51 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-10 16:55:52 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-10 16:55:52 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-10 16:55:52 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@7b451bf4
+2025-05-10 16:55:52 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-10 16:55:52 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 3.49.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-10 16:55:53 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-10 16:55:53 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-10 16:55:53 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-10 16:55:55 [main] INFO  c.g.y.app.config.SystemMonitorConfig - Creating singleton instance of SystemMonitorManagerJNI
+2025-05-10 16:55:55 [pool-3-thread-1] INFO  com.github.fommil.jni.JniLoader - successfully loaded C:\Users\cmarc\AppData\Local\Temp\jniloader10520776552626944633yamecjni.dll
+2025-05-10 16:55:55 [pool-3-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Initialized
+2025-05-10 16:55:55 [pool-3-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 16:55:56 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Initializing SystemMetricsCollector
+2025-05-10 16:55:56 [main] INFO  c.g.y.a.s.SystemMetricsCollector - CPU Hardware Information: Cpu[id=null, friendlyName='AMD Ryzen 9 5950X 16-Core Processor            ', coreCount='16', logicalProcessorCount='32', l1CacheSize='1048576', l2CacheSize='8388608', l3CacheSize='67108864', virtualizationEnabled='true']
+2025-05-10 16:55:56 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Memory Hardware Information: MemoryHardwareInformation{id=null, capacity=103079215104, speed=2133, slotsUsed=4, slotsTotal=4, capacityIsUnsigned=true, speedIsUnsigned=true}
+2025-05-10 16:55:56 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Disk Hardware Information:
+2025-05-10 16:55:56 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.DiskHardwareInformation@3e6945c6
+2025-05-10 16:55:56 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.DiskHardwareInformation@16e6a643
+2025-05-10 16:55:56 [main] INFO  c.g.y.a.s.SystemMetricsCollector - NIC Hardware Information:
+2025-05-10 16:55:56 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.NicHardwareInformation@7b3b763d
+2025-05-10 16:55:56 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.NicHardwareInformation@34ceefb5
+2025-05-10 16:55:56 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-05-10 16:55:57 [main] INFO  c.g.yamec.app.YamecApplicationTests - Started YamecApplicationTests in 6.987 seconds (process running for 7.872)
+2025-05-10 16:55:57 [pool-3-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 16:55:58 [SpringApplicationShutdownHook] INFO  c.g.y.a.s.SystemMetricsCollector - SystemMetricsCollector cleanup - monitor will be closed by Spring context
+2025-05-10 16:55:58 [SpringApplicationShutdownHook] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - Successfully released native resources
+2025-05-10 16:55:58 [SpringApplicationShutdownHook] INFO  c.g.yamec.app.YamecApplication - CLEANUP - YamecApplication is shutting down...
+2025-05-10 16:55:58 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-10 16:55:58 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-10 16:55:58 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

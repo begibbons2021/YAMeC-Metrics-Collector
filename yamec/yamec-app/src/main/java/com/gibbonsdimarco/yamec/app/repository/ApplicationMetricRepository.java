@@ -47,18 +47,24 @@ public interface ApplicationMetricRepository extends JpaRepository<ApplicationMe
                                                                         UUID applicationId,
                                                                         Pageable pageable);
 
-    @Query("SELECT a, m FROM Application a " +
-            "INNER JOIN ApplicationMetric m ON m.application.id = a.id " +
-            "INNER JOIN (SELECT metrics.innerId AS appId, MAX(metrics.innerTimestamp) as maxTimestamp " +
-            "      FROM (" +
-            "SELECT m2.application.id AS innerId, m2.timestamp AS innerTimestamp FROM ApplicationMetric m2 ORDER BY m2.timestamp DESC LIMIT 10000" +
-            ") metrics " +
-            "      WHERE metrics.innerTimestamp > :thresholdTime " +
-            "      GROUP BY appId) latest " +
-            "ON latest.appId = a.id AND (m.timestamp = latest.maxTimestamp) " +
-            "ORDER BY m.timestamp DESC")
+    @Query(value = "SELECT " +
+        "hex(a.id) as app_id, a.application_name, " +
+        "hex(m.id) as metric_id, m.timestamp, m.duration, " +
+        "m.avg_cpu_usage, m.avg_physical_memory_used, m.avg_virtual_memory_used, " +
+        "m.max_cpu_usage, m.max_physical_memory_used, m.max_virtual_memory_used, " +
+        "m.min_cpu_usage, m.min_physical_memory_used, m.min_virtual_memory_used " +
+        "FROM application a " +
+        "INNER JOIN (" +
+        "    SELECT application_id, MAX(timestamp) as max_timestamp " +
+        "    FROM application_metrics " +
+        "    WHERE timestamp > :thresholdTime " +
+        "    GROUP BY application_id" +
+        ") latest ON latest.application_id = a.id " +
+        "INNER JOIN application_metrics m ON m.application_id = a.id AND m.timestamp = latest.max_timestamp " +
+        "ORDER BY m.timestamp DESC",
+        nativeQuery = true)
     List<Object[]> findLatestMetricsForAllApplications(
-            @Param("thresholdTime") Timestamp thresholdTime,
-            Pageable pageable
+        @Param("thresholdTime") Timestamp thresholdTime,
+        Pageable pageable
     );
 }
