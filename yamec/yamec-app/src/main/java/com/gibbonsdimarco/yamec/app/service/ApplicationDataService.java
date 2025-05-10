@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manages repositories for Application and ApplicationMetric data in the database
@@ -21,6 +23,8 @@ import java.util.UUID;
  */
 @Service
 public class ApplicationDataService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationDataService.class);
 
     ApplicationRepository applicationRepository;
     ApplicationMetricRepository applicationMetricRepository;
@@ -283,16 +287,16 @@ public class ApplicationDataService {
     public java.util.Map<Application, java.util.List<ApplicationMetric>> getAllApplicationsWithMetrics() {
         // Get all applications
         java.util.List<Application> applications = applicationRepository.findAll();
-        
+
         // Initialize result map
         java.util.Map<Application, java.util.List<ApplicationMetric>> applicationsWithMetrics = new java.util.HashMap<>();
-        
+
         // For each application, get its metrics and add to the map
         for (Application application : applications) {
             java.util.List<ApplicationMetric> metrics = applicationMetricRepository.findByApplication(application);
             applicationsWithMetrics.put(application, metrics);
         }
-        
+
         return applicationsWithMetrics;
     }
 
@@ -308,10 +312,10 @@ public class ApplicationDataService {
         if (appOptional.isEmpty()) {
             return null;
         }
-        
+
         Application application = appOptional.get();
         java.util.List<ApplicationMetric> metrics = applicationMetricRepository.findByApplicationIdOrderByTimestampDesc(applicationId);
-        
+
         return java.util.Map.entry(application, metrics);
     }
 
@@ -326,32 +330,108 @@ public class ApplicationDataService {
         if (application == null) {
             return null;
         }
-        
+
         java.util.List<ApplicationMetric> metrics = applicationMetricRepository.findAllByApplicationApplicationName(applicationName);
-        
+
         return java.util.Map.entry(application, metrics);
     }
 
     /**
-     * Returns all applications with their latest metrics
+     * Returns all applications with their latest metrics within the last 3 seconds
      * This is useful for dashboards that only need the most recent metric for each application
      *
      * @return Map of Application objects to their latest metric
      */
     public java.util.Map<Application, ApplicationMetric> getAllApplicationsWithLatestMetrics() {
+        logger.debug("Starting getAllApplicationsWithLatestMetrics");
+        long startTime = System.currentTimeMillis();
+
         // Get applications with their latest metrics in a single query
+        // Only include metrics from the last 3 seconds
         Timestamp threshold = new Timestamp(System.currentTimeMillis() - 3000);
-        java.util.List<Object[]> results = applicationMetricRepository.findLatestMetricsForAllApplications(threshold, PageRequest.of(0,10000));
+
+        // Log query execution time
+        long queryStartTime = System.currentTimeMillis();
+        java.util.List<Object[]> results = applicationMetricRepository.findLatestMetricsForAllApplications(threshold, PageRequest.of(0, 100)); // Reduced page size for better performance
+        long queryEndTime = System.currentTimeMillis();
+        logger.debug("Query execution time: {} ms, returned {} results", (queryEndTime - queryStartTime), results.size());
 
         // Initialize result map
         java.util.Map<Application, ApplicationMetric> applicationsWithLatestMetrics = new java.util.HashMap<>();
 
         // Process results
         for (Object[] result : results) {
-            Application app = (Application) result[0];
-            ApplicationMetric metric = (ApplicationMetric) result[1];
-            applicationsWithLatestMetrics.put(app, metric);
+            try {
+                if (result == null || result.length < 14) {
+                    logger.warn("Skipping invalid result: {}", (result == null ? "null" : "length=" + result.length));
+                    continue;
+                }
+
+                // Parse the application data
+                String appIdHex = (String) result[0];
+                String appName = (String) result[1];
+
+                // Parse the metric data
+                String metricIdHex = (String) result[2];
+                Timestamp timestamp = (Timestamp) result[3];
+                Integer duration = result[4] != null ? ((Number) result[4]).intValue() : 0;
+                Double avgCpuUsage = result[5] != null ? ((Number) result[5]).doubleValue() : 0.0;
+                Long avgPhysicalMemoryUsed = result[6] != null ? ((Number) result[6]).longValue() : 0L;
+                Long avgVirtualMemoryUsed = result[7] != null ? ((Number) result[7]).longValue() : 0L;
+                Double maxCpuUsage = result[8] != null ? ((Number) result[8]).doubleValue() : 0.0;
+                Long maxPhysicalMemoryUsed = result[9] != null ? ((Number) result[9]).longValue() : 0L;
+                Long maxVirtualMemoryUsed = result[10] != null ? ((Number) result[10]).longValue() : 0L;
+                Double minCpuUsage = result[11] != null ? ((Number) result[11]).doubleValue() : 0.0;
+                Long minPhysicalMemoryUsed = result[12] != null ? ((Number) result[12]).longValue() : 0L;
+                Long minVirtualMemoryUsed = result[13] != null ? ((Number) result[13]).longValue() : 0L;
+
+                // Format UUID from hex string
+                String formattedAppIdHex = appIdHex;
+                if (appIdHex != null && appIdHex.length() >= 32) {
+                    formattedAppIdHex = appIdHex.replaceAll("(.{8})(.{4})(.{4})(.{4})(.+)", "$1-$2-$3-$4-$5");
+                } else {
+                    logger.warn("Invalid app ID hex: {}", appIdHex);
+                    continue;
+                }
+
+                String formattedMetricIdHex = metricIdHex;
+                if (metricIdHex != null && metricIdHex.length() >= 32) {
+                    formattedMetricIdHex = metricIdHex.replaceAll("(.{8})(.{4})(.{4})(.{4})(.+)", "$1-$2-$3-$4-$5");
+                } else {
+                    logger.warn("Invalid metric ID hex: {}", metricIdHex);
+                    continue;
+                }
+
+                // Create the Application object
+                Application app = new Application(appName);
+                app.setId(UUID.fromString(formattedAppIdHex));
+
+                // Create the ApplicationMetric object
+                ApplicationMetric metric = new ApplicationMetric();
+                metric.setId(UUID.fromString(formattedMetricIdHex));
+                metric.setApplication(app);
+                metric.setTimestamp(timestamp);
+                metric.setDuration(duration);
+                metric.setAvgCpuUsage(avgCpuUsage);
+                metric.setAvgPhysicalMemoryUsed(avgPhysicalMemoryUsed);
+                metric.setAvgVirtualMemoryUsed(avgVirtualMemoryUsed);
+                metric.setMaxCpuUsage(maxCpuUsage);
+                metric.setMaxPhysicalMemoryUsed(maxPhysicalMemoryUsed);
+                metric.setMaxVirtualMemoryUsed(maxVirtualMemoryUsed);
+                metric.setMinCpuUsage(minCpuUsage);
+                metric.setMinPhysicalMemoryUsed(minPhysicalMemoryUsed);
+                metric.setMinVirtualMemoryUsed(minVirtualMemoryUsed);
+
+                applicationsWithLatestMetrics.put(app, metric);
+            } catch (Exception e) {
+                // Log the error and continue processing other results
+                logger.error("Error processing application metric: {}", e.getMessage(), e);
+            }
         }
+
+        long endTime = System.currentTimeMillis();
+        logger.debug("Completed getAllApplicationsWithLatestMetrics in {} ms, processed {} applications", 
+                    (endTime - startTime), applicationsWithLatestMetrics.size());
 
         return applicationsWithLatestMetrics;
     }
