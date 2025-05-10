@@ -43,4 +43,8 @@ public interface ApplicationMetricRepository extends JpaRepository<ApplicationMe
                                                                         Timestamp timestampBefore,
                                                                         UUID applicationId,
                                                                         Pageable pageable);
+
+    @Query("SELECT a, m FROM Application a LEFT JOIN ApplicationMetric m ON m.application.id = a.id " +
+            "AND m.timestamp = (SELECT MAX(m2.timestamp) FROM ApplicationMetric m2 WHERE m2.application.id = a.id)")
+    List<Object[]> findLatestMetricsForAllApplications();
 }

@@ -339,25 +339,17 @@ public class ApplicationDataService {
      * @return Map of Application objects to their latest metric
      */
     public java.util.Map<Application, ApplicationMetric> getAllApplicationsWithLatestMetrics() {
-        // Get all applications
-        java.util.List<Application> applications = applicationRepository.findAll();
+        // Get applications with their latest metrics in a single query
+        java.util.List<Object[]> results = applicationMetricRepository.findLatestMetricsForAllApplications();
 
         // Initialize result map
         java.util.Map<Application, ApplicationMetric> applicationsWithLatestMetrics = new java.util.HashMap<>();
 
-        // For each application, get its latest metric
-        for (Application application : applications) {
-            // Find the latest metric for this application
-            // We need to use Sort to get the most recent one by timestamp
-            java.util.List<ApplicationMetric> metrics = applicationMetricRepository.getByApplicationApplicationName(
-                    application.getApplicationName(),
-                    org.springframework.data.domain.Sort.by(
-                            org.springframework.data.domain.Sort.Direction.DESC, "timestamp"));
-
-            // Add to result map if metrics exist
-            if (!metrics.isEmpty()) {
-                applicationsWithLatestMetrics.put(application, metrics.getFirst());
-            }
+        // Process results
+        for (Object[] result : results) {
+            Application app = (Application) result[0];
+            ApplicationMetric metric = (ApplicationMetric) result[1];
+            applicationsWithLatestMetrics.put(app, metric);
         }
 
         return applicationsWithLatestMetrics;
