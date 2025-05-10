@@ -95,15 +95,15 @@ function updateDashboard(metrics) {
                 </div>
                 <div class="metric">
                     <div class="metric-label">Average Read Speed</div>
-                    <div class="metric-value">${formatBytes(disk.avgBytesReadPerSecond)}/s</div>
+                    <div class="metric-value">${formatBytesTransferred(disk.avgBytesReadPerSecond)}</div>
                 </div>
                 <div class="metric">
                     <div class="metric-label">Average Write Speed</div>
-                    <div class="metric-value">${formatBytes(disk.avgBytesWrittenPerSecond)}/s</div>
+                    <div class="metric-value">${formatBytesTransferred(disk.avgBytesWrittenPerSecond)}</div>
                 </div>
                 <div class="metric">
                     <div class="metric-label">Average Time to Transfer</div>
-                    <div class="metric-value">${disk.avgTimeToTransfer.toFixed(2)} ms</div>
+                    <div class="metric-value">${formatSeconds(disk.avgTimeToTransfer, 2)}</div>
                 </div>
             `;
 
@@ -157,11 +157,11 @@ function updateDashboard(metrics) {
                 </div>
                 <div class="metric">
                     <div class="metric-label">Average Data Sent</div>
-                    <div class="metric-value">${formatBytes(nic.avgNetworkSent)}</div>
+                    <div class="metric-value">${formatBitsPerSecond(nic.avgNetworkSent)}</div>
                 </div>
                 <div class="metric">
                     <div class="metric-label">Average Data Received</div>
-                    <div class="metric-value">${formatBytes(nic.avgNetworkReceived)}</div>
+                    <div class="metric-value">${formatBitsPerSecond(nic.avgNetworkReceived)}</div>
                 </div>
             `;
 

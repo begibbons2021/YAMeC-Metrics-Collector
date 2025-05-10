@@ -58,7 +58,7 @@
                 </div>
                 <div class="metric">
                     <div class="metric-label">Current Usage</div>
-                    <div class="metric-value" id="cpu-usage" th:text="${#numbers.formatDecimal(metrics.cpuUsage, 1, 1) + '%'}">0%</div>
+                    <div class="metric-value usage-percent" id="cpu-usage" th:text="${metrics.cpuUsage}">0%</div>
                     <div class="progress-container">
                         <div class="progress-bar progress-cpu" id="cpu-progress" th:style="'width: ' + ${metrics.cpuUsage} + '%'"></div>
                     </div>
@@ -73,22 +73,22 @@
                 </div>
                 <div class="metric">
                     <div class="metric-label">Current Usage</div>
-                    <div class="metric-value" id="memory-usage" th:text="${#numbers.formatDecimal((metrics.usedMemory / metrics.totalMemory) * 100, 1, 1) + '%'}">0%</div>
+                    <div class="metric-value usage-percent" id="memory-usage" th:text="${(metrics.usedMemory / metrics.totalMemory)}">0%</div>
                     <div class="progress-container">
                         <div class="progress-bar progress-memory" id="memory-progress" th:style="'width: ' + ${(metrics.usedMemory / metrics.totalMemory) * 100} + '%'"></div>
                     </div>
                 </div>
                 <div class="metric">
                     <div class="metric-label">Total Memory</div>
-                    <div class="metric-value" id="total-memory" th:text="${#numbers.formatDecimal(metrics.totalMemory / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                    <div class="metric-value memory-bytes" id="total-memory" th:text="${metrics.totalMemory}">0 Bytes</div>
                 </div>
                 <div class="metric">
                     <div class="metric-label">Used Memory</div>
-                    <div class="metric-value" id="used-memory" th:text="${#numbers.formatDecimal(metrics.usedMemory / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                    <div class="metric-value memory-bytes" id="used-memory" th:text="${metrics.usedMemory}">0 Bytes</div>
                 </div>
                 <div class="metric">
                     <div class="metric-label">Free Memory</div>
-                    <div class="metric-value" id="free-memory" th:text="${#numbers.formatDecimal(metrics.freeMemory / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                    <div class="metric-value memory-bytes" id="free-memory" th:text="${metrics.freeMemory}">0 Bytes</div>
                 </div>
             </div>
 
@@ -104,26 +104,26 @@
                 </div>
                 <div class="metric">
                     <div class="metric-label">Capacity</div>
-                    <div class="metric-value" th:text="${#numbers.formatDecimal(disk.diskCapacity / (1024 * 1024 * 1024), 1, 2) + ' GB'}">0 GB</div>
+                    <div class="metric-value storage-bytes" th:text="${disk.diskCapacity}">0 Bytes</div>
                 </div>
                 <div class="metric">
                     <div class="metric-label">Average Usage</div>
-                    <div class="metric-value" th:text="${#numbers.formatDecimal(disk.avgDiskUsage, 1, 1) + '%'}">0%</div>
+                    <div class="metric-value usage-percent" th:text="${disk.avgDiskUsage}">0.0%</div>
                     <div class="progress-container">
                         <div class="progress-bar progress-disk" th:style="'width: ' + ${disk.avgDiskUsage} + '%'"></div>
                     </div>
                 </div>
                 <div class="metric">
                     <div class="metric-label">Average Read Speed</div>
-                    <div class="metric-value" th:text="${#numbers.formatDecimal(disk.avgBytesReadPerSecond / (1024 * 1024), 1, 2) + ' MB/s'}">0 MB/s</div>
+                    <div class="metric-value storage-bytes-transferred" th:text="${disk.avgBytesReadPerSecond}">0 B/s</div>
                 </div>
                 <div class="metric">
                     <div class="metric-label">Average Write Speed</div>
-                    <div class="metric-value" th:text="${#numbers.formatDecimal(disk.avgBytesWrittenPerSecond / (1024 * 1024), 1, 2) + ' MB/s'}">0 MB/s</div>
+                    <div class="metric-value storage-bytes-transferred" th:text="${disk.avgBytesWrittenPerSecond}">0 B/s</div>
                 </div>
                 <div class="metric">
                     <div class="metric-label">Average Time to Transfer</div>
-                    <div class="metric-value" th:text="${#numbers.formatDecimal(disk.avgTimeToTransfer, 1, 2) + ' ms'}">0 ms</div>
+                    <div class="metric-value time-field" th:text="${disk.avgTimeToTransfer}">0 ms</div>
                 </div>
             </div>
 
@@ -143,11 +143,11 @@
                 </div>
                 <div class="metric">
                     <div class="metric-label">Average Data Sent</div>
-                    <div class="metric-value" th:text="${#numbers.formatDecimal(nic.avgNetworkSent / (1024 * 1024), 1, 2) + ' MB'}">0 MB</div>
+                    <div class="metric-value nic-bits-transmitted" th:text="${nic.avgNetworkSent}">0 bps</div>
                 </div>
                 <div class="metric">
                     <div class="metric-label">Average Data Received</div>
-                    <div class="metric-value" th:text="${#numbers.formatDecimal(nic.avgNetworkReceived / (1024 * 1024), 1, 2) + ' MB'}">0 MB</div>
+                    <div class="metric-value nic-bits-transmitted" th:text="${nic.avgNetworkReceived}">0 bps</div>
                 </div>
             </div>
         </div>
