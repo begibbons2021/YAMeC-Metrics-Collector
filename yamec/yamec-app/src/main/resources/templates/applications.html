@@ -82,6 +82,7 @@
         <div class="nav-tabs">
             <a href="/" class="nav-tab">System Dashboard</a>
             <a href="/applications" class="nav-tab active">Application Dashboard</a>
+            <a href="/archive" class="nav-tab">Metrics History</a>
         </div>
         
         <div class="dashboard">
@@ -113,14 +114,6 @@
                     <div class="metric-label">Average Usage</div>
                     <div class="metric-value" id="app-cpu-avg">0%</div>
                 </div>
-                <div class="metric">
-                    <div class="metric-label">Maximum Usage</div>
-                    <div class="metric-value" id="app-cpu-max">0%</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-label">Minimum Usage</div>
-                    <div class="metric-value" id="app-cpu-min">0%</div>
-                </div>
                 <div class="progress-container">
                     <div class="progress-bar progress-cpu" id="app-cpu-progress"></div>
                 </div>
@@ -136,18 +129,6 @@
                     <div class="metric-label">Physical Memory (Average)</div>
                     <div class="metric-value" id="app-physical-memory-avg">0 MB</div>
                 </div>
-                <div class="metric">
-                    <div class="metric-label">Physical Memory (Maximum)</div>
-                    <div class="metric-value" id="app-physical-memory-max">0 MB</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-label">Physical Memory (Minimum)</div>
-                    <div class="metric-value" id="app-physical-memory-min">0 MB</div>
-                </div>
-            </div>
-            
-            <!-- Virtual Memory Card -->
-            <div class="card">
                 <div class="card-header">
                     <h2 class="card-title">Virtual Memory</h2>
                     <i class="fas fa-hdd card-icon"></i>
@@ -155,14 +136,6 @@
                 <div class="metric">
                     <div class="metric-label">Virtual Memory (Average)</div>
                     <div class="metric-value" id="app-virtual-memory-avg">0 MB</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-label">Virtual Memory (Maximum)</div>
-                    <div class="metric-value" id="app-virtual-memory-max">0 MB</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-label">Virtual Memory (Minimum)</div>
-                    <div class="metric-value" id="app-virtual-memory-min">0 MB</div>
                 </div>
             </div>
         </div>

@@ -310,7 +310,7 @@ public class ApplicationDataService {
         }
         
         Application application = appOptional.get();
-        java.util.List<ApplicationMetric> metrics = applicationMetricRepository.findByApplicationId(applicationId);
+        java.util.List<ApplicationMetric> metrics = applicationMetricRepository.findByApplicationIdOrderByTimestampDesc(applicationId);
         
         return java.util.Map.entry(application, metrics);
     }
@@ -340,7 +340,8 @@ public class ApplicationDataService {
      */
     public java.util.Map<Application, ApplicationMetric> getAllApplicationsWithLatestMetrics() {
         // Get applications with their latest metrics in a single query
-        java.util.List<Object[]> results = applicationMetricRepository.findLatestMetricsForAllApplications();
+        Timestamp threshold = new Timestamp(System.currentTimeMillis() - 3000);
+        java.util.List<Object[]> results = applicationMetricRepository.findLatestMetricsForAllApplications(threshold, PageRequest.of(0,10000));
 
         // Initialize result map
         java.util.Map<Application, ApplicationMetric> applicationsWithLatestMetrics = new java.util.HashMap<>();
