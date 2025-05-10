@@ -1,22 +1,5 @@
 // YAMeC Application Dashboard JavaScript
 
-// Format bytes to human-readable format
-// function formatBytes(bytes, decimals = 2) {
-//     if (bytes === 0) return '0 Bytes';
-//
-//     const k = 1024;
-//     const dm = decimals < 0 ? 0 : decimals;
-//     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-//
-//     const i = Math.floor(Math.log(bytes) / Math.log(k));
-//
-//     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-// }
-//
-// // Format percentage
-// function formatPercentage(value) {
-//     return value.toFixed(1) + '%';
-// }
 
 // Update the application details section with the selected application's metrics
 function updateApplicationDetails(appMetrics) {
