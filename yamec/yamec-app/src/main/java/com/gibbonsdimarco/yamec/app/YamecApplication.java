@@ -93,8 +93,8 @@ public class YamecApplication {
             }
         }
 
-
         logger.info("SETUP - YAMeC Home directory found and loaded successfully: {}", yamecHome);
+
         System.setProperty("java.awt.headless", "true");
 
     }
