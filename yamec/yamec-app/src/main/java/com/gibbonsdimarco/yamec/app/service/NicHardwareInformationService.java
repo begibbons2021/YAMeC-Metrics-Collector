@@ -370,8 +370,8 @@ public class NicHardwareInformationService {
             SystemNicMetric metric = nicMetricRepository.findNewestByNicId(
                     nic.getId());
 
-            // Add to result map if metrics exist
-            if (metric != null) {
+            // Add to result map if metrics exist and are from within the last 3 seconds
+            if (metric != null && metric.getTimestamp().after(new Timestamp(System.currentTimeMillis() - 3000))) {
                 nicsWithLatestMetrics.put(nic, metric);
             }
         }
