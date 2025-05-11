@@ -24,9 +24,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Properties;
 
 @SpringBootApplication
 @EnableScheduling
@@ -46,11 +48,17 @@ public class YamecApplication {
      * <p>If the folder cannot be loaded or cannot be created, the program displays an error message
      * and exits gracefully.</p>
      */
-    private static void setupApplicationFileSystem() {
+    private static Properties setupApplicationFileSystem() {
         System.setProperty("java.awt.headless", "false");
+
+        String home = System.getProperty("user.home");
+
+        // Temporarily set the logging directory to the user Home directory
+        System.setProperty("logging.file.path", System.getProperty("user.home"));
+
         yamecHome = new File(System.getProperty("user.home") + "/.yamec-home");
 
-        logger.info("SETUP - Attempting to access YAMeC Home directory: {}", yamecHome);
+        logger.info("SETUP - Attempting to access YAMeC Home directory: {}", yamecHome.toPath());
 
         boolean homeDirectoryExists = yamecHome.exists();
         if (homeDirectoryExists) {
@@ -61,19 +69,22 @@ public class YamecApplication {
                         YAMeC cannot be loaded because there is a file with the name '.yamec-home' \
                         in your home directory.
                         The file conflicts with the home directory of the application.
-                        Please delete or rename the file, then try running YAMeC again.""", "YAMeC - Error Starting Up", JOptionPane.ERROR_MESSAGE);
+                        Please delete or rename the file, then try running YAMeC again.""",
+                        "YAMeC - Error Starting Up", JOptionPane.ERROR_MESSAGE);
                 System.exit(-1);
             }
         }
 
         if (!homeDirectoryExists) {
             // Create the '.yamec-home' folder
-            logger.info("SETUP - No YAMeC Home directory found. Creating the YAMeC Home directory in: {}", yamecHome);
+            logger.info("SETUP - No YAMeC Home directory found. Creating the YAMeC Home directory in: {}",
+                    yamecHome.toPath());
             boolean directoryCreationSuccess = false;
             try {
                 directoryCreationSuccess = yamecHome.mkdir();
             } catch (Exception e) {
-                logger.error("SETUP - Creation of the YAMeC Home directory failed because " + "of an exception: {} - {}", e.getCause(), e.getMessage());
+                logger.error("SETUP - Creation of the YAMeC Home directory failed because "
+                                + "of an exception: {} - {}", e.getCause(), e.getMessage());
                 // Log stack trace contents
                 StackTraceElement[] stackTraceElements = e.getStackTrace();
                 logger.error("SETUP - Directory Creation Stack Trace [0]: ");
@@ -93,9 +104,32 @@ public class YamecApplication {
             }
         }
 
-        logger.info("SETUP - YAMeC Home directory found and loaded successfully: {}", yamecHome);
+        Properties props = new Properties();
+//        props.put("server.port", String.valueOf(serverPort));
+//        props.put("spring.datasource.url", yamecHome.toURI().toString());
 
+        logger.info("SETUP - YAMeC Home directory found and loaded successfully: {}", yamecHome.toPath());
+
+        // Set JVM system properties so that the application accesses the right files
+
+        // Set path to DB file
+        // jdbc:sqlite:${user.home}/.yamec-home/db.sqlite?journal_mode=WAL
+        System.setProperty("spring.datasource.url",
+                            "jdbc:sqlite://"
+                                    + home + "/.yamec-home"
+                                    + "/db.sqlite?journal_mode=WAL");
+
+        // Set the logging path
+        System.setProperty("logging.file.path",
+                home + "/.yamec-home"
+                + "/logs");
+
+        // If these are successful, then disable the program head (no GUI is needed)
         System.setProperty("java.awt.headless", "true");
+
+        // ...and return to main
+
+        return props;
 
     }
 
@@ -308,7 +342,9 @@ public class YamecApplication {
 
 
     public static void main(String[] args) {
-        setupApplicationFileSystem();
+        Properties setProperties = setupApplicationFileSystem();
+
+
 
         // Start Spring application first, so beans are available
         context = SpringApplication.run(YamecApplication.class, args);
@@ -320,6 +356,11 @@ public class YamecApplication {
 
 
         logger.info("User home directory: {}", System.getProperty("user.home"));
+
+//        logger.info("DB URL: {}", context.getResource("spring.datasource.url"));
+//        logger.info("Logger URL: {}", context.getResource("logging.file"));
+
+
 //        testSystemMonitorManager();
         logger.info("Yamec Application Started");
 

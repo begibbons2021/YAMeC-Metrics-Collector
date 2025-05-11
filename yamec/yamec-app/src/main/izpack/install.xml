@@ -9,6 +9,8 @@
         <appsubpath>yamec</appsubpath>
         <javaversion>23</javaversion>
         <run-privileged uninstaller="yes"/>
+        <uninstaller write="yes"/>
+        <writeinstallationinformation>no</writeinstallationinformation>
     </info>
 
     <locale>
