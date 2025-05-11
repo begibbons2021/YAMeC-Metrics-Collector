@@ -8,6 +8,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize table sorting
     initTableSorting();
+
+    // Initialize date/time picker
+    initDateTimePicker();
+
+    // Add event listener for the apply button
+    document.getElementById('applyDateRange').addEventListener('click', applyDateTimeRange);
 });
 
 /**
@@ -111,4 +117,59 @@ function updateSortIndicators(headers, activeIndex, direction) {
             header.classList.add(direction === 'asc' ? 'sort-asc' : 'sort-desc');
         }
     });
+}
+
+/**
+ * Initialize date/time picker with values from URL parameters or defaults
+ */
+function initDateTimePicker() {
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const startTimeParam = urlParams.get('startTime');
+    const endTimeParam = urlParams.get('endTime');
+
+    let startTime, endTime;
+
+    if (startTimeParam && endTimeParam) {
+        // Use parameters from URL
+        startTime = new Date(parseInt(startTimeParam)).toISOString().slice(0, 16);
+        endTime = new Date(parseInt(endTimeParam)).toISOString().slice(0, 16);
+    } else {
+        // Set default end time to now
+        const now = new Date();
+        endTime = now.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
+
+        // Set default start time to 5 minutes ago
+        const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
+        startTime = fiveMinutesAgo.toISOString().slice(0, 16);
+    }
+
+    // Set values
+    document.getElementById('startTime').value = startTime;
+    document.getElementById('endTime').value = endTime;
+}
+
+/**
+ * Apply the selected date/time range and reload metrics
+ */
+function applyDateTimeRange() {
+    const startTime = document.getElementById('startTime').value;
+    const endTime = document.getElementById('endTime').value;
+
+    if (!startTime || !endTime) {
+        alert('Please select both start and end times');
+        return;
+    }
+
+    // Convert to timestamps (milliseconds since epoch)
+    const startTimestamp = new Date(startTime).getTime();
+    const endTimestamp = new Date(endTime).getTime();
+
+    if (startTimestamp >= endTimestamp) {
+        alert('Start time must be before end time');
+        return;
+    }
+
+    // Redirect to the same page with query parameters
+    window.location.href = `/archive?startTime=${startTimestamp}&endTime=${endTimestamp}`;
 }

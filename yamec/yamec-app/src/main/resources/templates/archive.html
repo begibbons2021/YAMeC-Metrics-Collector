@@ -167,6 +167,53 @@
             margin: 0 auto;
         }
 
+        /* Date/Time Picker Styles */
+        .date-time-picker {
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+
+        .date-time-picker-content {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .date-time-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .date-time-field label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .date-time-field input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
     </style>
 </head>
 <body style="height: 100vh; overflow: hidden;">
@@ -182,6 +229,21 @@
             <a href="/" class="nav-tab">System Dashboard</a>
             <a href="/applications" class="nav-tab">Application Dashboard</a>
             <a href="/archive" class="nav-tab active">Metrics History</a>
+        </div>
+    </div>
+
+    <!-- Date/Time Range Picker -->
+    <div class="date-time-picker card">
+        <div class="date-time-picker-content">
+            <div class="date-time-field">
+                <label for="startTime">Start Time:</label>
+                <input type="datetime-local" id="startTime" name="startTime">
+            </div>
+            <div class="date-time-field">
+                <label for="endTime">End Time:</label>
+                <input type="datetime-local" id="endTime" name="endTime">
+            </div>
+            <button id="applyDateRange" class="btn">Apply Range</button>
         </div>
     </div>
 
