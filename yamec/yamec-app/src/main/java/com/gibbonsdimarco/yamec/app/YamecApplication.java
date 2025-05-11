@@ -6,6 +6,7 @@ import com.gibbonsdimarco.yamec.app.service.*;
 import jakarta.annotation.PreDestroy;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnOpen;
+import org.apache.logging.log4j.spi.LoggerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +42,14 @@ public class YamecApplication {
 
     private static int serverPort;
 
+//    private static void setLogFileLocation(String location) {
+////        LoggerContext loggingContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+////        java.util.Iterator<Logger> loggerIterator = loggingContext.get
+//
+//        logger
+//
+//    }
+
     /**
      * <p>Prepares the application to store all necessary files in the application home directory.</p>
      * <p>This is a hidden folder in the user's home directory. If the hidden folder already exists,
@@ -48,22 +57,19 @@ public class YamecApplication {
      * <p>If the folder cannot be loaded or cannot be created, the program displays an error message
      * and exits gracefully.</p>
      */
-    private static Properties setupApplicationFileSystem() {
+    private static void setupApplicationFileSystem() {
         System.setProperty("java.awt.headless", "false");
 
         String home = System.getProperty("user.home");
 
-        // Temporarily set the logging directory to the user Home directory
-        System.setProperty("logging.file.path", System.getProperty("user.home"));
-
-        yamecHome = new File(System.getProperty("user.home") + "/.yamec-home");
+        yamecHome = new File(home + "/.yamec-home");
 
         logger.info("SETUP - Attempting to access YAMeC Home directory: {}", yamecHome.toPath());
 
         boolean homeDirectoryExists = yamecHome.exists();
         if (homeDirectoryExists) {
             if (!yamecHome.isDirectory()) {
-                logger.error("SETUP - Cannot create the YAMeC Home directory because " + "a file exists with the name 'yamec'.");
+                logger.error("SETUP - Cannot create the YAMeC Home directory because " + "a file exists with the name '.yamec-home'.");
                 logger.error("SETUP - Exiting due to application setup failure (cannot load home directory).");
                 JOptionPane.showMessageDialog(null, """
                         YAMeC cannot be loaded because there is a file with the name '.yamec-home' \
@@ -104,10 +110,6 @@ public class YamecApplication {
             }
         }
 
-        Properties props = new Properties();
-//        props.put("server.port", String.valueOf(serverPort));
-//        props.put("spring.datasource.url", yamecHome.toURI().toString());
-
         logger.info("SETUP - YAMeC Home directory found and loaded successfully: {}", yamecHome.toPath());
 
         // Set JVM system properties so that the application accesses the right files
@@ -115,21 +117,16 @@ public class YamecApplication {
         // Set path to DB file
         // jdbc:sqlite:${user.home}/.yamec-home/db.sqlite?journal_mode=WAL
         System.setProperty("spring.datasource.url",
-                            "jdbc:sqlite://"
-                                    + home + "/.yamec-home"
-                                    + "/db.sqlite?journal_mode=WAL");
+                            "jdbc:sqlite://" + yamecHome + "/db.sqlite?journal_mode=WAL");
 
         // Set the logging path
-        System.setProperty("logging.file.path",
-                home + "/.yamec-home"
-                + "/logs");
+        System.setProperty("logging.file.name", yamecHome + "/logs/yamec.log");
 
         // If these are successful, then disable the program head (no GUI is needed)
         System.setProperty("java.awt.headless", "true");
 
         // ...and return to main
 
-        return props;
 
     }
 
@@ -214,137 +211,9 @@ public class YamecApplication {
         logger.info("CLEANUP - YamecApplication is shutting down...");
     }
 
-//    /**
-//     * A function which
-//     */
-//    private static void testSystemMonitorManager() {
-//        System.err.println("Testing System Monitor Manager...");
-//
-//        try {
-//            System.err.println("Testing CPU Metrics Retrieval...");
-//            SystemCpuMetric cpuMetrics = monitor.getCpuMetrics();
-//            if (cpuMetrics != null) {
-//                System.err.printf("CPU Information: \n\t%s\n\t\tUsage: %.1f%%\n",
-//                        cpuMetrics.getDeviceName(), cpuMetrics.getAverageUtilization());
-//            } else {
-//                System.err.println("CPU Information: \n\tNo CPU Metrics Found");
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            System.err.println("Failed to retrieve CPU Metrics.");
-//            return;
-//        }
-//
-//        try {
-//            System.err.println("Testing GPU Metrics Retrieval...");
-//            SystemGpuMetric gpuMetrics = monitor.getGpuMetrics();
-//            if (gpuMetrics != null) {
-//                System.err.printf("GPU Information: \n\t%s\n\t\tUsage: %.1f%%\n",
-//                        gpuMetrics.getDeviceName(), gpuMetrics.getUsage());
-//            } else {
-//                System.err.println("GPU Information: \n\tNo GPU Metrics Found");
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            System.err.println("Failed to retrieve GPU Metrics.");
-//            return;
-//        }
-//
-//        try {
-//            System.err.println("Testing Memory Metrics Retrieval...");
-//            SystemMemoryMetric memoryMetrics = monitor.getMemoryMetrics();
-//            if (memoryMetrics != null) {
-//                // Calculate the actual virtual memory use from the amount of committed memory used.
-//                double bytesVirtualMemoryInUse = memoryMetrics.getCommittedVirtualMemoryBytes();
-//
-//                System.err.println("Memory Information:");
-//                System.err.printf("\tAvailable Memory (Physical Memory): %s bytes\n",
-//                        memoryMetrics.getPhysicalMemoryAvailableUnsigned());
-//                System.err.printf("\tVirtual Memory Committed: %s\n",
-//                        memoryMetrics.getVirtualMemoryCommitted());
-//                System.err.printf("\tVirtual Memory In-Use: %f%% (~%.0f bytes)\n",
-//                        memoryMetrics.getCommittedVirtualMemoryUsage(),
-//                        bytesVirtualMemoryInUse);
-//            } else {
-//                System.err.println("Memory Information: \n\tNo Memory Metrics Found");
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            System.err.println("Failed to retrieve Memory Metrics.");
-//            return;
-//        }
-//
-//        try {
-//            System.err.println("Testing Disk Metrics Retrieval...");
-//            ArrayList<SystemDiskMetric> diskMetrics = monitor.getDiskMetrics();
-//            if (diskMetrics != null) {
-//
-//                System.err.println("Disk Information:");
-//                System.err.printf("\tDisk Instances Present (including _Total): %d\n", diskMetrics.size());
-//
-//                for (SystemDiskMetric diskMetric : diskMetrics) {
-//                    // Skip total system disk use
-//                    if (diskMetric.getDeviceName().compareTo("_Total") == 0) {
-//                        continue;
-//                    }
-//
-//                    System.err.printf("\t%s\n", diskMetric.getDeviceName());
-//                    System.err.printf("\t\tUsage: %f%%\n", diskMetric.getUsage());
-//                    System.err.printf("\t\tRead Bandwidth: %s bytes/sec\n", diskMetric.getReadBandwidthUnsigned());
-//                    System.err.printf("\t\tWrite Bandwidth: %s bytes/sec\n", diskMetric.getWriteBandwidthUnsigned());
-//                    System.err.printf("\t\tAverage Transfer Rate: %f bytes/sec\n", diskMetric.getAverageTimeToTransfer());
-//                }
-//            } else {
-//                System.err.println("Disk Information: \n\tNo Disk Metrics Found");
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            System.err.println("Failed to retrieve Disk Metrics.");
-//            return;
-//        }
-//
-//        try {
-//            System.err.println("Testing NIC Metrics Retrieval...");
-//            ArrayList<SystemNicMetric> nicMetrics = monitor.getNicMetrics();
-//            if (nicMetrics != null) {
-//
-//                System.err.println("NIC Information:");
-//                System.err.printf("\tNIC Instances Present (including _Total): %d\n", nicMetrics.size());
-//
-//                for (SystemNicMetric nicMetric : nicMetrics) {
-//                    // Skip total system NIC use
-//                    if (nicMetric.getDeviceName().compareTo("_Total") == 0) {
-//                        continue;
-//                    }
-//
-//                    System.err.printf("\t%s\n", nicMetric.getDeviceName());
-//                    System.err.printf("\t\tCurrent Operation Bandwidth: %s bps\n", nicMetric.getNicBandwidthUnsigned());
-//                    System.err.printf("\t\tBytes Sent: %s bytes/sec\n", nicMetric.getBytesSentUnsigned());
-//                    System.err.printf("\t\tWrite Bandwidth: %s bytes/sec\n", nicMetric.getBytesReceivedUnsigned());
-//                }
-//            } else {
-//                System.err.println("NIC Information: \n\tNo NIC Metrics Found");
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            System.err.println("Failed to retrieve NIC Metrics.");
-//            return;
-//        }
-//
-//
-//        System.err.println("Testing complete.");
-//    }
-
 
     public static void main(String[] args) {
-        Properties setProperties = setupApplicationFileSystem();
-
-
+        setupApplicationFileSystem();
 
         // Start Spring application first, so beans are available
         context = SpringApplication.run(YamecApplication.class, args);
