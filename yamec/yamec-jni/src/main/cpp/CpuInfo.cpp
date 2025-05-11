@@ -20,7 +20,7 @@ bool CpuInfo::initialize(PdhQueryManager *pdhManager)
     m_pdhManager = pdhManager;
 
     // Add CPU usage counter
-    if (!m_pdhManager->addCounter(TEXT("\\Processor(_Total)\\% Processor Time"), &m_usageCounter))
+    if (!m_pdhManager->addCounter(TEXT("\\Processor Information(_Total)\\% Processor Utility"), &m_usageCounter))
     {
         std::cerr << "Failed to add CPU usage counter" << std::endl;
         return false;
