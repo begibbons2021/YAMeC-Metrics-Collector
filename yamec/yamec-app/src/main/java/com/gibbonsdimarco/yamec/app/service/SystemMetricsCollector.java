@@ -109,7 +109,7 @@ public class SystemMetricsCollector {
 
 
     /**
-     * Scheduled task that runs every 10 seconds to collect the latest system metrics
+     * Scheduled task that runs every second to collect the latest system metrics
      * and save them to the database
      */
     @Scheduled(fixedRate = 1000) // Run every 1 second

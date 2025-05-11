@@ -29,6 +29,7 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
+    position: relative;
 }
 
 header {
@@ -154,6 +155,9 @@ h1 {
     transition: background-color 0.3s ease;
     margin-top: 10px;
     display: inline-block;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
 .shutdown-btn:hover {

@@ -189,7 +189,7 @@ function convertMetrics() {
  * This function sends a POST request to the /actuator/shutdown endpoint
  */
 function shutdownApplication() {
-    if (confirm('Are you sure you want to shutdown the application?')) {
+    if (confirm('Are you sure you want to shutdown YAMeC?')) {
         fetch('/actuator/shutdown', {
             method: 'POST',
             headers: {
@@ -198,7 +198,7 @@ function shutdownApplication() {
         })
             .then(response => response.json())
             .then(() => {
-                alert('Shutdown initiated successfully. The application will shut down in a few seconds. You may now close your browser.');
+                alert('YAMeC shutdown initiated successfully. \n\nYou may now close your browser.');
             })
             .catch(error => {
                 console.error('Error shutting down application:', error);
