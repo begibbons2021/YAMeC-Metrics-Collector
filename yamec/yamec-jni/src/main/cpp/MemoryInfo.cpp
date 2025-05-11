@@ -15,14 +15,12 @@ bool MemoryInfo::initialize(PdhQueryManager *pdhManager,
 {
     if (!pdhManager)
     {
-        std::cerr << "Invalid PDH manager" << std::endl;
-        return false;
+        throw std::runtime_error(" Memory Info - Was initialized with an invalid PdhQueryManager");
     }
 
     if (!wmiManager)
     {
-        std::cerr << "Invalid WMI manager" << std::endl;
-        return false;
+        throw std::runtime_error(" Memory Info - Was initialized with an invalid WmiQueryManager");
     }
 
     m_pdhManager = pdhManager;
@@ -32,22 +30,19 @@ bool MemoryInfo::initialize(PdhQueryManager *pdhManager,
     // Add Available (physical) Bytes Counter
     if (!m_pdhManager->addCounter(TEXT("\\Memory\\Available Bytes"), &m_physicalMemoryAvailableCounter))
     {
-        std::cerr << "Failed to add Memory Available Bytes counter" << std::endl;
-        return false;
+        throw std::runtime_error(" Memory Info - Available Bytes counter could not be added");
     }
 
     // Add Committed (Reserved Virtual Memory) Bytes Counter
     if (!m_pdhManager->addCounter(TEXT("\\Memory\\Committed Bytes"), &m_virtualMemoryCommittedCounter))
     {
-        std::cerr << "Failed to add Memory Committed Bytes counter" << std::endl;
-        return false;
+        throw std::runtime_error(" Memory Info - Committed Bytes counter could not be added");
     }
 
     // Add % Committed (virtual) Bytes In Use Counter
     if (!m_pdhManager->addCounter(TEXT("\\Memory\\% Committed Bytes In Use"), &m_virtualMemoryCommittedPercentUsedCounter))
     {
-        std::cerr << "Failed to add Memory % Committed Bytes In Use counter" << std::endl;
-        return false;
+        throw std::runtime_error(" Memory Info - % Committed Bytes In Use counter could not be added");
     }
 
     return true;
@@ -59,24 +54,48 @@ int MemoryInfo::getAllCounters(unsigned long long *physicalMemoryAvailable,
 {
     if (!m_pdhManager)
     {
-        std::cerr << "PDH manager not initialized" << std::endl;
-        return -1;
+        throw std::runtime_error(" Memory Info - Counters were retrieved before the PdhQueryManager was initialized");
     }
 
-    if (!m_pdhManager->getCounterValue(m_physicalMemoryAvailableCounter, physicalMemoryAvailable))
+    try
     {
-        return -3;
+        if (!m_pdhManager->getCounterValue(m_physicalMemoryAvailableCounter, physicalMemoryAvailable))
+        {
+            throw std::runtime_error(" Memory Info - Available Bytes - Counter retrieval failed");
+        }
+    }
+    catch (const std::exception &e)
+    {
+        throw std::runtime_error(std::format(" Memory Info - Available Bytes - {}", std::string(e.what())));
     }
 
-    if (!m_pdhManager->getCounterValue(m_virtualMemoryCommittedCounter, virtualMemoryCommitted))
+
+    try
     {
-        return -4;
+        if (!m_pdhManager->getCounterValue(m_virtualMemoryCommittedCounter, virtualMemoryCommitted))
+        {
+            throw std::runtime_error(" Memory Info - Committed Bytes - Counter retrieval failed");
+        }
+    }
+    catch (const std::exception &e)
+    {
+        throw std::runtime_error(std::format(" Memory Info - Committed Bytes - {}", std::string(e.what())));
     }
 
-    if (!m_pdhManager->getCounterValue(m_virtualMemoryCommittedPercentUsedCounter, virtualMemoryCommittedPercentUsed))
+
+    try
     {
-        return -5;
+        if (!m_pdhManager->getCounterValue(m_virtualMemoryCommittedPercentUsedCounter, virtualMemoryCommittedPercentUsed))
+        {
+            throw std::runtime_error(" Memory Info - % Committed Bytes In Use - Counter retrieval failed");
+        }
     }
+    catch (const std::exception &e)
+    {
+        throw std::runtime_error(std::format(" Memory Info - % Committed Bytes In Use - {}",
+                                    std::string(e.what())));
+    }
+
 
     return 0;
 
@@ -84,15 +103,16 @@ int MemoryInfo::getAllCounters(unsigned long long *physicalMemoryAvailable,
 
 int MemoryInfo::getPhysicalMemoryAvailable(unsigned long long *physicalMemoryAvailable) const
 {
-    if (!m_pdhManager)
+    try
     {
-        std::cerr << "PDH manager not initialized" << std::endl;
-        return -1;
+        if (!m_pdhManager->getCounterValue(m_physicalMemoryAvailableCounter, physicalMemoryAvailable))
+        {
+            throw std::runtime_error(" Memory Info - Available Bytes - Counter retrieval failed");
+        }
     }
-
-    if (!m_pdhManager->getCounterValue(m_physicalMemoryAvailableCounter, physicalMemoryAvailable))
+    catch (const std::exception &e)
     {
-        return -3;
+        throw std::runtime_error(std::format(" Memory Info - Available Bytes - {}", std::string(e.what())));
     }
 
     return 0;
@@ -100,34 +120,36 @@ int MemoryInfo::getPhysicalMemoryAvailable(unsigned long long *physicalMemoryAva
 
 int MemoryInfo::getVirtualMemoryCommitted(unsigned long long *virtualMemoryCommitted) const
 {
-    if (!m_pdhManager)
+    try
     {
-        std::cerr << "PDH manager not initialized" << std::endl;
-        return -1;
+        if (!m_pdhManager->getCounterValue(m_virtualMemoryCommittedCounter, virtualMemoryCommitted))
+        {
+            throw std::runtime_error(" Memory Info - Committed Bytes - Counter retrieval failed");
+        }
+    }
+    catch (const std::exception &e)
+    {
+        throw std::runtime_error(std::format(" Memory Info - Committed Bytes - {}", std::string(e.what())));
     }
 
-    if (!m_pdhManager->getCounterValue(m_virtualMemoryCommittedCounter, virtualMemoryCommitted))
-    {
-        return -3;
-    }
-
-    return false;
+    return 0;
 }
 
 int MemoryInfo::getVirtualMemoryCommittedPercentUsed(double *virtualMemoryCommittedPercentUsed) const
 {
-    if (!m_pdhManager)
+    try
     {
-        std::cerr << "PDH manager not initialized" << std::endl;
-        return -1;
+        if (!m_pdhManager->getCounterValue(m_virtualMemoryCommittedPercentUsedCounter, virtualMemoryCommittedPercentUsed))
+        {
+            throw std::runtime_error(" Memory Info - % Committed Bytes In Use - Counter retrieval failed");
+        }
+    }
+    catch (const std::exception &e)
+    {
+        throw std::runtime_error(std::format(" Memory Info - % Committed Bytes In Use - {}",
+                                    std::string(e.what())));
     }
 
-    if (!m_pdhManager->getCounterValue(m_virtualMemoryCommittedPercentUsedCounter, virtualMemoryCommittedPercentUsed))
-    {
-        return -3;
-    }
-
-    return 0;
 }
 
 unsigned long long MemoryInfo::getPhysicalMemory()
@@ -136,7 +158,7 @@ unsigned long long MemoryInfo::getPhysicalMemory()
 
     if (!GetPhysicallyInstalledSystemMemory(&memory))
     {
-        throw std::runtime_error("Unable to get RAM information.");
+        throw std::runtime_error("Memory Info - Physical Memory Total - Unable to get RAM information.");
     }
 
     return memory;
@@ -156,8 +178,7 @@ int MemoryInfo::getMemoryInformation(unsigned long long *speed,
 {
     if (!m_wmiManager)
     {
-        std::cerr << "WMI manager not initialized" << std::endl;
-        return -1;
+        throw std::runtime_error(" Memory Info - Hardware data were retrieved before the WmiQueryManager was initialized");
     }
 
     IEnumWbemClassObject *response;

@@ -32,22 +32,19 @@ int ApplicationInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wm
     // Add CPU Time Counter Handler
     if (!m_pdhManager->addCounter(TEXT("\\Process V2(*)\\% Processor Time"), &m_processCpuTimeCounter))
     {
-        std::cerr << "Failed to add Process % Processor Time counter" << std::endl;
-        return -3;
+        throw std::runtime_error(" Application Info - All-process usage counter could not be added");
     }
 
     // Add Committed (Reserved Virtual Memory) Bytes Counter
     if (!m_pdhManager->addCounter(TEXT("\\Process V2(*)\\Page File Bytes"), &m_processPageSizeCounter))
     {
-        std::cerr << "Failed to add Process Page File Bytes counter" << std::endl;
-        return -4;
+        throw std::runtime_error(" Application Info - All-process Page File Bytes counter could not be added");
     }
 
     // Add % Committed (virtual) Bytes In Use Counter
     if (!m_pdhManager->addCounter(TEXT("\\Process V2(*)\\Working Set - Private"), &m_processWorkingSetSizeCounter))
     {
-        std::cerr << "Failed to add Process Working Set counter" << std::endl;
-        return -5;
+        throw std::runtime_error(" Application Info - All-process Private Working Set counter could not be added");
     }
 
     return 0;
@@ -62,8 +59,7 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
 {
     if (!m_pdhManager)
     {
-        std::cerr << "PDH manager not initialized" << std::endl;
-        return -1;
+        throw std::runtime_error(" Application Info - Counters were retrieved before the PdhQueryManager was initialized");
     }
 
     std::unordered_map<std::wstring, double> processCpuUsageMap;
@@ -71,12 +67,12 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
     {
         if (!m_pdhManager->getCounterValues(m_processCpuTimeCounter, &processCpuUsageMap))
         {
-            return -3;
+            throw std::runtime_error(" Application Info - CPU Usage - Counter Retrieval Failed");
         }
     }
     catch (std::exception &e)
     {
-        throw std::runtime_error(" Application Info - CPU Usage - " + std::string(e.what()));
+        throw std::runtime_error(std::format(" Application Info - CPU Usage - {}", std::string(e.what())));
     }
 
 
@@ -86,12 +82,12 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
     {
         if (!m_pdhManager->getCounterValues(m_processWorkingSetSizeCounter, &processPhysicalMemoryMap))
         {
-            return -4;
+            throw std::runtime_error(" Application Info - Physical Memory Use - Counter Retrieval Failed");
         }
     }
     catch (std::exception &e)
     {
-        throw std::runtime_error(" Application Info - Physical Memory Use -" + std::string(e.what()));
+        throw std::runtime_error(std::format(" Application Info - Physical Memory Use - {}", std::string(e.what())));
     }
 
 
@@ -102,12 +98,12 @@ int ApplicationInfo::getProcessCounters(std::vector<std::wstring> *processNames,
     {
         if (!m_pdhManager->getCounterValues(m_processPageSizeCounter, &processVirtualMemoryMap))
         {
-            return -5;
+            throw std::runtime_error(" Application Info - Virtual Memory Use - Counter Retrieval Failed");
         }
     }
     catch (std::exception &e)
     {
-        throw std::runtime_error(" Application Info - Virtual Memory Use -" + std::string(e.what()));
+        throw std::runtime_error(std::format(" Application Info - Virtual Memory Use - {}", std::string(e.what())));
     }
 
     // Clear storage buffers
