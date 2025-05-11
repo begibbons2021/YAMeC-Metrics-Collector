@@ -29,6 +29,7 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
+    position: relative;
 }
 
 header {
@@ -58,11 +59,12 @@ h1 {
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    transition: transform 0.3s ease;
+    transition: box-shadow 0.3s ease;
+    overflow: hidden;
 }
 
 .card:hover {
-    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
 }
 
 .card-header {
@@ -76,6 +78,10 @@ h1 {
     font-size: 1.2rem;
     font-weight: 600;
     color: var(--dark-color);
+}
+
+.archive-hardware .card-title {
+    font-size: 1.1rem;
 }
 
 .card-icon {
@@ -137,6 +143,31 @@ h1 {
     font-size: 0.9rem;
 }
 
+/* Shutdown button styles */
+.shutdown-btn {
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.shutdown-btn:hover {
+    background-color: #c0392b;
+}
+
+.shutdown-btn i {
+    margin-right: 5px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .dashboard {
@@ -150,4 +181,4 @@ h1 {
     .metric-value {
         font-size: 1.5rem;
     }
-} 
+}

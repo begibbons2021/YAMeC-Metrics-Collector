@@ -169,4 +169,23 @@ public class NicHardwareInformation implements Serializable {
     public void setId(UUID id) {
         this.id = id;
     }
+
+    /**
+     * Returns a string representation of this NicHardwareInformation object.
+     * 
+     * @return A string containing the details of this network interface hardware
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("NicHardwareInformation{");
+        sb.append("id=").append(id);
+        sb.append(", friendlyName='").append(friendlyName).append('\'');
+        sb.append(", label='").append(label).append('\'');
+        sb.append(", uniqueId='").append(uniqueId).append('\'');
+        sb.append(", nicType=").append(nicType);
+        sb.append(" (").append(getNicTypeString(nicType)).append(')');
+        sb.append('}');
+        return sb.toString();
+    }
 }

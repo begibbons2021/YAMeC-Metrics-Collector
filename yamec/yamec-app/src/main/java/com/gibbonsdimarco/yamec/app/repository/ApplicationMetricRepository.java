@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
@@ -24,6 +25,8 @@ public interface ApplicationMetricRepository extends JpaRepository<ApplicationMe
     List<ApplicationMetric> findByApplication(Application application);
 
     List<ApplicationMetric> findByApplicationId(UUID applicationId);
+
+    List<ApplicationMetric> findByApplicationIdOrderByTimestampDesc(UUID applicationId);
 
     List<ApplicationMetric> findAllByApplicationApplicationName(String name);
 
@@ -43,4 +46,26 @@ public interface ApplicationMetricRepository extends JpaRepository<ApplicationMe
                                                                         Timestamp timestampBefore,
                                                                         UUID applicationId,
                                                                         Pageable pageable);
+
+    @Query(value = "SELECT " +
+            "hex(a.id) as app_id, a.application_name, " +
+            "hex(m.id) as metric_id, m.timestamp, m.duration, " +
+            "m.avg_cpu_usage, m.avg_physical_memory_used, m.avg_virtual_memory_used, " +
+            "m.max_cpu_usage, m.max_physical_memory_used, m.max_virtual_memory_used, " +
+            "m.min_cpu_usage, m.min_physical_memory_used, m.min_virtual_memory_used " +
+            "FROM application a " +
+            "INNER JOIN (" +
+            "    SELECT application_id, MAX(timestamp) as max_timestamp " +
+            "    FROM application_metrics " +
+            "    WHERE timestamp > :thresholdTime " +
+            "    GROUP BY application_id " +
+            "    LIMIT 10000" +
+            ") latest ON latest.application_id = a.id " +
+            "INNER JOIN application_metrics m ON m.application_id = a.id AND m.timestamp = latest.max_timestamp " +
+            "ORDER BY m.timestamp DESC",
+        nativeQuery = true)
+    List<Object[]> findLatestMetricsForAllApplications(
+        @Param("thresholdTime") Timestamp thresholdTime,
+        Pageable pageable
+    );
 }

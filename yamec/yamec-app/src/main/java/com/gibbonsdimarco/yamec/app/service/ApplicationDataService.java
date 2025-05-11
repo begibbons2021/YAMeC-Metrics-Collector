@@ -8,10 +8,14 @@ import com.gibbonsdimarco.yamec.app.repository.ApplicationRepository;
 import jakarta.transaction.Transactional;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manages repositories for Application and ApplicationMetric data in the database
@@ -19,6 +23,8 @@ import java.util.UUID;
  */
 @Service
 public class ApplicationDataService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationDataService.class);
 
     ApplicationRepository applicationRepository;
     ApplicationMetricRepository applicationMetricRepository;
@@ -97,7 +103,7 @@ public class ApplicationDataService {
         for (UUID applicationId : applicationNameProcessMetrics.keySet()) {
 
             // Sum the number of processes and metrics per second
-//            long[] numProcessesPerSecond = new long[duration];
+            long[] numProcessesPerSecond = new long[duration];
             double[] totalCpuUsagePerSecond = new double[duration];
             long[] totalPhysicalMemoryUsedPerSecond = new long[duration];
             long[] totalVirtualMemoryUsedPerSecond = new long[duration];
@@ -111,12 +117,12 @@ public class ApplicationDataService {
                 long processPhysicalMemoryUsed = activeProcess.getPhysicalMemoryUsage();
                 long processVirtualMemoryUsed = activeProcess.getVirtualMemoryUsage();
 
-                // Skip processes which are reporting 0 resource use (no data to report)
-                if (processCpuUsage == 0
-                        && processPhysicalMemoryUsed == 0
-                        && processVirtualMemoryUsed == 0) {
-                    continue;
-                }
+//                // Skip processes which are reporting 0 resource use (no data to report)
+//                if (processCpuUsage == 0
+//                        && processPhysicalMemoryUsed == 0
+//                        && processVirtualMemoryUsed == 0) {
+//                    continue;
+//                }
 
                 // Fail-safe in case a process is not given a timestamp (Can't accurately get metrics from it)
                 if (activeProcess.getTimestamp() == null) {
@@ -142,15 +148,19 @@ public class ApplicationDataService {
                 totalCpuUsagePerSecond[secondsSinceStartTime] += processCpuUsage;
                 totalPhysicalMemoryUsedPerSecond[secondsSinceStartTime] += processPhysicalMemoryUsed;
                 totalVirtualMemoryUsedPerSecond[secondsSinceStartTime] += processVirtualMemoryUsed;
-//                numProcessesPerSecond[secondsSinceStartTime]++;
+                numProcessesPerSecond[secondsSinceStartTime]++;
             }
 
             // Data containers for metrics
+
+            boolean metricsInitialized = false;
+            int secondsActive = 0;
+
             double averageCpuUsage = 0;
             long averagePhysicalMemoryUsed = 0;
             long averageVirtualMemoryUsed = 0;
 
-            double maxCpuUsage = Double.MIN_VALUE;
+            double maxCpuUsage = 0.0;
             long maxPhysicalMemoryUsed = Long.MIN_VALUE;
             long maxVirtualMemoryUsed = Long.MIN_VALUE;
 
@@ -159,65 +169,82 @@ public class ApplicationDataService {
             long minVirtualMemoryUsed = Long.MAX_VALUE;
 
             for (int secondNum = 0; secondNum < duration; secondNum++) {
+                // Check if there are active processes before updating metrics data
+                if (numProcessesPerSecond[secondNum] != 0) {
+                    // Sum total usages for all valid processes and applications
+                    averageCpuUsage += totalCpuUsagePerSecond[secondNum];
+                    averagePhysicalMemoryUsed += totalPhysicalMemoryUsedPerSecond[secondNum];
+                    averageVirtualMemoryUsed += totalVirtualMemoryUsedPerSecond[secondNum];
 
-                // Sum total usages for all valid processes and applications
-                averageCpuUsage += totalCpuUsagePerSecond[secondNum];
-                averagePhysicalMemoryUsed += totalPhysicalMemoryUsedPerSecond[secondNum];
-                averageVirtualMemoryUsed += totalVirtualMemoryUsedPerSecond[secondNum];
-
-
-                if (secondNum == 0) {
-                    // Set initial values for all the maximums and minimums at second 0
-                    maxCpuUsage = minCpuUsage = totalCpuUsagePerSecond[secondNum];
-                    maxPhysicalMemoryUsed = minPhysicalMemoryUsed = totalPhysicalMemoryUsedPerSecond[secondNum];
-                    maxVirtualMemoryUsed = minVirtualMemoryUsed = totalVirtualMemoryUsedPerSecond[secondNum];
-                } else {
-                    // Set the maximums and minimums of each metric as they are identified
-                    if (totalCpuUsagePerSecond[secondNum] > maxCpuUsage) {
+                    if (!metricsInitialized) {
+                        // Set initial values for all the maximums and minimums at second 0
                         maxCpuUsage = totalCpuUsagePerSecond[secondNum];
-                    } else if (totalCpuUsagePerSecond[secondNum] < minCpuUsage) {
                         minCpuUsage = totalCpuUsagePerSecond[secondNum];
-                    }
-
-                    if (totalPhysicalMemoryUsedPerSecond[secondNum] > maxPhysicalMemoryUsed) {
                         maxPhysicalMemoryUsed = totalPhysicalMemoryUsedPerSecond[secondNum];
-                    } else if (totalPhysicalMemoryUsedPerSecond[secondNum] < minPhysicalMemoryUsed) {
                         minPhysicalMemoryUsed = totalPhysicalMemoryUsedPerSecond[secondNum];
+                        maxVirtualMemoryUsed = totalVirtualMemoryUsedPerSecond[secondNum];
+                        minVirtualMemoryUsed = totalVirtualMemoryUsedPerSecond[secondNum];
+
+                        metricsInitialized = true;
+                    } else {
+                        // Set the maximums and minimums of each metric as they are identified
+                        if (totalCpuUsagePerSecond[secondNum] > maxCpuUsage) {
+                            maxCpuUsage = totalCpuUsagePerSecond[secondNum];
+                        }
+
+                        if (totalCpuUsagePerSecond[secondNum] < minCpuUsage) {
+                            minCpuUsage = totalCpuUsagePerSecond[secondNum];
+                        }
+
+                        if (totalPhysicalMemoryUsedPerSecond[secondNum] > maxPhysicalMemoryUsed) {
+                            maxPhysicalMemoryUsed = totalPhysicalMemoryUsedPerSecond[secondNum];
+                        }
+
+                        if (totalPhysicalMemoryUsedPerSecond[secondNum] < minPhysicalMemoryUsed) {
+                            minPhysicalMemoryUsed = totalPhysicalMemoryUsedPerSecond[secondNum];
+                        }
+
+                        if (totalVirtualMemoryUsedPerSecond[secondNum] > maxVirtualMemoryUsed) {
+                            maxVirtualMemoryUsed = totalVirtualMemoryUsedPerSecond[secondNum];
+                        }
+
+                        if (totalVirtualMemoryUsedPerSecond[secondNum] < minVirtualMemoryUsed) {
+                            minVirtualMemoryUsed = totalVirtualMemoryUsedPerSecond[secondNum];
+                        }
                     }
 
-                    if (totalVirtualMemoryUsedPerSecond[secondNum] > maxVirtualMemoryUsed) {
-                        maxVirtualMemoryUsed = totalVirtualMemoryUsedPerSecond[secondNum];
-                    } else if (totalVirtualMemoryUsedPerSecond[secondNum] < minVirtualMemoryUsed) {
-                        minVirtualMemoryUsed = totalVirtualMemoryUsedPerSecond[secondNum];
-                    }
+                    secondsActive++;
 
                 }
-
             }
 
-            // Take average of each metric based on the duration
-            averageCpuUsage /= duration;
-            averagePhysicalMemoryUsed /= duration;
-            averageVirtualMemoryUsed /= duration;
+            // This check should never fail because we would have collected no process data
+            // pertaining to this application if we did (this is a failsafe)
+            if (secondsActive != 0) {
+                // Take average of each metric based on the duration spent active
+                averageCpuUsage /= secondsActive;
+                averagePhysicalMemoryUsed /= secondsActive;
+                averageVirtualMemoryUsed /= secondsActive;
 
-            if (LoggerFactory.getLogger(ApplicationDataService.class).isDebugEnabled()) {
-                LoggerFactory.getLogger(ApplicationDataService.class).debug("Process {} - Average CPU Usage: {}",
-                        applicationRepository.getReferenceById(applicationId).getApplicationName(), averageCpuUsage);
+                if (LoggerFactory.getLogger(ApplicationDataService.class).isDebugEnabled()) {
+                    LoggerFactory.getLogger(ApplicationDataService.class).debug("Process {} - Average CPU Usage: {}",
+                            applicationRepository.getReferenceById(applicationId).getApplicationName(), averageCpuUsage);
+                }
+
+                // Create Metric object
+                applicationMetrics.add(new ApplicationMetric(applicationRepository.getReferenceById(applicationId),
+                        startTime, duration,
+                        averageCpuUsage,
+                        averagePhysicalMemoryUsed,
+                        averageVirtualMemoryUsed,
+                        maxCpuUsage,
+                        maxPhysicalMemoryUsed,
+                        maxVirtualMemoryUsed,
+                        minCpuUsage,
+                        minPhysicalMemoryUsed,
+                        minVirtualMemoryUsed));
+
             }
-
-            // Create Metric object
-            applicationMetrics.add(new ApplicationMetric(applicationRepository.getReferenceById(applicationId),
-                                                            startTime, duration,
-                                                            averageCpuUsage,
-                                                            averagePhysicalMemoryUsed,
-                                                            averageVirtualMemoryUsed,
-                                                            maxCpuUsage,
-                                                            maxPhysicalMemoryUsed,
-                                                            maxVirtualMemoryUsed,
-                                                            minCpuUsage,
-                                                            minPhysicalMemoryUsed,
-                                                            minVirtualMemoryUsed));
-
 
         }
 
@@ -260,16 +287,16 @@ public class ApplicationDataService {
     public java.util.Map<Application, java.util.List<ApplicationMetric>> getAllApplicationsWithMetrics() {
         // Get all applications
         java.util.List<Application> applications = applicationRepository.findAll();
-        
+
         // Initialize result map
         java.util.Map<Application, java.util.List<ApplicationMetric>> applicationsWithMetrics = new java.util.HashMap<>();
-        
+
         // For each application, get its metrics and add to the map
         for (Application application : applications) {
             java.util.List<ApplicationMetric> metrics = applicationMetricRepository.findByApplication(application);
             applicationsWithMetrics.put(application, metrics);
         }
-        
+
         return applicationsWithMetrics;
     }
 
@@ -285,10 +312,10 @@ public class ApplicationDataService {
         if (appOptional.isEmpty()) {
             return null;
         }
-        
+
         Application application = appOptional.get();
-        java.util.List<ApplicationMetric> metrics = applicationMetricRepository.findByApplicationId(applicationId);
-        
+        java.util.List<ApplicationMetric> metrics = applicationMetricRepository.findByApplicationIdOrderByTimestampDesc(applicationId);
+
         return java.util.Map.entry(application, metrics);
     }
 
@@ -303,40 +330,122 @@ public class ApplicationDataService {
         if (application == null) {
             return null;
         }
-        
+
         java.util.List<ApplicationMetric> metrics = applicationMetricRepository.findAllByApplicationApplicationName(applicationName);
-        
+
         return java.util.Map.entry(application, metrics);
     }
 
     /**
-     * Returns all applications with their latest metrics
+     * Returns all applications with their latest metrics within the last 3 seconds
      * This is useful for dashboards that only need the most recent metric for each application
      *
      * @return Map of Application objects to their latest metric
      */
     public java.util.Map<Application, ApplicationMetric> getAllApplicationsWithLatestMetrics() {
-        // Get all applications
-        java.util.List<Application> applications = applicationRepository.findAll();
+        logger.debug("Starting getAllApplicationsWithLatestMetrics");
+        long startTime = System.currentTimeMillis();
+
+        // Get applications with their latest metrics in a single query
+        // Only include metrics from the last 3 seconds
+        Timestamp threshold = new Timestamp(System.currentTimeMillis() - 3000);
+
+        // Log query execution time
+        long queryStartTime = System.currentTimeMillis();
+        java.util.List<Object[]> results = applicationMetricRepository.findLatestMetricsForAllApplications(threshold, PageRequest.of(0, 100)); // Reduced page size for better performance
+        long queryEndTime = System.currentTimeMillis();
+        logger.debug("Query execution time: {} ms, returned {} results", (queryEndTime - queryStartTime), results.size());
 
         // Initialize result map
         java.util.Map<Application, ApplicationMetric> applicationsWithLatestMetrics = new java.util.HashMap<>();
 
-        // For each application, get its latest metric
-        for (Application application : applications) {
-            // Find the latest metric for this application
-            // We need to use Sort to get the most recent one by timestamp
-            java.util.List<ApplicationMetric> metrics = applicationMetricRepository.getByApplicationApplicationName(
-                    application.getApplicationName(),
-                    org.springframework.data.domain.Sort.by(
-                            org.springframework.data.domain.Sort.Direction.DESC, "timestamp"));
+        // Process results
+        for (Object[] result : results) {
+            try {
+                if (result == null || result.length < 14) {
+                    logger.warn("Skipping invalid result: {}", (result == null ? "null" : "length=" + result.length));
+                    continue;
+                }
 
-            // Add to result map if metrics exist
-            if (!metrics.isEmpty()) {
-                applicationsWithLatestMetrics.put(application, metrics.getFirst());
+                // Parse the application data
+                String appIdHex = (String) result[0];
+                String appName = (String) result[1];
+
+                // Parse the metric data
+                String metricIdHex = (String) result[2];
+                Timestamp timestamp = (Timestamp) result[3];
+                Integer duration = result[4] != null ? ((Number) result[4]).intValue() : 0;
+                Double avgCpuUsage = result[5] != null ? ((Number) result[5]).doubleValue() : 0.0;
+                Long avgPhysicalMemoryUsed = result[6] != null ? ((Number) result[6]).longValue() : 0L;
+                Long avgVirtualMemoryUsed = result[7] != null ? ((Number) result[7]).longValue() : 0L;
+                Double maxCpuUsage = result[8] != null ? ((Number) result[8]).doubleValue() : 0.0;
+                Long maxPhysicalMemoryUsed = result[9] != null ? ((Number) result[9]).longValue() : 0L;
+                Long maxVirtualMemoryUsed = result[10] != null ? ((Number) result[10]).longValue() : 0L;
+                Double minCpuUsage = result[11] != null ? ((Number) result[11]).doubleValue() : 0.0;
+                Long minPhysicalMemoryUsed = result[12] != null ? ((Number) result[12]).longValue() : 0L;
+                Long minVirtualMemoryUsed = result[13] != null ? ((Number) result[13]).longValue() : 0L;
+
+                // Format UUID from hex string
+                String formattedAppIdHex = appIdHex;
+                if (appIdHex != null && appIdHex.length() >= 32) {
+                    formattedAppIdHex = appIdHex.replaceAll("(.{8})(.{4})(.{4})(.{4})(.+)", "$1-$2-$3-$4-$5");
+                } else {
+                    logger.warn("Invalid app ID hex: {}", appIdHex);
+                    continue;
+                }
+
+                String formattedMetricIdHex = metricIdHex;
+                if (metricIdHex != null && metricIdHex.length() >= 32) {
+                    formattedMetricIdHex = metricIdHex.replaceAll("(.{8})(.{4})(.{4})(.{4})(.+)", "$1-$2-$3-$4-$5");
+                } else {
+                    logger.warn("Invalid metric ID hex: {}", metricIdHex);
+                    continue;
+                }
+
+                // Create the Application object
+                Application app = new Application(appName);
+                app.setId(UUID.fromString(formattedAppIdHex));
+
+                // Create the ApplicationMetric object
+                ApplicationMetric metric = new ApplicationMetric();
+                metric.setId(UUID.fromString(formattedMetricIdHex));
+                metric.setApplication(app);
+                metric.setTimestamp(timestamp);
+                metric.setDuration(duration);
+                metric.setAvgCpuUsage(avgCpuUsage);
+                metric.setAvgPhysicalMemoryUsed(avgPhysicalMemoryUsed);
+                metric.setAvgVirtualMemoryUsed(avgVirtualMemoryUsed);
+                metric.setMaxCpuUsage(maxCpuUsage);
+                metric.setMaxPhysicalMemoryUsed(maxPhysicalMemoryUsed);
+                metric.setMaxVirtualMemoryUsed(maxVirtualMemoryUsed);
+                metric.setMinCpuUsage(minCpuUsage);
+                metric.setMinPhysicalMemoryUsed(minPhysicalMemoryUsed);
+                metric.setMinVirtualMemoryUsed(minVirtualMemoryUsed);
+
+                applicationsWithLatestMetrics.put(app, metric);
+            } catch (Exception e) {
+                // Log the error and continue processing other results
+                logger.error("Error processing application metric: {}", e.getMessage(), e);
             }
         }
 
+        long endTime = System.currentTimeMillis();
+        logger.debug("Completed getAllApplicationsWithLatestMetrics in {} ms, processed {} applications", 
+                    (endTime - startTime), applicationsWithLatestMetrics.size());
+
         return applicationsWithLatestMetrics;
+    }
+
+    public java.util.List<ApplicationMetric> getStoredApplicationMetrics(Timestamp startTime, Timestamp endTime) {
+        return applicationMetricRepository.findAllByTimestampBetween(
+                startTime, endTime);
+    }
+
+    public java.util.List<ApplicationMetric> getStoredApplicationMetrics(Timestamp startTime, Timestamp endTime, int pageNumber) {
+        return applicationMetricRepository.findAllByTimestampBetween(
+                startTime, endTime,
+                PageRequest.of(pageNumber, 255,
+                        Sort.by(Sort.Direction.DESC, "timestamp"))
+        );
     }
 }

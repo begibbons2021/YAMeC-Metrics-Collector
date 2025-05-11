@@ -14,9 +14,9 @@ bool GpuInfo::initialize(PdhQueryManager *pdhManager)
 {
     if (!pdhManager)
     {
-        std::cerr << "Invalid PDH manager" << std::endl;
-        return false;
+        throw std::runtime_error(" GPU Info - Was initialized with an invalid PdhQueryManager");
     }
+
 
     m_pdhManager = pdhManager;
 

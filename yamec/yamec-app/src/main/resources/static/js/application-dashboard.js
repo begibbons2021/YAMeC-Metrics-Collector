@@ -1,40 +1,17 @@
 // YAMeC Application Dashboard JavaScript
 
-// Format bytes to human-readable format
-function formatBytes(bytes, decimals = 2) {
-    if (bytes === 0) return '0 Bytes';
-
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-}
-
-// Format percentage
-function formatPercentage(value) {
-    return value.toFixed(1) + '%';
-}
 
 // Update the application details section with the selected application's metrics
 function updateApplicationDetails(appMetrics) {
     // CPU Usage
     document.getElementById('app-cpu-avg').textContent = formatPercentage(appMetrics.avgCpuUsage);
-    document.getElementById('app-cpu-max').textContent = formatPercentage(appMetrics.maxCpuUsage);
-    document.getElementById('app-cpu-min').textContent = formatPercentage(appMetrics.minCpuUsage);
     document.getElementById('app-cpu-progress').style.width = appMetrics.avgCpuUsage + '%';
 
     // Physical Memory
     document.getElementById('app-physical-memory-avg').textContent = formatBytes(appMetrics.avgPhysicalMemoryUsed);
-    document.getElementById('app-physical-memory-max').textContent = formatBytes(appMetrics.maxPhysicalMemoryUsed);
-    document.getElementById('app-physical-memory-min').textContent = formatBytes(appMetrics.minPhysicalMemoryUsed);
 
     // Virtual Memory
     document.getElementById('app-virtual-memory-avg').textContent = formatBytes(appMetrics.avgVirtualMemoryUsed);
-    document.getElementById('app-virtual-memory-max').textContent = formatBytes(appMetrics.maxVirtualMemoryUsed);
-    document.getElementById('app-virtual-memory-min').textContent = formatBytes(appMetrics.minVirtualMemoryUsed);
 
     // Update timestamp
     document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
@@ -110,6 +87,7 @@ function updateApplicationList(applications) {
         // Restore the active state if this was the previously selected app
         if (app.id === selectedAppId) {
             appItem.classList.add('active');
+            fetchApplicationDetails(selectedAppId);
         }
     });
 

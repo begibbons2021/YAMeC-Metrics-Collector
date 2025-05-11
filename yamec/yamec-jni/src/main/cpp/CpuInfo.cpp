@@ -13,17 +13,15 @@ bool CpuInfo::initialize(PdhQueryManager *pdhManager)
 {
     if (!pdhManager)
     {
-        std::cerr << "Invalid PDH manager" << std::endl;
-        return false;
+        throw std::runtime_error(" CPU Info - Was initialized with an invalid PdhQueryManager");
     }
 
     m_pdhManager = pdhManager;
 
     // Add CPU usage counter
-    if (!m_pdhManager->addCounter(TEXT("\\Processor(_Total)\\% Processor Time"), &m_usageCounter))
+    if (!m_pdhManager->addCounter(TEXT("\\Processor Information(_Total)\\% Processor Utility"), &m_usageCounter))
     {
-        std::cerr << "Failed to add CPU usage counter" << std::endl;
-        return false;
+        throw std::runtime_error(" CPU Info - Usage - Could not add performance counter");
     }
 
     return true;
@@ -33,14 +31,21 @@ int CpuInfo::getUsage(double *usage) const
 {
     if (!m_pdhManager)
     {
-        std::cerr << "PDH manager not initialized" << std::endl;
-        return -1;
+        throw std::runtime_error(" CPU Info - Usage was retrieved before the PdhQueryManager was initialized");
     }
 
-    if (!m_pdhManager->getCounterValue(m_usageCounter, usage))
+    try
     {
-        return -4;
+        if (!m_pdhManager->getCounterValue(m_usageCounter, usage))
+        {
+            return -4;
+        }
     }
+    catch (std::exception &e)
+    {
+        throw std::runtime_error(std::format(" CPU Info - Usage - {}", std::string(e.what())));
+    }
+
 
     return 0;
 }
@@ -118,11 +123,13 @@ CacheInfo CpuInfo::getCacheInfo()
 
                 if (buffer == nullptr)
                 {
-                    throw std::runtime_error("Error: Allocation failure");
+                    throw std::runtime_error("CPU Info - Cache Info - Memory allocation failed while getting "
+                                                + std::string("logical processor information"));
                 }
             } else
             {
-                throw std::runtime_error(std::format("Error: %d", GetLastError()));
+                throw std::runtime_error(std::format(" CPU Info - Cache Info - Retrieval Failed: {}",
+                                            GetLastError()));
             }
         } else
         {
@@ -168,7 +175,7 @@ CacheInfo CpuInfo::getCacheInfo()
                 break;
 
             default:
-                throw std::runtime_error("Error: Unsupported LOGICAL_PROCESSOR_RELATIONSHIP value.");
+                throw std::runtime_error("CPU Info - Cache Info - Unsupported LOGICAL_PROCESSOR_RELATIONSHIP value.");
                 break;
         }
         byteOffset += sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION);

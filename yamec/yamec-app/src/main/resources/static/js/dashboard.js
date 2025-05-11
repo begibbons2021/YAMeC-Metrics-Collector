@@ -1,36 +1,4 @@
 // YAMeC Dashboard JavaScript
-
-// Get progress bar color based on percentage
-function getProgressBarColor(percentage) {
-    if (percentage < 35) {
-        return 'var(--secondary-color)'; // Green
-    } else if (percentage < 60) {
-        return 'var(--warning-color)';   // Yellow
-    } else if (percentage < 80) {
-        return 'var(--orange-color)';    // Orange
-    } else {
-        return 'var(--danger-color)';    // Red
-    }
-}
-
-// Format bytes to human-readable format
-function formatBytes(bytes, decimals = 2) {
-    if (bytes === 0) return '0 Bytes';
-
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-}
-
-// Format percentage
-function formatPercentage(value) {
-    return value.toFixed(1) + '%';
-}
-
 // Update the dashboard with new metrics data
 function updateDashboard(metrics) {
     // CPU Usage
@@ -95,15 +63,15 @@ function updateDashboard(metrics) {
                 </div>
                 <div class="metric">
                     <div class="metric-label">Average Read Speed</div>
-                    <div class="metric-value">${formatBytes(disk.avgBytesReadPerSecond)}/s</div>
+                    <div class="metric-value">${formatBytesTransferred(disk.avgBytesReadPerSecond)}</div>
                 </div>
                 <div class="metric">
                     <div class="metric-label">Average Write Speed</div>
-                    <div class="metric-value">${formatBytes(disk.avgBytesWrittenPerSecond)}/s</div>
+                    <div class="metric-value">${formatBytesTransferred(disk.avgBytesWrittenPerSecond)}</div>
                 </div>
                 <div class="metric">
                     <div class="metric-label">Average Time to Transfer</div>
-                    <div class="metric-value">${disk.avgTimeToTransfer.toFixed(2)} ms</div>
+                    <div class="metric-value">${formatSeconds(disk.avgTimeToTransfer, 2)}</div>
                 </div>
             `;
 
@@ -157,11 +125,11 @@ function updateDashboard(metrics) {
                 </div>
                 <div class="metric">
                     <div class="metric-label">Average Data Sent</div>
-                    <div class="metric-value">${formatBytes(nic.avgNetworkSent)}</div>
+                    <div class="metric-value">${formatBitsPerSecond(nic.avgNetworkSent)}</div>
                 </div>
                 <div class="metric">
                     <div class="metric-label">Average Data Received</div>
-                    <div class="metric-value">${formatBytes(nic.avgNetworkReceived)}</div>
+                    <div class="metric-value">${formatBitsPerSecond(nic.avgNetworkReceived)}</div>
                 </div>
             `;
 

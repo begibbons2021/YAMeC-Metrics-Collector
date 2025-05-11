@@ -4,11 +4,14 @@ import com.gibbonsdimarco.yamec.app.data.*;
 import com.gibbonsdimarco.yamec.app.jni.SystemMonitorManagerJNI;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.*;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.annotation.Order;
 
+import javax.swing.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -21,6 +24,54 @@ class YamecApplicationTests {
 
     @Autowired
     private SystemMonitorManagerJNI monitor;
+
+    @BeforeAll
+    static void setUp() {
+
+        final Logger logger = LoggerFactory.getLogger(YamecApplicationTests.class);
+        File yamecHome;
+
+        System.setProperty("java.awt.headless", "false");
+        yamecHome = new File(System.getProperty("user.home") + "/.yamec-home");
+
+        logger.info("SETUP - Attempting to access YAMeC Home directory: {}", yamecHome);
+
+        boolean homeDirectoryExists = yamecHome.exists();
+        if (homeDirectoryExists) {
+            if (!yamecHome.isDirectory()) {
+                logger.error("SETUP - Cannot create the YAMeC Home directory because " + "a file exists with the name 'yamec'.");
+                logger.error("SETUP - Exiting due to application setup failure (cannot load home directory).");
+                fail("Could not load or create .yamec-home directory because a file exists with the name '.yamec-home'" +
+                        " in the user home directory.");
+            }
+        }
+
+        if (!homeDirectoryExists) {
+            // Create the '.yamec-home' folder
+            logger.info("SETUP - No YAMeC Home directory found. Creating the YAMeC Home directory in: {}", yamecHome);
+            boolean directoryCreationSuccess = false;
+            try {
+                directoryCreationSuccess = yamecHome.mkdir();
+            } catch (Exception e) {
+                logger.error("SETUP - Creation of the YAMeC Home directory failed because " + "of an exception: {} - {}", e.getCause(), e.getMessage());
+                // Log stack trace contents
+                StackTraceElement[] stackTraceElements = e.getStackTrace();
+                logger.error("SETUP - Directory Creation Stack Trace [0]: ");
+                for (int i = 0; i < stackTraceElements.length; i++) {
+                    logger.error("SETUP - Directory Creation Stack Trace [{}]: {}", i + 1, stackTraceElements[i]);
+                }
+            }
+
+            if (!directoryCreationSuccess) {
+                fail("Could not load or create .yamec-home directory.");
+            }
+        }
+
+        logger.info("SETUP - YAMeC Home directory found and loaded successfully: {}", yamecHome);
+
+        System.setProperty("java.awt.headless", "true");
+
+    }
 
     @Test
     void contextLoads() {

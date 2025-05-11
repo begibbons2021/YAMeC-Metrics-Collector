@@ -206,4 +206,25 @@ public class DiskHardwareInformation implements Serializable {
         this.id = id;
     }
 
+    /**
+     * Returns a string representation of this DiskHardwareInformation object.
+     * 
+     * @return A string containing the details of this disk hardware
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("DiskHardwareInformation{");
+        sb.append("id=").append(id);
+        sb.append(", friendlyName='").append(friendlyName).append('\'');
+        sb.append(", uniqueId='").append(uniqueId).append('\'');
+        sb.append(", diskNumber=").append(diskNumber);
+        sb.append(", mediaType=").append(mediaType);
+        sb.append(" (").append(getMediaTypeString(mediaType)).append(')');
+        sb.append(", capacity=").append(capacity);
+        sb.append(", capacityIsUnsigned=").append(capacityIsUnsigned);
+        sb.append(", partitions=").append(partitions);
+        sb.append('}');
+        return sb.toString();
+    }
 }

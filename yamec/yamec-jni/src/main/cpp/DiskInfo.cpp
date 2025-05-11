@@ -14,15 +14,14 @@ bool DiskInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManag
 {
     if (!pdhManager)
     {
-        std::cerr << "Invalid PDH manager" << std::endl;
-        return false;
+        throw std::runtime_error(" Disk Info - Was initialized with an invalid PdhQueryManager");
     }
 
     if (!wmiManager)
     {
-        std::cerr << "Invalid WMI manager" << std::endl;
-        return false;
+        throw std::runtime_error(" Disk Info - Was initialized with an invalid WmiQueryManager");
     }
+
 
     m_pdhManager = pdhManager;
 
@@ -33,8 +32,7 @@ bool DiskInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManag
     PDH_HCOUNTER diskTimeCounterTemp;
     if (!m_pdhManager->addCounter(L"\\PhysicalDisk(*)\\% Disk Time", &diskTimeCounterTemp))
     {
-        std::wcerr << "Failed to add All Disks Usage counters " << std::endl;
-        return false;
+        throw std::runtime_error(" Disk Info - All-device utilization counters could not be added");
     }
 
     m_allDisksUsageCounter = diskTimeCounterTemp;
@@ -42,8 +40,7 @@ bool DiskInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManag
     PDH_HCOUNTER diskReadBandwidthCounterTemp;
     if (!m_pdhManager->addCounter(L"\\PhysicalDisk(*)\\Disk Read Bytes/sec", &diskReadBandwidthCounterTemp))
     {
-        std::wcerr << "Failed to add All Disks Read Bandwidth counters " << std::endl;
-        return false;
+        throw std::runtime_error(" Disk Info - All-device read bandwidth counters could not be added");
     }
 
     m_allDisksReadBandwidthCounter = diskReadBandwidthCounterTemp;
@@ -51,18 +48,16 @@ bool DiskInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManag
     PDH_HCOUNTER diskWriteBandwidthCounterTemp;
     if (!m_pdhManager->addCounter(L"\\PhysicalDisk(*)\\Disk Write Bytes/sec", &diskWriteBandwidthCounterTemp))
     {
-        std::wcerr << "Failed to add All Disks Write Bandwidth counters " << std::endl;
-        return false;
+        throw std::runtime_error(" Disk Info - All-device write bandwidth counters could not be added");
     }
 
     m_allDisksWriteBandwidthCounter = diskWriteBandwidthCounterTemp;
 
 
     PDH_HCOUNTER diskTimeToTransferCounterTemp;
-    if (!m_pdhManager->addCounter(L"\\PhysicalDisk(*)\\Disk Write Bytes/sec", &diskTimeToTransferCounterTemp))
+    if (!m_pdhManager->addCounter(L"\\PhysicalDisk(*)\\Avg. Disk sec/Transfer", &diskTimeToTransferCounterTemp))
     {
-        std::wcerr << "Failed to add All Disks Time to Transfer counters " << std::endl;
-        return false;
+        throw std::runtime_error(" Disk Info - All-device time to transfer counters could not be added");
     }
 
     m_allDisksTimeToTransferCounter = diskTimeToTransferCounterTemp;
@@ -72,6 +67,7 @@ bool DiskInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManag
 
     if (initInstances() == 0)
     {
+        // Can't initialize with no disk devices
         return false;
     }
 
@@ -86,8 +82,7 @@ bool DiskInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManag
 
         if (!m_pdhManager->addCounter(pathName, &mCounter))
         {
-            std::wcerr << "Failed to add Disk Usage counter for " << instanceNames.at(i) << std::endl;
-            return false;
+            throw std::runtime_error(" Disk Info - A device-level utilization counter could not be added");
         }
 
         m_diskUsagePercentCounters.emplace_back(mCounter);
@@ -103,8 +98,7 @@ bool DiskInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManag
 
         if (!m_pdhManager->addCounter(pathName, &mCounter))
         {
-            std::wcerr << "Failed to add Disk Read Bandwidth counter for " << instanceNames.at(i) << std::endl;
-            return false;
+            throw std::runtime_error(" Disk Info - A device-level read bandwidth counter could not be added");
         }
 
         m_diskReadBandwidthCounters.emplace_back(mCounter);
@@ -121,8 +115,7 @@ bool DiskInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManag
 
         if (!m_pdhManager->addCounter(pathName, &mCounter))
         {
-            std::wcerr << "Failed to add Disk Write Bandwidth counter for " << instanceNames.at(i) << std::endl;
-            return false;
+            throw std::runtime_error(" Disk Info - A device-level write bandwidth counter could not be added");
         }
 
         m_diskWriteBandwidthCounters.emplace_back(mCounter);
@@ -138,8 +131,7 @@ bool DiskInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManag
 
         if (!m_pdhManager->addCounter(pathName, &mCounter))
         {
-            std::wcerr << "Failed to add Disk Time to Transfer counter for " << instanceNames.at(i) << std::endl;
-            return false;
+            throw std::runtime_error(" Disk Info - A device-level time-to-transfer counter could not be added");
         }
 
         m_diskTimeToTransferCounters.emplace_back(mCounter);
@@ -155,8 +147,7 @@ size_t DiskInfo::initInstances()
 {
     if (!m_pdhManager)
     {
-        std::cerr << "PDH manager not initialized" << std::endl;
-        return 0;
+        throw std::runtime_error(" Disk Info - Instances were retrieved before the PdhQueryManager was initialized");
     }
 
     const auto *objectName = TEXT("PhysicalDisk");
@@ -193,8 +184,7 @@ int DiskInfo::getAllCounters(std::vector<double> *diskUsageValues,
 {
     if (!m_pdhManager)
     {
-        std::cerr << "PDH manager not initialized" << std::endl;
-        return -1;
+        throw std::runtime_error(" Disk Info - Device-level counters were retrieved before the PdhQueryManager was initialized");
     }
 
     // Disk Utilization
@@ -202,10 +192,20 @@ int DiskInfo::getAllCounters(std::vector<double> *diskUsageValues,
     {
         double diskUsage;
 
-        if (!m_pdhManager->getCounterValue(m_diskUsagePercentCounters.at(i), &diskUsage))
+        try
         {
-            return -3;
+            if (!m_pdhManager->getCounterValue(m_diskUsagePercentCounters.at(i), &diskUsage))
+            {
+                throw std::runtime_error(
+                    std::format(" Disk Info - Usage (Disk {}) - Device-level counter retrieval failed", i));
+            }
         }
+        catch (std::exception &e)
+        {
+            throw std::runtime_error(std::format(" Disk Info - Usage (Disk {}) - {}",
+                i, std::string(e.what())));
+        }
+
 
         diskUsageValues->push_back(diskUsage);
     }
@@ -215,10 +215,22 @@ int DiskInfo::getAllCounters(std::vector<double> *diskUsageValues,
     {
         unsigned long long bytesRead;
 
-        if (!m_pdhManager->getCounterValue(m_diskReadBandwidthCounters.at(i), &bytesRead))
+        try
         {
-            return -4;
+            if (!m_pdhManager->getCounterValue(m_diskReadBandwidthCounters.at(i), &bytesRead))
+            {
+                throw std::runtime_error(
+                    std::format(
+                        " Disk Info - Read Bandwidth (Disk {}) - Device-level counter retrieval failed",
+                        i));
+            }
         }
+        catch (std::exception &e)
+        {
+            throw std::runtime_error(std::format(" Disk Info - Read Bandwidth (Disk {}) - {}",
+                i, std::string(e.what())));
+        }
+
 
         diskReadBandwidthValues->push_back(bytesRead);
     }
@@ -228,10 +240,22 @@ int DiskInfo::getAllCounters(std::vector<double> *diskUsageValues,
     {
         unsigned long long bytesWritten;
 
-        if (!m_pdhManager->getCounterValue(m_diskWriteBandwidthCounters.at(i), &bytesWritten))
+        try
         {
-            return -5;
+            if (!m_pdhManager->getCounterValue(m_diskWriteBandwidthCounters.at(i), &bytesWritten))
+            {
+                throw std::runtime_error(
+                        std::format(
+                            " Disk Info - Write Bandwidth (Disk {}) - Device-level counter retrieval failed",
+                            i));
+            }
         }
+        catch (std::exception &e)
+        {
+            throw std::runtime_error(std::format(" Disk Info - Write Bandwidth (Disk {}) - {}",
+                i, std::string(e.what())));
+        }
+
 
         diskWriteBandwidthValues->push_back(bytesWritten);
     }
@@ -241,10 +265,22 @@ int DiskInfo::getAllCounters(std::vector<double> *diskUsageValues,
     {
         double avgTimeToTransfer;
 
-        if (!m_pdhManager->getCounterValue(m_diskTimeToTransferCounters.at(i), &avgTimeToTransfer))
+        try
         {
-            return -6;
+            if (!m_pdhManager->getCounterValue(m_diskTimeToTransferCounters.at(i), &avgTimeToTransfer))
+            {
+                throw std::runtime_error(
+                        std::format(
+                            " Disk Info - Time To Transfer (Disk {}) - Device-level counter retrieval failed",
+                            i));
+            }
         }
+        catch (std::exception &e)
+        {
+            throw std::runtime_error(std::format(" Disk Info - Time to Transfer (Disk {}) - {}",
+                i, std::string(e.what())));
+        }
+
 
         diskTimeToTransferValues->push_back(avgTimeToTransfer);
     }
@@ -261,8 +297,7 @@ int DiskInfo::getAllCounters(std::vector<std::wstring> *diskInstanceNames,
 {
     if (!m_pdhManager)
     {
-        std::cerr << "PDH manager not initialized" << std::endl;
-        return -1;
+        throw std::runtime_error(" Disk Info - All-device counters were retrieved before the PdhQueryManager was initialized");
     }
 
     // Collect Disk Usage
@@ -271,12 +306,13 @@ int DiskInfo::getAllCounters(std::vector<std::wstring> *diskInstanceNames,
     {
         if (!m_pdhManager->getCounterValues(m_allDisksUsageCounter, &diskUsageMap))
         {
-            return -3;
+            throw std::runtime_error(" Disk Info - Usage - All-device counter retrieval failed");
         }
     }
     catch (std::exception &e)
     {
-        throw std::runtime_error(" Disk Info - Usage - " + std::string(e.what()));
+        throw std::runtime_error(
+                    std::format(" Disk Info - Usage - {}", std::string(e.what())));
     }
 
 
@@ -286,12 +322,13 @@ int DiskInfo::getAllCounters(std::vector<std::wstring> *diskInstanceNames,
     {
         if (!m_pdhManager->getCounterValues(m_allDisksReadBandwidthCounter, &diskReadBandwidthMap))
         {
-            return -4;
+            throw std::runtime_error(" Disk Info - Read Bandwidth - All-device counter retrieval failed");
         }
     }
     catch (std::exception &e)
     {
-        throw std::runtime_error(" Disk Info - Disk Bytes Read/sec -" + std::string(e.what()));
+        throw std::runtime_error(
+                    std::format(" Disk Info - Read Bandwidth - {}", std::string(e.what())));
     }
 
 
@@ -301,12 +338,13 @@ int DiskInfo::getAllCounters(std::vector<std::wstring> *diskInstanceNames,
     {
         if (!m_pdhManager->getCounterValues(m_allDisksWriteBandwidthCounter, &diskWriteBandwidthMap))
         {
-            return -5;
+            throw std::runtime_error(" Disk Info - Write Bandwidth - All-device counter retrieval failed");
         }
     }
     catch (std::exception &e)
     {
-        throw std::runtime_error(" Disk Info - Disk Bytes Written/sec -" + std::string(e.what()));
+        throw std::runtime_error(
+                    std::format(" Disk Info - Write Bandwidth - {}", std::string(e.what())));
     }
 
 
@@ -314,14 +352,15 @@ int DiskInfo::getAllCounters(std::vector<std::wstring> *diskInstanceNames,
     std::unordered_map<std::wstring, double> diskTimeToTransferMap;
     try
     {
-        if (!m_pdhManager->getCounterValues(m_allDisksUsageCounter, &diskTimeToTransferMap))
+        if (!m_pdhManager->getCounterValues(m_allDisksTimeToTransferCounter, &diskTimeToTransferMap))
         {
-            return -6;
+            throw std::runtime_error(" Disk Info - Time to Transfer - All-device counter retrieval failed");
         }
     }
     catch (std::exception &e)
     {
-        throw std::runtime_error(" Disk Info - Avg. Time to Transfer - " + std::string(e.what()));
+        throw std::runtime_error(
+                    std::format(" Disk Info - Time to Transfer - {}", std::string(e.what())));
     }
 
 
@@ -352,6 +391,7 @@ int DiskInfo::getAllCounters(std::vector<std::wstring> *diskInstanceNames,
         diskTimeToTransferValues->clear();
     }
 
+    // No counter data to retrieve
     if (diskUsageMap.empty())
     {
         return 0;
@@ -429,8 +469,7 @@ int DiskInfo::getDiskInformation(std::vector<std::wstring> *hardwareNames,
 {
     if (!m_wmiManager)
     {
-        std::cerr << "WMI manager not initialized" << std::endl;
-        return -1;
+        throw std::runtime_error(" Disk Info - Hardware data were retrieved before the WmiQueryManager was initialized");
     }
 
     IEnumWbemClassObject *response;
@@ -564,8 +603,6 @@ int DiskInfo::getDiskInformation(std::vector<std::wstring> *hardwareNames,
             driveLetterAsStrLen + 1, driveLetterStr.c_str(),
             driveLetterAsStrLen);
         std::wstring partitionName(partitionNameAsWchar);
-
-        std::cout << driveLetterStr << std::endl;
 
         diskPartitionToUniqueIdMappingsTemp[partitionName] = diskNumberVar.ulVal;
 

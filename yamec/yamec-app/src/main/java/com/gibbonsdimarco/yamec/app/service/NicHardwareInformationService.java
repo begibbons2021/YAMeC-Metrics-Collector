@@ -6,6 +6,8 @@ import com.gibbonsdimarco.yamec.app.repository.NicHardwareInformationRepository;
 import com.gibbonsdimarco.yamec.app.repository.SystemNicMetricRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -368,13 +370,26 @@ public class NicHardwareInformationService {
             SystemNicMetric metric = nicMetricRepository.findNewestByNicId(
                     nic.getId());
 
-            // Add to result map if metrics exist
-            if (metric != null) {
+            // Add to result map if metrics exist and are from within the last 3 seconds
+            if (metric != null && metric.getTimestamp().after(new Timestamp(System.currentTimeMillis() - 3000))) {
                 nicsWithLatestMetrics.put(nic, metric);
             }
         }
 
         return nicsWithLatestMetrics;
+    }
+
+    public java.util.List<SystemNicMetric> getStoredNicMetrics(Timestamp startTime, Timestamp endTime) {
+        return nicMetricRepository.findAllByTimestampBetween(
+                startTime, endTime);
+    }
+
+    public java.util.List<SystemNicMetric> getStoredNicMetrics(Timestamp startTime, Timestamp endTime, int pageNumber) {
+        return nicMetricRepository.findAllByTimestampBetween(
+                startTime, endTime,
+                PageRequest.of(pageNumber, 255,
+                        Sort.by(Sort.Direction.DESC, "timestamp"))
+        );
     }
 
     // Other service methods as needed
