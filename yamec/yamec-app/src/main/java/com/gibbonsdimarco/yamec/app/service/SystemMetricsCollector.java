@@ -70,6 +70,9 @@ public class SystemMetricsCollector {
         }
     }
 
+    /**
+     * Queries the SystemMonitorManager for all hardware currently connected to the system
+     */
     public void updateHardwareInformation() {
         // Get hardware information once during initialization
         cpuInfo = monitor.getCpuHardwareInformation();
@@ -107,6 +110,16 @@ public class SystemMetricsCollector {
         }
     }
 
+    /**
+     * Scheduled task that runs every 5 seconds to collect the latest hardware information
+     *
+     * @implNote The 5-second interval was chosen for this operation since this is more time expensive
+     * and could delay metric collection
+     */
+    @Scheduled(cron = "*/5 * * * * ?")
+    public void updateHardware() {
+        updateHardwareInformation();
+    }
 
     /**
      * Scheduled task that runs every second to collect the latest system metrics

@@ -604,8 +604,6 @@ int DiskInfo::getDiskInformation(std::vector<std::wstring> *hardwareNames,
             driveLetterAsStrLen);
         std::wstring partitionName(partitionNameAsWchar);
 
-        std::cout << driveLetterStr << std::endl;
-
         diskPartitionToUniqueIdMappingsTemp[partitionName] = diskNumberVar.ulVal;
 
         VariantClear(&diskNumberVar);
