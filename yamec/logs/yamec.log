@@ -7364,3 +7364,295 @@ java.lang.ClassCastException: class java.lang.String cannot be cast to class com
 2025-05-10 16:59:22 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
 2025-05-10 16:59:23 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
 2025-05-10 16:59:24 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-10 19:06:21 [main] INFO  c.g.yamec.app.YamecApplication - Starting YamecApplication using Java 23.0.2 with PID 45080 (C:\Users\cmarc\IdeaProjects\yamec\yamec\yamec-app\target\yamec-app-0.0.1-SNAPSHOT.jar started by cmarc in C:\Users\cmarc\IdeaProjects\yamec\yamec)
+2025-05-10 19:06:21 [main] INFO  c.g.yamec.app.YamecApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-10 19:06:22 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-10 19:06:22 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 83 ms. Found 13 JPA repository interfaces.
+2025-05-10 19:06:23 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8084 (http)
+2025-05-10 19:06:23 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-10 19:06:23 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-05-10 19:06:23 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-05-10 19:06:23 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1688 ms
+2025-05-10 19:06:23 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-10 19:06:24 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-05-10 19:06:24 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-10 19:06:24 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-10 19:06:24 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-10 19:06:24 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@7a1371
+2025-05-10 19:06:24 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-10 19:06:24 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 3.49.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-10 19:06:25 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-10 19:06:25 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-10 19:06:26 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-10 19:06:27 [main] INFO  c.g.y.app.config.SystemMonitorConfig - Creating singleton instance of SystemMonitorManagerJNI
+2025-05-10 19:06:27 [pool-2-thread-1] INFO  com.github.fommil.jni.JniLoader - successfully loaded C:\Users\cmarc\AppData\Local\Temp\jniloader229095293176118989yamecjni.dll
+2025-05-10 19:06:27 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Initialized
+2025-05-10 19:06:27 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:06:28 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Initializing SystemMetricsCollector
+2025-05-10 19:06:28 [main] INFO  c.g.y.a.s.SystemMetricsCollector - CPU Hardware Information: Cpu[id=null, friendlyName='AMD Ryzen 9 5950X 16-Core Processor            ', coreCount='16', logicalProcessorCount='32', l1CacheSize='1048576', l2CacheSize='8388608', l3CacheSize='67108864', virtualizationEnabled='true']
+2025-05-10 19:06:28 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Memory Hardware Information: MemoryHardwareInformation{id=null, capacity=103079215104, speed=2133, slotsUsed=4, slotsTotal=4, capacityIsUnsigned=true, speedIsUnsigned=true}
+2025-05-10 19:06:28 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Disk Hardware Information:
+2025-05-10 19:06:28 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.DiskHardwareInformation@21f41593
+2025-05-10 19:06:28 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.DiskHardwareInformation@5ceeab0c
+2025-05-10 19:06:29 [main] INFO  c.g.y.a.s.SystemMetricsCollector - NIC Hardware Information:
+2025-05-10 19:06:29 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.NicHardwareInformation@64dd94ed
+2025-05-10 19:06:29 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.NicHardwareInformation@9918487
+2025-05-10 19:06:29 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-05-10 19:06:29 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8084 (http) with context path '/'
+2025-05-10 19:06:29 [main] INFO  c.g.yamec.app.YamecApplication - Started YamecApplication in 8.64 seconds (process running for 9.441)
+2025-05-10 19:06:30 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:06:30 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:06:30 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:06:30 [main] INFO  c.g.yamec.app.YamecApplication - User home directory: C:\Users\cmarc
+2025-05-10 19:06:30 [main] INFO  c.g.yamec.app.YamecApplication - Yamec Application Started
+2025-05-10 19:06:31 [http-nio-8084-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-10 19:06:31 [http-nio-8084-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-10 19:06:31 [http-nio-8084-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-05-10 19:06:31 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:06:32 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:06:33 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:06:34 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:06:35 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:06:36 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:06:37 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:06:38 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-10 19:06:38 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-10 19:06:38 [SpringApplicationShutdownHook] INFO  c.g.y.a.s.SystemMetricsCollector - SystemMetricsCollector cleanup - monitor will be closed by Spring context
+2025-05-10 19:06:38 [SpringApplicationShutdownHook] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - Successfully released native resources
+2025-05-10 19:06:38 [SpringApplicationShutdownHook] INFO  c.g.yamec.app.YamecApplication - CLEANUP - YamecApplication is shutting down...
+2025-05-10 19:06:38 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-10 19:06:38 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-10 19:06:38 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-10 19:47:07 [main] INFO  c.g.yamec.app.YamecApplication - Starting YamecApplication using Java 23.0.2 with PID 27564 (C:\Users\cmarc\IdeaProjects\yamec\yamec\yamec-app\target\yamec-app-0.0.1-SNAPSHOT.jar started by cmarc in C:\Users\cmarc\IdeaProjects\yamec\yamec)
+2025-05-10 19:47:07 [main] INFO  c.g.yamec.app.YamecApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-10 19:47:08 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-10 19:47:08 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 76 ms. Found 13 JPA repository interfaces.
+2025-05-10 19:47:09 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8084 (http)
+2025-05-10 19:47:09 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-10 19:47:09 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-05-10 19:47:09 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-05-10 19:47:09 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1584 ms
+2025-05-10 19:47:09 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-10 19:47:09 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-05-10 19:47:09 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-10 19:47:09 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-10 19:47:10 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-10 19:47:10 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@61808ecd
+2025-05-10 19:47:10 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-10 19:47:10 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 3.49.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-10 19:47:11 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-10 19:47:11 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-10 19:47:11 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-10 19:47:12 [main] INFO  c.g.y.app.config.SystemMonitorConfig - Creating singleton instance of SystemMonitorManagerJNI
+2025-05-10 19:47:12 [pool-2-thread-1] INFO  com.github.fommil.jni.JniLoader - successfully loaded C:\Users\cmarc\AppData\Local\Temp\jniloader2419197346824978374yamecjni.dll
+2025-05-10 19:47:13 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Initialized
+2025-05-10 19:47:13 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:14 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Initializing SystemMetricsCollector
+2025-05-10 19:47:14 [main] INFO  c.g.y.a.s.SystemMetricsCollector - CPU Hardware Information: Cpu[id=null, friendlyName='AMD Ryzen 9 5950X 16-Core Processor            ', coreCount='16', logicalProcessorCount='32', l1CacheSize='1048576', l2CacheSize='8388608', l3CacheSize='67108864', virtualizationEnabled='true']
+2025-05-10 19:47:15 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Memory Hardware Information: MemoryHardwareInformation{id=null, capacity=103079215104, speed=2133, slotsUsed=4, slotsTotal=4, capacityIsUnsigned=true, speedIsUnsigned=true}
+2025-05-10 19:47:15 [main] INFO  c.g.y.a.s.SystemMetricsCollector - Disk Hardware Information:
+2025-05-10 19:47:15 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.DiskHardwareInformation@268215b3
+2025-05-10 19:47:15 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.DiskHardwareInformation@4e31229f
+2025-05-10 19:47:15 [main] INFO  c.g.y.a.s.SystemMetricsCollector - NIC Hardware Information:
+2025-05-10 19:47:15 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.NicHardwareInformation@602854ed
+2025-05-10 19:47:15 [main] INFO  c.g.y.a.s.SystemMetricsCollector - com.gibbonsdimarco.yamec.app.data.NicHardwareInformation@491d36ef
+2025-05-10 19:47:15 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-05-10 19:47:15 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8084 (http) with context path '/'
+2025-05-10 19:47:15 [main] INFO  c.g.yamec.app.YamecApplication - Started YamecApplication in 8.85 seconds (process running for 9.66)
+2025-05-10 19:47:15 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:16 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:16 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:16 [main] INFO  c.g.yamec.app.YamecApplication - User home directory: C:\Users\cmarc
+2025-05-10 19:47:16 [main] INFO  c.g.yamec.app.YamecApplication - Yamec Application Started
+2025-05-10 19:47:17 [http-nio-8084-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-10 19:47:17 [http-nio-8084-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-10 19:47:17 [http-nio-8084-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-05-10 19:47:17 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:18 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:19 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:20 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:21 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:22 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:23 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:24 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:25 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:26 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:27 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:28 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:29 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:30 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:31 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:32 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:33 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:34 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:35 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:36 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:37 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:38 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:39 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:40 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:41 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:42 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:43 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:44 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:45 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:46 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:47 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:48 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:49 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:50 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:51 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:52 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:53 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:54 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:55 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:56 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:58 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:58 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:47:59 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:00 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:01 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:02 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:03 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:04 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:05 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:06 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:07 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:08 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:09 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:10 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:11 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:12 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:13 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:14 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:15 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:16 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:17 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:18 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:19 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:20 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:21 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:22 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:23 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:24 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:25 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:26 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:27 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:28 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:29 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:30 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:31 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:32 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:33 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:34 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:35 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:36 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:37 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:38 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:39 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:40 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:41 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:42 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:43 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:44 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:45 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:46 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:47 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:48 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:49 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:50 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:51 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:52 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:53 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:54 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:55 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:56 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:57 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:58 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:48:59 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:00 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:01 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:02 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:03 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:04 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:05 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:06 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:07 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:08 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:09 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:10 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:11 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:12 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:13 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:14 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:15 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:16 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:17 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:18 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:19 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:20 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:21 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:22 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:23 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:24 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:25 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:26 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:27 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:28 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:29 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:30 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:31 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:32 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:33 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:34 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:35 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:36 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:37 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:38 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:39 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:40 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:41 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:42 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:43 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:44 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:45 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:46 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:47 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:48 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:49 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:50 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:51 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:52 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:53 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:54 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:55 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:56 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:57 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:58 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:49:59 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:50:00 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:50:01 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:50:02 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:50:03 [pool-2-thread-1] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - SystemMonitorManager - Collected new counter data
+2025-05-10 19:50:04 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-10 19:50:04 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-10 19:50:04 [SpringApplicationShutdownHook] INFO  c.g.y.a.s.SystemMetricsCollector - SystemMetricsCollector cleanup - monitor will be closed by Spring context
+2025-05-10 19:50:04 [SpringApplicationShutdownHook] INFO  c.g.y.a.jni.SystemMonitorManagerJNI - Successfully released native resources
+2025-05-10 19:50:04 [SpringApplicationShutdownHook] INFO  c.g.yamec.app.YamecApplication - CLEANUP - YamecApplication is shutting down...
+2025-05-10 19:50:04 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-10 19:50:04 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-10 19:50:04 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
