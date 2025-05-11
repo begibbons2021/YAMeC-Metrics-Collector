@@ -14,14 +14,12 @@ bool NicInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManage
 {
     if (!pdhManager)
     {
-        std::cerr << "Invalid PDH manager" << std::endl;
-        return false;
+        throw std::runtime_error(" NIC Info - Was initialized with an invalid PdhQueryManager");
     }
 
     if (!wmiManager)
     {
-        std::cerr << "Invalid WMI manager" << std::endl;
-        return false;
+        throw std::runtime_error(" NIC Info - Was initialized with an invalid WmiQueryManager");
     }
 
     m_pdhManager = pdhManager;
@@ -32,8 +30,7 @@ bool NicInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManage
     PDH_HCOUNTER nicBandwidthCounterTemp;
     if (!m_pdhManager->addCounter(L"\\Network Interface(*)\\Current Bandwidth", &nicBandwidthCounterTemp))
     {
-        std::wcerr << "Failed to add All Disks Read Bandwidth counters " << std::endl;
-        return false;
+        throw std::runtime_error(" NIC Info - All-device Operating Bandwidth counters could not be added");
     }
 
     m_allNicsBandwidthBytesCounter = nicBandwidthCounterTemp;
@@ -42,8 +39,7 @@ bool NicInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManage
     PDH_HCOUNTER nicSendBandwidthCounterTemp;
     if (!m_pdhManager->addCounter(L"\\Network Interface(*)\\Bytes Sent/sec", &nicSendBandwidthCounterTemp))
     {
-        std::wcerr << "Failed to add All Disks Write Bandwidth counters " << std::endl;
-        return false;
+        throw std::runtime_error(" NIC Info - All-device Send Bandwidth counters could not be added");
     }
 
     m_allNicsSendBytesCounter = nicSendBandwidthCounterTemp;
@@ -52,12 +48,10 @@ bool NicInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManage
     PDH_HCOUNTER nicReceiveBandwidthCounterTemp;
     if (!m_pdhManager->addCounter(L"\\Network Interface(*)\\Bytes Received/sec", &nicReceiveBandwidthCounterTemp))
     {
-        std::wcerr << "Failed to add All Disks Usage counters " << std::endl;
-        return false;
+        throw std::runtime_error(" NIC Info - All-device Receive Bandwidth counters could not be added");
     }
 
     m_allNicsRecvBytesCounter = nicReceiveBandwidthCounterTemp;
-
 
 
     if (initInstances() == 0)
@@ -76,8 +70,7 @@ bool NicInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManage
 
         if (!m_pdhManager->addCounter(pathName, &mCounter))
         {
-            std::wcerr << "Failed to add NIC Current Bandwidth counter for " << instanceNames.at(i) << std::endl;
-            return false;
+            throw std::runtime_error(" NIC Info - A device-level Operating Bandwidth counter could not be added");
         }
 
         m_nicBandwidthBpsCounters.emplace_back(mCounter);
@@ -93,8 +86,7 @@ bool NicInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManage
 
         if (!m_pdhManager->addCounter(pathName, &mCounter))
         {
-            std::wcerr << "Failed to add NIC Bytes Received/sec counter for " << instanceNames.at(i) << std::endl;
-            return false;
+            throw std::runtime_error(" NIC Info - A device-level Receive Bandwidth counter could not be added");
         }
 
         m_nicRecvBytesCounters.emplace_back(mCounter);
@@ -111,8 +103,7 @@ bool NicInfo::initialize(PdhQueryManager *pdhManager, WmiQueryManager *wmiManage
 
         if (!m_pdhManager->addCounter(pathName, &mCounter))
         {
-            std::wcerr << "Failed to add NIC Bytes Sent/sec counter for " << instanceNames.at(i) << std::endl;
-            return false;
+            throw std::runtime_error(" NIC Info - A device-level Send Bandwidth counter could not be added");
         }
 
         m_nicSendBytesCounters.emplace_back(mCounter);
@@ -127,8 +118,7 @@ size_t NicInfo::initInstances()
 {
     if (!m_pdhManager)
     {
-        std::cerr << "PDH manager not initialized" << std::endl;
-        return 0;
+        throw std::runtime_error(" NIC Info - Was initialized with an invalid PdhQueryManager");
     }
 
     const auto *objectName = TEXT("Network Interface");
@@ -163,8 +153,7 @@ int NicInfo::getAllCounters(std::vector<unsigned long long> *nicBandwidthBpsValu
 {
     if (!m_pdhManager)
     {
-        std::cerr << "PDH manager not initialized" << std::endl;
-        return -1;
+        throw std::runtime_error(" NIC Info - Device-level counters were retrieved before the PdhQueryManager was initialized");
     }
 
     // NIC Current Bandwidth in Bps
@@ -172,10 +161,24 @@ int NicInfo::getAllCounters(std::vector<unsigned long long> *nicBandwidthBpsValu
     {
         unsigned long long bandwidth;
 
-        if (!m_pdhManager->getCounterValue(m_nicBandwidthBpsCounters.at(i), &bandwidth))
+        try
         {
-            return -3;
+            if (!m_pdhManager->getCounterValue(m_nicBandwidthBpsCounters.at(i), &bandwidth))
+            {
+                throw std::runtime_error(
+                        std::format(
+                            " NIC Info - Operating Bandwidth (NIC {}) - Device-level counter retrieval failed",
+                            i));
+            }
         }
+        catch (std::exception &e)
+        {
+            throw std::runtime_error(
+                    std::format(
+                        " NIC Info - Operating Bandwidth (NIC {}) - {}",
+                        i, std::string(e.what())));
+        }
+
 
         nicBandwidthBpsValues->push_back(bandwidth);
     }
@@ -185,10 +188,25 @@ int NicInfo::getAllCounters(std::vector<unsigned long long> *nicBandwidthBpsValu
     {
         unsigned long long bytesRecv;
 
-        if (!m_pdhManager->getCounterValue(m_nicRecvBytesCounters.at(i), &bytesRecv))
+        try
         {
-            return -4;
+            if (!m_pdhManager->getCounterValue(m_nicRecvBytesCounters.at(i), &bytesRecv))
+            {
+                throw std::runtime_error(
+                        std::format(
+                            " NIC Info - Receive Bandwidth (NIC {}) - Device-level counter retrieval failed",
+                            i));
+            }
         }
+        catch (std::exception &e)
+        {
+            throw std::runtime_error(
+                    std::format(
+                        " NIC Info - Receive Bandwidth (NIC {}) - {}",
+                        i, std::string(e.what())));
+        }
+
+
 
         nicRecvBytesValues->push_back(bytesRecv);
     }
@@ -198,9 +216,22 @@ int NicInfo::getAllCounters(std::vector<unsigned long long> *nicBandwidthBpsValu
     {
         unsigned long long bytesSent;
 
-        if (!m_pdhManager->getCounterValue(m_nicSendBytesCounters.at(i), &bytesSent))
+        try
         {
-            return -5;
+            if (!m_pdhManager->getCounterValue(m_nicSendBytesCounters.at(i), &bytesSent))
+            {
+                throw std::runtime_error(
+                        std::format(
+                            " NIC Info - Send Bandwidth (NIC {}) - Device-level counter retrieval failed",
+                            i));
+            }
+        }
+        catch (std::exception &e)
+        {
+            throw std::runtime_error(
+                    std::format(
+                        " NIC Info - Send Bandwidth (NIC {}) - {}",
+                        i, std::string(e.what())));
         }
 
         nicSendBytesValues->push_back(bytesSent);
@@ -218,8 +249,7 @@ int NicInfo::getAllCounters(std::vector<std::wstring> *nicInstanceNames,
 {
     if (!m_pdhManager)
     {
-        std::cerr << "PDH manager not initialized" << std::endl;
-        return -1;
+        throw std::runtime_error(" NIC Info - All-device counters were retrieved before the PdhQueryManager was initialized");
     }
 
     // Collect Operating Bandwidth
@@ -228,7 +258,7 @@ int NicInfo::getAllCounters(std::vector<std::wstring> *nicInstanceNames,
     {
         if (!m_pdhManager->getCounterValues(m_allNicsBandwidthBytesCounter, &nicOperatingBandwidthMap))
         {
-            return -3;
+            throw std::runtime_error(" NIC Info - Operating Bandwidth - All-device counter retrieval failed");
         }
     }
     catch (std::exception &e)
@@ -243,7 +273,7 @@ int NicInfo::getAllCounters(std::vector<std::wstring> *nicInstanceNames,
     {
         if (!m_pdhManager->getCounterValues(m_allNicsSendBytesCounter, &nicBytesSentMap))
         {
-            return -4;
+            throw std::runtime_error(" NIC Info - Operating Bandwidth - All-device counter retrieval failed");
         }
     }
     catch (std::exception &e)
@@ -258,7 +288,7 @@ int NicInfo::getAllCounters(std::vector<std::wstring> *nicInstanceNames,
     {
         if (!m_pdhManager->getCounterValues(m_allNicsRecvBytesCounter, &nicBytesRecvMap))
         {
-            return -5;
+            throw std::runtime_error(" NIC Info - Operating Bandwidth - All-device counter retrieval failed");
         }
     }
     catch (std::exception &e)
@@ -290,6 +320,7 @@ int NicInfo::getAllCounters(std::vector<std::wstring> *nicInstanceNames,
 
     if (nicOperatingBandwidthMap.empty())
     {
+        // Succeeds with no return data
         return 0;
     }
 
@@ -355,8 +386,7 @@ int NicInfo::getNicInformation(std::vector<std::wstring> *hardwareNames,
 {
     if (!m_wmiManager)
     {
-        std::cerr << "WMI manager not initialized" << std::endl;
-        return -1;
+        throw std::runtime_error(" NIC Info - Hardware data were retrieved before the WmiQueryManager was initialized");
     }
 
     IEnumWbemClassObject *response;
