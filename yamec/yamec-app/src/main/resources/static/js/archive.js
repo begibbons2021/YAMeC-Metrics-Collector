@@ -128,19 +128,27 @@ function initDateTimePicker() {
     const startTimeParam = urlParams.get('startTime');
     const endTimeParam = urlParams.get('endTime');
 
+    // Solution for timezone issues: https://stackoverflow.com/a/61082536
+
     let startTime, endTime;
 
     if (startTimeParam && endTimeParam) {
         // Use parameters from URL
-        startTime = new Date(parseInt(startTimeParam)).toISOString().slice(0, 16);
-        endTime = new Date(parseInt(endTimeParam)).toISOString().slice(0, 16);
+        startTime = new Date(parseInt(startTimeParam))
+        startTime.setMinutes(startTime.getMinutes() - startTime.getTimezoneOffset());
+        startTime = startTime.toISOString().slice(0, 16);
+        endTime = new Date(parseInt(endTimeParam));
+        endTime.setMinutes(endTime.getMinutes() - endTime.getTimezoneOffset());
+        endTime = endTime.toISOString().slice(0, 16);
     } else {
         // Set default end time to now
-        const now = new Date();
+        let now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         endTime = now.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
 
         // Set default start time to 5 minutes ago
-        const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
+        let fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
+        // fiveMinutesAgo.setMinutes(fiveMinutesAgo.getMinutes() - fiveMinutesAgo.getTimezoneOffset());
         startTime = fiveMinutesAgo.toISOString().slice(0, 16);
     }
 
