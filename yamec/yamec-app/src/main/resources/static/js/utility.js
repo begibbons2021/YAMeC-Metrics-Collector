@@ -33,9 +33,9 @@ function formatSeconds(seconds, decimals = 2) {
     const dm = decimals < 0 ? 0 : decimals;
 
     if (seconds >= 1) {
-        return parseFloat(seconds).toFixed(dm) + "sec";
+        return parseFloat(seconds).toFixed(dm) + " sec";
     } else {
-        return (parseFloat(seconds) * 1000.0).toFixed(dm) + "ms";
+        return (parseFloat(seconds) * 1000.0).toFixed(dm) + " ms";
     }
 
 }
