@@ -423,9 +423,13 @@
                                th:text="${#dates.format(#dates.createNow(), 'HH:mm:ss')}">00:00:00</span>
         </p>
         <p>YAMeC - Yet Another Metrics Collector</p>
+        <button class="shutdown-btn" onclick="shutdownApplication()">
+            <i class="fas fa-power-off"></i> Shutdown Application
+        </button>
     </div>
 </div>
 
+<script th:src="@{/js/utility.js}"></script>
 <!--    <script th:src="@{/js/application-dashboard.js}"></script>-->
 <!--    <script th:src="@{/js/dashboard.js}"></script>-->
 

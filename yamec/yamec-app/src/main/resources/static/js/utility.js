@@ -35,7 +35,7 @@ function formatSeconds(seconds, decimals = 2) {
     if (seconds >= 1) {
         return parseFloat(seconds).toFixed(dm) + "sec";
     } else {
-        return (parseFloat(seconds)*1000.0).toFixed(dm) + "ms";
+        return (parseFloat(seconds) * 1000.0).toFixed(dm) + "ms";
     }
 
 }
@@ -53,14 +53,14 @@ function formatBytesTransferred(bytes, decimals = 2) {
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ['Bytes/sec',
-                            'KB/sec',
-                            'MB/sec',
-                            'GB/sec',
-                            'TB/sec',
-                            'PB/sec',
-                            'EB/sec',
-                            'ZB/sec',
-                            'YB/sec'];
+        'KB/sec',
+        'MB/sec',
+        'GB/sec',
+        'TB/sec',
+        'PB/sec',
+        'EB/sec',
+        'ZB/sec',
+        'YB/sec'];
 
     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
@@ -182,4 +182,27 @@ function convertMetrics() {
         }
     }
 
+}
+
+/**
+ * Shutdown the application using Spring Boot Actuator
+ * This function sends a POST request to the /actuator/shutdown endpoint
+ */
+function shutdownApplication() {
+    if (confirm('Are you sure you want to shutdown the application?')) {
+        fetch('/actuator/shutdown', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(() => {
+                alert('Shutdown initiated successfully. The application will shut down in a few seconds. You may now close your browser.');
+            })
+            .catch(error => {
+                console.error('Error shutting down application:', error);
+                alert('Error shutting down application. See console for details.');
+            });
+    }
 }

@@ -155,6 +155,9 @@
         <div class="footer">
             <p>Last updated: <span id="last-updated" th:text="${#dates.format(#dates.createNow(), 'HH:mm:ss')}">00:00:00</span></p>
             <p>YAMeC - Yet Another Metrics Collector</p>
+            <button class="shutdown-btn" onclick="shutdownApplication()">
+                <i class="fas fa-power-off"></i> Shutdown Application
+            </button>
         </div>
     </div>
 
